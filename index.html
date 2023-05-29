@@ -30,6 +30,75 @@
       [data-can-drop] {
          background-color: rgba(0, 128, 0, 0.3);
       }
+
+      [data-cell] {
+         width: 45px;
+         height: 45px;
+      }
+
+      [data-square] {
+         /* width: 430px;
+         height: 430px; */
+         display: grid;
+         justify-content: start;
+         grid-template-columns: repeat(10, auto);
+         grid-template-rows: repeat(10, auto);
+      }
+
+      [data-square]>* {
+         border-left: 1px solid gray;
+      }
+
+      [data-square]>*:nth-child(10n) {
+         border-right: 1px solid gray;
+      }
+
+      [data-square]>* {
+         border-top: 1px solid gray;
+      }
+
+      [data-square]>*:nth-child(1n+91) {
+         border-bottom: 1px solid gray;
+      }
+
+      [data-ship] {
+         display: inline-flex;
+         position: relative;
+      }
+
+      [data-vertical] {
+         flex-direction: column;
+      }
+
+      [data-ship]>* {
+         border: 1px solid gray;
+         border-right: none;
+      }
+
+      [data-ship]>*:last-child {
+         border-right: 1px solid gray;
+      }
+
+      [data-ship][data-vertical]>* {
+         border: 1px solid gray;
+         border-bottom: none;
+      }
+
+      [data-ship][data-vertical]>*:last-child {
+         border-bottom: 1px solid gray;
+      }
+
+      [data-drag] {
+         transform: scale(0.85);
+         /* transform-origin: 'left top'; */
+      }
+
+      [data-toolbar] {
+         position: absolute;
+         top: 0;
+         right: 0;
+         transform: translate(100%, -100%);
+      }
    </style>
 </head>
 
@@ -162,164 +231,139 @@
    </div>
    <br><br><br><br>
    <div id="user">
-      <table data-ship="2">
-         <tbody>
-            <tr>
-               <td></td>
-               <td></td>
-            </tr>
-         </tbody>
-      </table>
-      <table data-ship="3">
-         <tbody>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-         </tbody>
-      </table>
-      <table data-ship="3">
-         <tbody>
-            <tr>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-            </tr>
-         </tbody>
-      </table>
+      <div data-dock>
+         <div data-ship="1">
+            <div data-cell></div>
+         </div>
+         <br>
+         <div data-ship="2">
+            <div data-cell></div>
+            <div data-cell></div>
+         </div>
+         <br>
+         <div data-ship="3">
+            <div data-cell></div>
+            <div data-cell></div>
+            <div data-cell></div>
+         </div>
+         <br>
+         <div data-ship="4">
+            <div data-toolbar>
+               <button data-rotate>rotate</button>
+               <button data-ok>ok</button>
+            </div>
+            <div data-cell></div>
+            <div data-cell></div>
+            <div data-cell></div>
+            <div data-cell></div>
+
+         </div>
+      </div>
       <br><br><br>
-      <table data-area>
-         <span>aergaerg</span>
-         <tbody>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-            <tr>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-               <td></td>
-            </tr>
-         </tbody>
-      </table>
+      <div data-square>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell="1"></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+         <div data-cell=""></div>
+      </div>
    </div>
-   <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+   <br><br><br><br><br>
 </body>
 
 <script src="js/script.js" type="module"></script>

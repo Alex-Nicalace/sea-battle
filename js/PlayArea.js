@@ -58,11 +58,6 @@ class PlayArea {
        */
       this.area = Array(10);
       /**
-       * Поле, содержащее массив HTML-узлов (корабли)
-       * @type {Array<Node>}
-       */
-      this.ships = [];
-      /**
        * Поле, представляющее Map с ключами в виде HTML-узлов и значениями в виде объектов {i, k} - координаты 2-мерного массива.
        * @type {Map<Node, Coord>}
        */
@@ -197,9 +192,10 @@ class PlayArea {
    /**
     * Размещение корабля по заданным координатам
     * @param {Coord[]} track массив координат корабля
-    * @returns
+    * @returns {Array<Coord>} массив координат корабля, дополненный координатами буферной зоны
     */
    buildShip(track = []) {
+      const res = [...track];
       const sizeShip = track.length;
       const setBorder = (i, k, sizeShip) => {
          const iMin = Math.max(i - 1, 0);
@@ -208,8 +204,9 @@ class PlayArea {
          const kMax = Math.min(k + 1, 9);
          for (let ii = iMin; ii <= iMax; ii++) {
             for (let kk = kMin; kk <= kMax; kk++) {
-               if (this.area[ii][kk].cell == sizeShip) continue;
+               if (this.area[ii][kk].cell !== this.emptyCell) continue;
                this.area[ii][kk].cell = this.borderCell;
+               res.push({ i: ii, k: kk })
             }
          }
       }
@@ -217,6 +214,7 @@ class PlayArea {
          this.area[coord.i][coord.k].cell = sizeShip;
          setBorder(coord.i, coord.k, sizeShip);
       });
+      return res;
    }
    /**
     * создание кораблей на поле в автаматическом режиме
@@ -224,7 +222,6 @@ class PlayArea {
    createShips() {
       for (let i = 4; i > 0; i--) {
          for (let k = 1; k <= 5 - i; k++) {
-            // console.log(i, k);
             this.createShip(i)
          }
       }
@@ -307,14 +304,27 @@ class PlayArea {
    }
    /**
     * Указаней короблей в HTML верстке
-    * @param {String} selector селектор корблей
+    * @param {String} dockSelector селектор дока (гаража) кораблей
+    * @param {String} shipSelector селектор кораблей
     */
-   setShips(selector) {
+   setShips(dockSelector, shipSelector) {
       /**
        * @type {String} селектор корабля
        */
-      this.shipSelector = selector;
-      this.ships = [...document.querySelectorAll(selector)];
+      this.shipSelector = shipSelector;
+      /**
+       * Ключ - HTML-узел крабля, значение - массив координат корабля и буферной зоны
+       * @type {Map<Node, Array<Coord>>}
+       */
+      this.ships = new Map;
+      const ships = document.querySelectorAll(shipSelector);
+      for (const ship of ships) {
+         this.ships.set(ship, [])
+      }
+      /**
+       * @type {Node} HTML-узел содержащий корабли
+       */
+      this.dock = document.querySelector(dockSelector);
    }
    /**
     * Уже имеющиеся в классе корабли делает перетаскиваемыми
@@ -330,6 +340,15 @@ class PlayArea {
          sizeShip;
       const cbMouseDown = (dragElement) => {
          sizeShip = +dragElement.dataset.ship;
+         dragElement.setAttribute('data-drag', '');
+         const coordShip = this.ships.get(dragElement);
+         if (coordShip.length) {
+            coordShip.forEach(({ i, k }) => {
+               this.area[i][k].cell = this.emptyCell;
+            });
+            this.ships.set(dragElement, []);
+            this.printPlayArea();
+         }
       }
       const cbMouseMove = (dragElement) => {
          dragElement.removeAttribute('data-can-drop');
@@ -338,21 +357,21 @@ class PlayArea {
          });
 
          const dragElementCoord = dragElement.getBoundingClientRect();
-         dragElement.hidden = true;
-         const topLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.top).closest(this.cellSelector);
-         const topRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.top).closest(this.cellSelector);
-         const bottomLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.bottom).closest(this.cellSelector);
-         const bottomRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.bottom).closest(this.cellSelector);
-         dragElement.hidden = false;
+         dragElement.style.display = 'none';
+         const topLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.top)?.closest(this.cellSelector);
+         const topRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.top)?.closest(this.cellSelector);
+         const bottomLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.bottom)?.closest(this.cellSelector);
+         const bottomRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.bottom)?.closest(this.cellSelector);
+         dragElement.style.display = '';
 
          let cellBegin, cellEnd, dir;
          if (dragElementCoord.width > dragElementCoord.height) {
             cellBegin = topLeft || bottomLeft;
-            cellEnd = topRight || bottomRight;
+            cellEnd = topLeft ? topRight : bottomRight;
             dir = 'right';
          } else {
             cellBegin = topLeft || topRight;
-            cellEnd = bottomLeft || bottomRight;
+            cellEnd = topLeft ? bottomLeft : bottomRight;
             dir = 'down';
          }
 
@@ -360,7 +379,6 @@ class PlayArea {
             isOverArea = false;
             return;
          };
-
          isOverArea =
             this.droppableEl.contains(cellBegin) &&
             this.droppableEl.contains(cellEnd);
@@ -381,27 +399,31 @@ class PlayArea {
                });
                track = [...currentTrack];
             }
-            console.log('hi', begin, end, dir, currentTrack, canBuild);
-            console.log('isOverArea', isOverArea);
          }
       }
       const cbMouseUp = (dragElement) => {
          if (!isOverArea) {
             dragElement.removeAttribute('style');
+            dragElement.removeAttribute('data-drag', '');
+            if (dragElement.parentChild !== this.dock) {
+               this.dock.append(dragElement);
+            }
             return;
          }
          const { i, k } = track[0]
-         const { top: topDropEl, left: leftDropEl } = this.droppableEl.getBoundingClientRect();
-         // const { top: topDragEl, left: leftDragEl } = dragElement.getBoundingClientRect();
+         const { top: topDropEl, left: leftDropEl, height: heightDropEl, width: widthDropEl } = this.droppableEl.getBoundingClientRect();
          const { top: topDragEl, left: leftDragEl } = this.area[i][k].cellHtml.getBoundingClientRect();
-         dragElement.style.top = `${topDragEl - topDropEl}px`;
-         dragElement.style.left = `${leftDragEl - leftDropEl}px`;
+         dragElement.style.top = `${(topDragEl - topDropEl) / heightDropEl * 100}%`;
+         dragElement.style.left = `${(leftDragEl - leftDropEl) / widthDropEl * 100}%`;
          dragElement.style.position = 'absolute';
+         this.droppableEl.appendChild(dragElement);
 
          if (canBuild) {
-            this.buildShip(track);
+            const buildedShip = this.buildShip(track);
+            this.ships.set(dragElement, buildedShip);
             this.printPlayArea();
          }
+         dragElement.removeAttribute('data-drag', '');
       }
       new Dragable(this.shipSelector, {
          cbMouseDown,
