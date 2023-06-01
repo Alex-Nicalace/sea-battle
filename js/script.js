@@ -9,7 +9,7 @@ playComp.printPlayArea();
 const playUser = new PlayArea;
 playUser.createPlayArea();
 playUser.assignHtml('#user [data-square] [data-cell]');
-playUser.setShips('#user [data-dock]', '#user [data-ship]');
+playUser.setShips('#user [data-dock]', '#user [data-ship]', '#user [data-rotate]', '#user [data-toolbar]');
 playUser.makeDragableShips('#user [data-square]');
 console.log(playUser);
 // playUser.createShips();

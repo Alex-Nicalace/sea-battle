@@ -21,19 +21,24 @@ class Dragable {
    }
    onMouseDown(e) {
       const dragElement = e && e.currentTarget;
-      const cbMouseMove = this.cbMouseMove;
-      const cbMouseUp = this.cbMouseUp;
-      if (!dragElement) return;
       e.preventDefault();
+      if (!dragElement) return;
+
       dragElement.ondragstart = function () {
          return false;
       };
 
-      let shiftX, shiftY;
+      let isBreak = false
 
       if (typeof this.cbMouseDown === 'function') {
-         this.cbMouseDown(dragElement);
+         isBreak = this.cbMouseDown(e);
       }
+
+      if (isBreak) return;
+
+      const cbMouseMove = this.cbMouseMove;
+      const cbMouseUp = this.cbMouseUp;
+      let shiftX, shiftY;
 
       startDrag(dragElement, e.clientX, e.clientY); // e.clientX, e.clientY координаты относительно окна
 

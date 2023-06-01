@@ -306,8 +306,10 @@ class PlayArea {
     * Указаней короблей в HTML верстке
     * @param {String} dockSelector селектор дока (гаража) кораблей
     * @param {String} shipSelector селектор кораблей
+    * @param {String} btnRotateSelector селектор кнопки повората корабля
+    * @param {String} toolbarSelector селектор панели настроек корабля
     */
-   setShips(dockSelector, shipSelector) {
+   setShips(dockSelector, shipSelector, rotateBtnSelector, toolbarSelector) {
       /**
        * @type {String} селектор корабля
        */
@@ -325,6 +327,25 @@ class PlayArea {
        * @type {Node} HTML-узел содержащий корабли
        */
       this.dock = document.querySelector(dockSelector);
+
+      /**
+       * @type {String} селектор панели настроек корабля
+       */
+      this.toolbarSelector = toolbarSelector;
+      const rotateShip = (e) => {
+         const shipEl = e.target.closest(this.shipSelector);
+         if (!shipEl) return;
+         if (shipEl.hasAttribute('data-vertical')) {
+            shipEl.removeAttribute('data-vertical', '');
+         } else {
+            shipEl.setAttribute('data-vertical', '');
+         }
+      }
+      const rotateBtns = document.querySelectorAll(rotateBtnSelector);
+      for (const btn of rotateBtns) {
+         btn.addEventListener('click', rotateShip);
+      }
+
    }
    /**
     * Уже имеющиеся в классе корабли делает перетаскиваемыми
@@ -338,7 +359,10 @@ class PlayArea {
          track = [],
          canBuild = false,
          sizeShip;
-      const cbMouseDown = (dragElement) => {
+      const cbMouseDown = (e) => {
+         if (e.target.closest(this.toolbarSelector)) return true;
+
+         const dragElement = e && e.currentTarget;
          sizeShip = +dragElement.dataset.ship;
          dragElement.setAttribute('data-drag', '');
          const coordShip = this.ships.get(dragElement);
