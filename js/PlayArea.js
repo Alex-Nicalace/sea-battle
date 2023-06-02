@@ -146,6 +146,7 @@ class PlayArea {
        * Поле содержит значение, кот. должно обозначать ячейки, кот. непосредственно примыкают к кораблю
        */
       this.borderCell = '.';
+
    }
    /**
     * создает игоровое поле, 2-мерный массив
@@ -303,13 +304,17 @@ class PlayArea {
       }
    }
    /**
-    * Указаней короблей в HTML верстке
-    * @param {String} dockSelector селектор дока (гаража) кораблей
-    * @param {String} shipSelector селектор кораблей
-    * @param {String} btnRotateSelector селектор кнопки повората корабля
-    * @param {String} toolbarSelector селектор панели настроек корабля
-    */
-   setShips(dockSelector, shipSelector, rotateBtnSelector, toolbarSelector) {
+    * Указаней короблей в HTML верстке и сопутсвующих настроек для кораблей
+   * @param {Object} [options={}] - Объект с параметрами.
+   * @param {string} [options.dockSelector] - селектор дока (гаража) кораблей
+   * @param {string} [options.shipSelector] - селектор кораблей
+   * @param {string} [options.rotateBtnSelector] - селектор кнопки повората корабля
+   * @param {string} [options.toolbarSelector] - селектор панели настроек корабля
+   * @param {string} [options.nameAttrVertical] - вертикальный корабль имеет указанный атрибут
+   * @param {string} [options.nameAttrCanDrop] - атрибут указывающий на возможность размещения корабля
+   * @param {string} [options.nameAttrDrag] - атрибут - признак перемещения крабля
+   */
+   setShips({ dockSelector, shipSelector, rotateBtnSelector, toolbarSelector, nameAttrVertical, nameAttrCanDrop, nameAttrDrag } = {}) {
       /**
        * @type {String} селектор корабля
        */
@@ -319,6 +324,21 @@ class PlayArea {
        * @type {Map<Node, Array<Coord>>}
        */
       this.ships = new Map;
+      /**
+       * вертикальный корабль имеет указанный атрибут
+       * @type {String}
+       */
+      this.nameAttrVertical = nameAttrVertical;
+      /**
+       * атрибут указывающий на возможность размещения корабля
+       * @type {String}
+       */
+      this.nameAttrCanDrop = nameAttrCanDrop;
+      /**
+       * атрибут - признак перемещения крабля
+       * @type {String}
+       */
+      this.nameAttrDrag = nameAttrDrag;
       const ships = document.querySelectorAll(shipSelector);
       for (const ship of ships) {
          this.ships.set(ship, [])
@@ -335,17 +355,52 @@ class PlayArea {
       const rotateShip = (e) => {
          const shipEl = e.target.closest(this.shipSelector);
          if (!shipEl) return;
-         if (shipEl.hasAttribute('data-vertical')) {
-            shipEl.removeAttribute('data-vertical', '');
+         if (shipEl.hasAttribute(this.nameAttrVertical)) {
+            shipEl.removeAttribute(this.nameAttrVertical, '');
          } else {
-            shipEl.setAttribute('data-vertical', '');
+            shipEl.setAttribute(this.nameAttrVertical, '');
          }
+         this.clearCellsUnderShip(shipEl);
+         shipEl.removeAttribute(this.nameAttrCanDrop);
       }
       const rotateBtns = document.querySelectorAll(rotateBtnSelector);
       for (const btn of rotateBtns) {
          btn.addEventListener('click', rotateShip);
       }
 
+   }
+   /**
+    * Очищает поле от корабля
+    * @param {Node} shipEl 
+    */
+   clearCellsUnderShip(shipEl) {
+      const coordShip = this.ships.get(shipEl);
+      if (coordShip.length) {
+         coordShip.forEach(({ i, k }) => {
+            this.area[i][k].cell = this.emptyCell;
+         });
+         this.ships.set(shipEl, []);
+         this.removeDekorCells(coordShip);
+         this.printPlayArea();
+      }
+   }
+   /**
+    * 
+    * @param {Array<Coord>} track 
+    */
+   removeDekorCells(track) {
+      track.forEach(({ i, k }) => {
+         this.area[i][k].cellHtml.removeAttribute(this.nameAttrCanDrop, '')
+      });
+   }
+   /**
+    * 
+    * @param {Array<Coord>} track 
+    */
+   setDekorCells(track) {
+      track.forEach(({ i, k }) => {
+         this.area[i][k].cellHtml.setAttribute(this.nameAttrCanDrop, '')
+      });
    }
    /**
     * Уже имеющиеся в классе корабли делает перетаскиваемыми
@@ -355,31 +410,20 @@ class PlayArea {
       this.droppableEl = document.querySelector(droppableSelector);
       this.droppableEl.style.position = 'relative';
       let
-         isOverArea = false,
+         isOverArea,
          track = [],
-         canBuild = false,
-         sizeShip;
+         canBuild,
+         sizeShip,
+         prevCellBegin;
       const cbMouseDown = (e) => {
          if (e.target.closest(this.toolbarSelector)) return true;
 
          const dragElement = e && e.currentTarget;
          sizeShip = +dragElement.dataset.ship;
-         dragElement.setAttribute('data-drag', '');
-         const coordShip = this.ships.get(dragElement);
-         if (coordShip.length) {
-            coordShip.forEach(({ i, k }) => {
-               this.area[i][k].cell = this.emptyCell;
-            });
-            this.ships.set(dragElement, []);
-            this.printPlayArea();
-         }
+         dragElement.setAttribute(this.nameAttrDrag, '');
+         this.clearCellsUnderShip(dragElement);
       }
       const cbMouseMove = (dragElement) => {
-         dragElement.removeAttribute('data-can-drop');
-         track.forEach(({ i, k }) => {
-            this.area[i][k].cellHtml.removeAttribute('data-can-drop', '')
-         });
-
          const dragElementCoord = dragElement.getBoundingClientRect();
          dragElement.style.display = 'none';
          const topLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.top)?.closest(this.cellSelector);
@@ -399,61 +443,66 @@ class PlayArea {
             dir = 'down';
          }
 
-         if (!(cellBegin && cellEnd)) {
-            isOverArea = false;
-            return;
-         };
+         if (prevCellBegin === cellBegin) return;
+         prevCellBegin = cellBegin;
+
+         dragElement.removeAttribute(this.nameAttrCanDrop);
+         this.removeDekorCells(track);
+
          isOverArea =
             this.droppableEl.contains(cellBegin) &&
             this.droppableEl.contains(cellEnd);
 
-         if (isOverArea) {
-            const
-               begin = this.cellsHtml.get(cellBegin),
-               end = this.cellsHtml.get(cellEnd);
-
-            const currentTrack = this.tracks[dir].filler(begin.i, begin.k, sizeShip);
+         const
+            cellBeginCoord = this.cellsHtml.get(cellBegin),
+            cellEndCoord = this.cellsHtml.get(cellEnd);
+         canBuild = !!(cellBeginCoord && cellEndCoord);
+         if (canBuild) {
+            const currentTrack = this.tracks[dir].filler(cellBeginCoord.i, cellBeginCoord.k, sizeShip);
             canBuild = this.canBuildShip(currentTrack);
 
             if (canBuild) {
-               dragElement.setAttribute('data-can-drop', '');
-
-               currentTrack.forEach(({ i, k }) => {
-                  this.area[i][k].cellHtml.setAttribute('data-can-drop', '')
-               });
+               dragElement.setAttribute(this.nameAttrCanDrop, '');
                track = [...currentTrack];
+               this.setDekorCells(track);
             }
          }
       }
       const cbMouseUp = (dragElement) => {
-         if (!isOverArea) {
+         if (canBuild) {
+            const { i, k } = track[0]
+            const { top: topDropEl, left: leftDropEl, height: heightDropEl, width: widthDropEl } = this.droppableEl.getBoundingClientRect();
+            const { top: topDragEl, left: leftDragEl } = this.area[i][k].cellHtml.getBoundingClientRect();
+            dragElement.style.top = `${(topDragEl - topDropEl) / heightDropEl * 100}%`;
+            dragElement.style.left = `${(leftDragEl - leftDropEl) / widthDropEl * 100}%`;
+            dragElement.style.position = 'absolute';
+            this.droppableEl.appendChild(dragElement);
+
+            if (canBuild) {
+               const buildedShip = this.buildShip(track);
+               this.ships.set(dragElement, buildedShip);
+               this.printPlayArea();
+            }
+            dragElement.removeAttribute(this.nameAttrDrag, '');
+         } else {
             dragElement.removeAttribute('style');
-            dragElement.removeAttribute('data-drag', '');
-            if (dragElement.parentChild !== this.dock) {
+            dragElement.removeAttribute(this.nameAttrDrag, '');
+            if (dragElement.parentElement !== this.dock) {
                this.dock.append(dragElement);
             }
-            return;
          }
-         const { i, k } = track[0]
-         const { top: topDropEl, left: leftDropEl, height: heightDropEl, width: widthDropEl } = this.droppableEl.getBoundingClientRect();
-         const { top: topDragEl, left: leftDragEl } = this.area[i][k].cellHtml.getBoundingClientRect();
-         dragElement.style.top = `${(topDragEl - topDropEl) / heightDropEl * 100}%`;
-         dragElement.style.left = `${(leftDragEl - leftDropEl) / widthDropEl * 100}%`;
-         dragElement.style.position = 'absolute';
-         this.droppableEl.appendChild(dragElement);
+         resetVariable();
 
-         if (canBuild) {
-            const buildedShip = this.buildShip(track);
-            this.ships.set(dragElement, buildedShip);
-            this.printPlayArea();
-         }
-         dragElement.removeAttribute('data-drag', '');
       }
       new Dragable(this.shipSelector, {
          cbMouseDown,
          cbMouseMove,
          cbMouseUp,
       }).init();
+      function resetVariable() {
+         track = [];
+         isOverArea = canBuild = sizeShip = prevCellBegin = null;
+      }
    }
 }
 
