@@ -1,4 +1,17 @@
+/**
+ * Класс, представляющий перетаскиваемый элемент.
+ * @class Dragable
+ */
 class Dragable {
+   /**
+    * Создайте перетаскиваемый элемент.
+    * @constructor
+    * @param {String} selector - селектор
+    * @param {Object} options - настройки
+    * @param {Function} [options.cbMouseDown = e => {}] - функция обратного вызова, вызываемая при нажатии кнопки мыши на перетаскиваемый элемент.
+    * @param {Function} [options.cbMouseMove = dragElement => {}] - Функция обратного вызова, вызываемая при наведении курсора мыши на перетаскиваемый элемент.
+    * @param {Function} [options.cbMouseUp = dragElement => {}] - Функция обратного вызова, которая вызывается при отпускании кнопки мыши на перетаскиваемом элементе.
+    */
    constructor(selector, {
       cbMouseDown,
       cbMouseMove,
@@ -13,12 +26,29 @@ class Dragable {
       this.cbMouseDown = cbMouseDown;
       this.cbMouseMove = cbMouseMove;
       this.cbMouseUp = cbMouseUp;
+      this.onMouseDown = this.onMouseDown.bind(this);
    }
-   init() {
+   /**
+    * включить Drag'n drop
+    */
+   on() {
       this.dragElements.forEach(dragElement => {
-         dragElement.addEventListener('mousedown', e => this.onMouseDown(e));
+         dragElement.addEventListener('mousedown', this.onMouseDown);
       });
    }
+   /**
+    * отключить Drag'n drop
+    */
+   off() {
+      this.dragElements.forEach(dragElement => {
+         dragElement.removeEventListener('mousedown', this.onMouseDown);
+      });
+   }
+   /**
+    * 
+    * @param {Event} e 
+    * @returns 
+    */
    onMouseDown(e) {
       const dragElement = e && e.currentTarget;
       e.preventDefault();
