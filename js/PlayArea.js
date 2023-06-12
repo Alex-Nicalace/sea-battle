@@ -1,5 +1,5 @@
-import { randomInteger } from './numbers.js';
 import Dragable from './Dragable.js';
+import Grid from './Grid.js';
 
 /**
  * Объект, представляющий координату в массиве
@@ -38,12 +38,16 @@ import Dragable from './Dragable.js';
  * @property {Object} left - Трек влево.
  * @property {function} left.filler - Метод для формирования трека влево.
  */
+
 /**
+ * @typedef {'Miss' | 'Hit' | 'Sunk'} ShotResult
+ */
+
 /**
  * Класс, представляющий объект игрового поля
  * @class
  */
-class PlayArea {
+class PlayArea extends Grid {
    /**
    * HTML-узел, в который можно сбрасывать корабль
    * @type {Node}
@@ -54,11 +58,7 @@ class PlayArea {
     * @type {string | null;}
     */
    cellSelector = null;
-   /**
-    * Поле, представляющее двумерный массив объектов.
-    * @type {Area}
-    */
-   area = Array(10);
+
    /**
     * Поле, представляющее Map с ключами в виде HTML-узлов и значениями в виде объектов {i, k} - координаты 2-мерного массива.
     * @type {Map<Node, Coord>}
@@ -141,14 +141,6 @@ class PlayArea {
       },
    }
    /**
-    * Поле содержит значение, кот. должно обозначать пустую ячейку
-    */
-   emptyCell = null;
-   /**
-    * Поле содержит значение, кот. должно обозначать ячейки, кот. непосредственно примыкают к кораблю
-    */
-   borderCell = '.';
-   /**
    * @type {String} селектор корабля
    */
    shipSelector;
@@ -199,42 +191,9 @@ class PlayArea {
     * @type {Boolean} признак завершения расстановки кораблей
     */
    isReadyPlacement = false;
-   constructor() {
-   }
-   /**
-    * создает игоровое поле, 2-мерный массив
-    */
-   createPlayArea() {
-      for (let i = 0; i < this.area.length; i++) {
-         this.area[i] = Array(this.area.length)
-         for (let k = 0; k < this.area[i].length; k++) {
-            this.area[i][k] = { cell: this.emptyCell, cellHtml: null };
-         }
-      }
-   }
-   /**
-    * печатает значения 2-мерного массива в сопоставленные HTML-узлы
-    */
-   printPlayArea() {
-      /* let row = '';
-      for (let i = 0; i < this.area.length; i++) {
-         for (let k = 0; k < this.area.length; k++) {
-            row += this.area[i][k].cell;
-         }
-         row += '\n';
-      }
-      console.log(row);
-      console.table(this.area); */
-      if (!this.cellsHtml) return;
-      for (const item of this.cellsHtml) {
-         const { i, k } = item[1];
-         if (typeof this.area[i][k].cell === 'number') {
-            this.area[i][k].cellHtml.innerHTML = this.area[i][k].cell;
-            continue
-         }
-         this.area[i][k].cellHtml.innerHTML = '';
-      }
-   }
+
+
+
    /**
     * Проверить возможность размещения корабля по заданным координатам
     * @param {Coord[]} track массив координат корабля
@@ -244,43 +203,51 @@ class PlayArea {
       return !!track.length && !track.some(coord => this.area[coord.i][coord.k].cell != this.emptyCell);
    }
    /**
-    * Размещение корабля по заданным координатам
-    * @param {Coord[]} track массив координат корабля
-    * @returns {String} ключ корабля в объекте shipsOnArea
-    */
-   buildShip(track = []) {
-      const aroundTrack = [];
-      const sizeShip = track.length;
-      const setBorder = (i, k) => {
-         const iMin = Math.max(i - 1, 0);
-         const iMax = Math.min(i + 1, 9);
-         const kMin = Math.max(k - 1, 0);
-         const kMax = Math.min(k + 1, 9);
-         for (let ii = iMin; ii <= iMax; ii++) {
-            for (let kk = kMin; kk <= kMax; kk++) {
-               if (this.area[ii][kk].cell !== this.emptyCell || track.find(({ i, k }) => ii === i && kk === k)) continue;
-               this.area[ii][kk].cell = this.borderCell;
-               // res.push({ i: ii, k: kk })
-               aroundTrack.push({ i: ii, k: kk })
-            }
-         }
-      }
-      track.forEach(coord => {
-         this.area[coord.i][coord.k].cell = sizeShip;
-         setBorder(coord.i, coord.k, sizeShip);
-      });
-      return aroundTrack;
-      // return this.addShipsOnArea(track, aroundTrack);
-   }
-   /**
     * создание кораблей на поле в автаматическом режиме
     */
    createShips() {
-      for (let i = 4; i > 0; i--) {
+      const setShips = {
+         1: 4,
+         2: 3,
+         3: 2,
+         4: 1,
+         // символьный метод, возвращающий итератор
+         [Symbol.iterator]() {
+            const entries = Object.entries(this);
+            // метод должен вернуть объект с методом next() 
+            return {
+               currentI: 0,
+               lastI: entries.length,
+               currentK: 0,
+               entries,
+               // в этом методе реализуется логика итерации
+               next() {
+                  if (this.currentI < this.lastI) {
+                     const [sizeShip, quantity] = this.entries[this.currentI];
+                     if (++this.currentK > quantity) {
+                        this.currentI++;
+                        this.currentK = 0;
+                        return this.next();
+                     }
+                     return {
+                        done: false,
+                        value: sizeShip,
+                     }
+                  } else
+                     return { done: true }
+               }
+            }
+         }
+      }
+      for (const ship of setShips) {
+         // console.log('iterator', iterator);
+         this.createShip(+ship)
+      }
+      /* for (let i = 4; i > 0; i--) {
          for (let k = 1; k <= 5 - i; k++) {
             this.createShip(i)
          }
-      }
+      } */
    }
    /**
     * создание корабля заданной длины в автоматическом режиме
@@ -291,11 +258,10 @@ class PlayArea {
          track,
          canBuildShip = false;
       do {
-         const resulst = this.getRandomEmptyPoint();
-         i = resulst.i;
-         k = resulst.k;
-         let
-            excludeDirect = [];
+         const result = this.getRandomEmptyPoint();
+         i = result.i;
+         k = result.k;
+         let excludeDirect = [];
          direct = this.getRandomDirect(excludeDirect);
          while (!canBuildShip && direct) {
             track = this.tracks[direct].filler(i, k, len);
@@ -311,39 +277,20 @@ class PlayArea {
 
    }
    /**
-    * полчение случайной пустой координаты
-    * @returns {Coord} координата ячейки
-    */
-   getRandomEmptyPoint() {
-      let i, k;
-      do {
-         i = Math.abs(randomInteger(0, 9));
-         k = Math.abs(randomInteger(0, 9));
-      } while (this.area[i][k].cell != this.emptyCell);
-      return { i, k };
-   }
-   /**
-    * случайно получить направление для размещения корабля
-    * @param {Array<String>} excludeArr массив исключенных направлений
-    * @returns 
-    */
-   getRandomDirect(excludeArr = []) {
-      const directArr = ['up', 'left', 'down', 'right'];
-      const isAllOptionsExcluded = directArr.every(val => excludeArr.includes(val));
-      if (isAllOptionsExcluded) return null;
-      let num;
-      do {
-         num = Math.abs(randomInteger(0, 3));
-      } while (excludeArr.indexOf(directArr[num]) > -1);
-      return directArr[num];
-   }
-   /**
-    * Ассоциация ячеек 2-мерного массива (игрового поля) с HTML-узлами, представляющие собой ячейку
-    * @param {String} cellSelector селектор HTML-узла, кот. будет считаться ячейкой
-    * @returns 
-    */
-   assignHtml(cellSelector) {
+      * Ассоциация ячеек 2-мерного массива (игрового поля) с HTML-узлами, представляющие собой ячейку
+      * @param {Object} [options={}] - Объект с параметрами.
+      * @param {String} [options.cellSelector] селектор HTML-узла, кот. будет считаться ячейкой
+      * @param {String} [options.nameAttrShot] - атрибут для ячейки по которой был выстрел
+      * @param {String} [options.nameAttrShotTarget] - атрибут для ячейки по которой было попадание
+      * @param {String} [options.nameAttrShotDied] - атрибут для ячейки входит в состав убитого корабля
+      * @returns 
+      */
+   assignHtml({ cellSelector, nameAttrShot, nameAttrShotTarget, nameAttrShotDied }) {
       this.cellSelector = cellSelector;
+      this.nameAttrShot = nameAttrShot;
+      this.nameAttrShotTarget = nameAttrShotTarget;
+      this.nameAttrShotDied = nameAttrShotDied;
+
       const elements = [...document.querySelectorAll(this.cellSelector)];
       const sizeSideArea = this.area.length;
       if (elements.length < Math.pow(sizeSideArea, 2)) {
@@ -416,6 +363,7 @@ class PlayArea {
       if (coordShip.length) {
          coordShip.forEach(({ i, k }) => {
             this.area[i][k].cell = this.emptyCell;
+            this.area[i][k].track = [];
          });
          this.removeDekorCells(this.listShips[key].track);
          delete this.listShips[key];
@@ -638,34 +586,51 @@ class PlayArea {
       console.log('isNotCompleate', isCompleate);
       if (!isCompleate) return;
       this.offDragable();
+      this.bindShipsToArrayCells();
       this.isReadyPlacement = true;
    }
    /**
-    * сделать поле, спсобным принять клик-выстрел
-    */
+      * сделать поле, спсобным принять клик-выстрел
+      */
    makeShootable() {
       this.bindShipsToArrayCells();
-      for (const [cellEl, { i, k }] of this.cellsHtml) {
-         cellEl.addEventListener('click', e => {
-            this.area[i][k].isShooted = true;
-            const track = this.area[i][k].track;
-            if (track) {
-               const coord = track.find(({ i: ii, k: kk }) => i === ii && k === kk);
-               coord.isShooted = true;
-               const health = track.filter(({ isShooted }) => isShooted).length;
-               if (health === track.length) {
-                  console.log('убил')
-               } else {
-                  console.log('попал')
-               };
-            } else {
-               console.log('мимо');
-            }
-         })
+      for (const [cellEl, coord] of this.cellsHtml) {
+         cellEl.addEventListener('click', () => this.takeShot(coord))
       }
    }
    /**
-    * связать ключ объекта корабля с ячейкой
+    * 
+    * @param {Coord} coord координаты выстрела
+    * @returns {ShotResult} результат выстрела
+    */
+   takeShot({ i, k }) {
+      this.area[i][k].isShooted = true;
+      const cellHtml = this.area[i][k].cellHtml
+      cellHtml.setAttribute(this.nameAttrShot, '')
+      const track = this.area[i][k].track;
+      if (!track?.length) {
+         // выстрел мимо
+         console.log('мимо');
+         return 'Miss';
+      }
+      // попадание в цель
+      const coord = track.find(({ i: ii, k: kk }) => i === ii && k === kk);
+      coord.isShooted = true;
+      cellHtml.setAttribute(this.nameAttrShotTarget, '');
+      const health = track.filter(({ isShooted }) => isShooted).length;
+      if (health === track.length) {
+         // попадание и убил
+         console.log('убил');
+         track.map(({ i, k }) => this.area[i][k].cellHtml).forEach(elCell => elCell.setAttribute(this.nameAttrShotDied, ''));
+         return 'Sunk';
+      }
+      // попадание и ранение
+      console.log('попал');
+      return 'Hit';
+
+   }
+   /**
+    * связать ключ списка (объекта) кораблей с ячейками корабля
     * т.о. по координатам ячейки можно выйти на весь корабль
     */
    bindShipsToArrayCells() {

@@ -99,6 +99,18 @@
          right: 0;
          transform: translate(100%, -100%);
       }
+
+      [data-shot] {
+         background-color: rgba(0, 0, 0, 0.2);
+      }
+
+      [data-shot-target] {
+         background-color: rgba(255, 0, 0, 0.2);
+      }
+
+      [data-shot-died] {
+         background-color: rgba(255, 0, 0, 1);
+      }
    </style>
 </head>
 
@@ -399,6 +411,8 @@
          <div data-cell=""></div>
       </div>
       <button id="btn-auto-place">auto place</button>
+      <button id="btn-comp-shot">comp shot</button>
+      <button id="btn-print">console logic area</button>
    </div>
    <br><br><br><br><br>
 </body>
