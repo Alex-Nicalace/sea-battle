@@ -181,6 +181,8 @@ class PlayArea extends Grid {
    /**
     * Объект содержит по определенному ключу координаты занятые кораблем и координаты буферной зоны
     * @type {Object.<string, ShipCoords>}
+    * @property {string} - уникальный ключ корабля
+    * @property {ShipCoords} - координаты корабля
     */
    listShips = {};
    /**
@@ -206,40 +208,7 @@ class PlayArea extends Grid {
     * создание кораблей на поле в автаматическом режиме
     */
    createShips() {
-      const setShips = {
-         1: 4,
-         2: 3,
-         3: 2,
-         4: 1,
-         // символьный метод, возвращающий итератор
-         [Symbol.iterator]() {
-            const entries = Object.entries(this);
-            // метод должен вернуть объект с методом next() 
-            return {
-               currentI: 0,
-               lastI: entries.length,
-               currentK: 0,
-               entries,
-               // в этом методе реализуется логика итерации
-               next() {
-                  if (this.currentI < this.lastI) {
-                     const [sizeShip, quantity] = this.entries[this.currentI];
-                     if (++this.currentK > quantity) {
-                        this.currentI++;
-                        this.currentK = 0;
-                        return this.next();
-                     }
-                     return {
-                        done: false,
-                        value: sizeShip,
-                     }
-                  } else
-                     return { done: true }
-               }
-            }
-         }
-      }
-      for (const ship of setShips) {
+      for (const ship of this.schemeShips) {
          // console.log('iterator', iterator);
          this.createShip(+ship)
       }
@@ -580,18 +549,19 @@ class PlayArea extends Grid {
    }
    /**
     * завершить расстановку кораблей
+    * @returns {{done: boolean, message?: string}}
     */
-   finalisePlacement() {
-      const isCompleate = ![...this.shipsNodes.values()].some(item => !item);
-      console.log('isNotCompleate', isCompleate);
-      if (!isCompleate) return;
+   finalisePlacementShips() {
+      const isCompleate = this.totalShips === Object.keys(this.listShips).length;
+      if (!isCompleate) return { done: false, message: 'Необходимо расставить все корабли на поле' };
       this.offDragable();
       this.bindShipsToArrayCells();
       this.isReadyPlacement = true;
+      return { done: true };
    }
    /**
-      * сделать поле, спсобным принять клик-выстрел
-      */
+   * сделать поле, спсобным принять клик-выстрел
+   */
    makeShootable() {
       this.bindShipsToArrayCells();
       for (const [cellEl, coord] of this.cellsHtml) {

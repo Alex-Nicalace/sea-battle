@@ -5,6 +5,7 @@ import LogicComp from './LogicComp.js';
 const playComp = new PlayArea();
 playComp.createPlayArea();
 playComp.createShips();
+playComp.finalisePlacementShips();
 playComp.assignHtml({
    cellSelector: '#comp tbody tr td',
    nameAttrShot: 'data-shot',
@@ -12,13 +13,12 @@ playComp.assignHtml({
    nameAttrShotTarget: 'data-shot-target',
 }
 );
-// playComp.printPlayArea();
+playComp.printPlayArea();
 playComp.makeShootable();
-// console.log('playComp', playComp);
+console.log('playComp', playComp);
 
 const playUser = new PlayArea();
 playUser.createPlayArea();
-// playUser.createShips();
 playUser.assignHtml({
    cellSelector: '#user [data-square] [data-cell]',
    nameAttrShot: 'data-shot',
@@ -45,8 +45,11 @@ const logicComp = new LogicComp();
 
 document.querySelector('#btn-auto-place').addEventListener('click', () => {
    playUser.locateShips();
-   playUser.finalisePlacement();
    playUser.printPlayArea();
+});
+document.querySelector('#btn-ready').addEventListener('click', () => {
+   const { message } = playUser.finalisePlacementShips();
+   console.log(message);
 });
 document.querySelector('#btn-comp-shot').addEventListener('click', () => {
    const coordShot = logicComp.makeShot();
@@ -66,4 +69,3 @@ document.querySelector('#btn-print').addEventListener('click', () => {
 // todo:
 
 // подсветка тулбара только когда в движении и на поле
-// реализовать мой выстрел/ выстрел компа

@@ -27,6 +27,52 @@ import { GridError } from './Error.js';
  * @class
  */
 class Grid {
+   constructor() {
+      this.totalShips = Object.values(this.schemeShips).reduce((total, num) => total + num, 0);
+   }
+   /**
+    * @type {number} общее количество кораблей
+    */
+   totalShips = 0;
+   /**
+    * Объект настроек колличества кораблей
+    * @type {Object.<number, number>}
+    * @property {number} key - размер корабля
+    * @property {number} value - количество кораблей
+    */
+   schemeShips = {
+      1: 4,
+      2: 3,
+      3: 2,
+      4: 1,
+      // символьный метод, возвращающий итератор
+      [Symbol.iterator]() {
+         const entries = Object.entries(this);
+         // метод должен вернуть объект с методом next() 
+         return {
+            currentI: 0,
+            lastI: entries.length,
+            currentK: 0,
+            entries,
+            // в этом методе реализуется логика итерации
+            next() {
+               if (this.currentI < this.lastI) {
+                  const [sizeShip, quantity] = this.entries[this.currentI];
+                  if (++this.currentK > quantity) {
+                     this.currentI++;
+                     this.currentK = 0;
+                     return this.next();
+                  }
+                  return {
+                     done: false,
+                     value: sizeShip,
+                  }
+               } else
+                  return { done: true }
+            }
+         }
+      }
+   }
    /**
     * Поле, представляющее двумерный массив объектов.
     * @type {Area}
