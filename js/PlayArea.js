@@ -1,5 +1,6 @@
 import Dragable from './Dragable.js';
 import Grid from './Grid.js';
+import { PlayAreaError } from './Error.js';
 
 /**
  * Объект, представляющий координату в массиве
@@ -49,16 +50,14 @@ import Grid from './Grid.js';
  */
 class PlayArea extends Grid {
    /**
-   * HTML-узел, в который можно сбрасывать корабль
-   * @type {Node}
-   */
-   droppableEl;
-   /**
-    * селектор клетки игорового поля
+    * селектор контейнера клеток игорового поля
     * @type {string | null;}
     */
    cellSelector = null;
-
+   /**
+    * @type {Node} HTML-узлел - общий родитель cellsHtml
+    */
+   containerCell;
    /**
     * Поле, представляющее Map с ключами в виде HTML-узлов и значениями в виде объектов {i, k} - координаты 2-мерного массива.
     * @type {Map<Node, Coord>}
@@ -193,16 +192,17 @@ class PlayArea extends Grid {
     * @type {Boolean} признак завершения расстановки кораблей
     */
    isReadyPlacement = false;
-
-
-
+   /**
+    * @type {boolean} можно ли кликать-стрелять
+    */
+   isShootable = true;
    /**
     * Проверить возможность размещения корабля по заданным координатам
     * @param {Coord[]} track массив координат корабля
     * @returns {Boolean}
     */
    canBuildShip(track = []) {
-      return !!track.length && !track.some(coord => this.area[coord.i][coord.k].cell != this.emptyCell);
+      return !!track.length && !track.some(({ i, k }) => this.area[i][k].cell != this.emptyCell);
    }
    /**
     * создание кораблей на поле в автаматическом режиме
@@ -248,13 +248,15 @@ class PlayArea extends Grid {
    /**
       * Ассоциация ячеек 2-мерного массива (игрового поля) с HTML-узлами, представляющие собой ячейку
       * @param {Object} [options={}] - Объект с параметрами.
+      * @param {String} [options.containerCellSelector] селектор HTML-узла, кот. является контейнером ячеек
       * @param {String} [options.cellSelector] селектор HTML-узла, кот. будет считаться ячейкой
       * @param {String} [options.nameAttrShot] - атрибут для ячейки по которой был выстрел
       * @param {String} [options.nameAttrShotTarget] - атрибут для ячейки по которой было попадание
       * @param {String} [options.nameAttrShotDied] - атрибут для ячейки входит в состав убитого корабля
       * @returns 
       */
-   assignHtml({ cellSelector, nameAttrShot, nameAttrShotTarget, nameAttrShotDied }) {
+   assignHtml({ containerCellSelector, cellSelector, nameAttrShot, nameAttrShotTarget, nameAttrShotDied }) {
+      this.containerCell = document.querySelector(containerCellSelector);
       this.cellSelector = cellSelector;
       this.nameAttrShot = nameAttrShot;
       this.nameAttrShotTarget = nameAttrShotTarget;
@@ -263,10 +265,7 @@ class PlayArea extends Grid {
       const elements = [...document.querySelectorAll(this.cellSelector)];
       const sizeSideArea = this.area.length;
       if (elements.length < Math.pow(sizeSideArea, 2)) {
-         const msgError = 'Ошибка! Количества HTML элементов недостаточно для создания поля!';
-         console.log(msgError);
-         alert(msgError);
-         return;
+         throw new PlayAreaError('The number of node elements does not match the size of the grid');
       }
       this.cellsHtml = new Map();
       for (let i = 0; i < sizeSideArea; i++) {
@@ -362,11 +361,11 @@ class PlayArea extends Grid {
    }
    /**
     * Уже имеющиеся в классе корабли делает перетаскиваемыми
-    * @param {String} droppableSelector селектор игорвого поля, куда можно сбрасывать корабли
     */
-   makeDragableShips(droppableSelector) {
-      this.droppableEl = document.querySelector(droppableSelector);
-      this.droppableEl.style.position = 'relative';
+   makeDragableShips() {
+      if (!this.containerCell) return new PlayAreaError('The containerCell property does not exist');
+
+      this.containerCell.style.position = 'relative';
       let
          isOverArea,
          track = [],
@@ -409,8 +408,8 @@ class PlayArea extends Grid {
          this.removeDekorCells(track);
 
          isOverArea =
-            this.droppableEl.contains(cellBegin) &&
-            this.droppableEl.contains(cellEnd);
+            this.containerCell.contains(cellBegin) &&
+            this.containerCell.contains(cellEnd);
 
          const
             cellBeginCoord = this.cellsHtml.get(cellBegin),
@@ -540,12 +539,12 @@ class PlayArea extends Grid {
     * @param {Node} element HTML-узел
     */
    positioningElInArea(i, k, element) {
-      const { top: topDropEl, left: leftDropEl, height: heightDropEl, width: widthDropEl } = this.droppableEl.getBoundingClientRect();
+      const { top: topDropEl, left: leftDropEl, height: heightDropEl, width: widthDropEl } = this.containerCell.getBoundingClientRect();
       const { top: topDragEl, left: leftDragEl } = this.area[i][k].cellHtml.getBoundingClientRect();
       element.style.top = `${(topDragEl - topDropEl) / heightDropEl * 100}%`;
       element.style.left = `${(leftDragEl - leftDropEl) / widthDropEl * 100}%`;
       element.style.position = 'absolute';
-      this.droppableEl.appendChild(element);
+      this.containerCell.appendChild(element);
    }
    /**
     * завершить расстановку кораблей
@@ -563,10 +562,26 @@ class PlayArea extends Grid {
    * сделать поле, спсобным принять клик-выстрел
    */
    makeShootable() {
-      this.bindShipsToArrayCells();
       for (const [cellEl, coord] of this.cellsHtml) {
          cellEl.addEventListener('click', () => this.takeShot(coord))
       }
+   }
+   /**
+    * переводит игровое поле в ожижание клика-выстрела по полю
+    * возвращает координаты выстрела
+    * @returns 
+    */
+   makeShot() {
+      return new Promise((res) => {
+         const onClick = e => {
+            const cellEl = e?.target?.closest(this.cellSelector);
+            const coord = this.cellsHtml.get(cellEl);
+            if (!coord) return new PlayAreaError('The HTML node has no coordinates');
+            this.containerCell.removeEventListener('click', onClick);
+            res(coord);
+         }
+         this.containerCell.addEventListener('click', onClick)
+      })
    }
    /**
     * 
@@ -574,6 +589,9 @@ class PlayArea extends Grid {
     * @returns {ShotResult} результат выстрела
     */
    takeShot({ i, k }) {
+      if (!this.isReadyPlacement) {
+         throw new PlayAreaError('The placement of ships has not been completed');
+      }
       this.area[i][k].isShooted = true;
       const cellHtml = this.area[i][k].cellHtml
       cellHtml.setAttribute(this.nameAttrShot, '')

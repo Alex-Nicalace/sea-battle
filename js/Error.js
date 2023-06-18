@@ -17,4 +17,10 @@ class GridError extends SeaBatleError {
    }
 }
 
-export { LogicCompError, GridError };
+class PlayAreaError extends SeaBatleError {
+   constructor(message) {
+      super(message);
+   }
+}
+
+export { LogicCompError, GridError, PlayAreaError };

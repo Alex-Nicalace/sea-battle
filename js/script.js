@@ -1,12 +1,13 @@
 import PlayArea from './PlayArea.js';
 import LogicComp from './LogicComp.js';
+// import Referee from './Referee.js';
 
 
 const playComp = new PlayArea();
-playComp.createPlayArea();
 playComp.createShips();
 playComp.finalisePlacementShips();
 playComp.assignHtml({
+   containerCellSelector: '#comp tbody',
    cellSelector: '#comp tbody tr td',
    nameAttrShot: 'data-shot',
    nameAttrShotDied: 'data-shot-died',
@@ -14,18 +15,17 @@ playComp.assignHtml({
 }
 );
 playComp.printPlayArea();
-playComp.makeShootable();
+// playComp.makeShootable();
 console.log('playComp', playComp);
 
 const playUser = new PlayArea();
-playUser.createPlayArea();
 playUser.assignHtml({
+   containerCellSelector: '#user [data-square]',
    cellSelector: '#user [data-square] [data-cell]',
    nameAttrShot: 'data-shot',
    nameAttrShotDied: 'data-shot-died',
    nameAttrShotTarget: 'data-shot-target',
 });
-playUser.printPlayArea();
 playUser.setShips({
    dockSelector: '#user [data-dock]',
    shipSelector: '#user [data-ship]',
@@ -35,11 +35,48 @@ playUser.setShips({
    nameAttrCanDrop: 'data-can-drop',
    nameAttrDrag: 'data-drag',
 });
-playUser.makeDragableShips('#user [data-square]');
+playUser.makeDragableShips();
 
 console.log('playUser', playUser);
 
 const logicComp = new LogicComp();
+
+// const referee = new Referee(playUser, logicComp);
+
+class Referee {
+   /**
+    * 
+    * @param {PlayArea} playUser 
+    * @param {LogicComp} logicComp 
+    */
+   constructor(playUser, playComp, logicComp) {
+      this.playUser = playUser;
+      this.logicComp = logicComp;
+      this.playComp = playComp;
+
+      this.shotComp();
+   }
+   async shotUser() {
+      const coord = await this.playComp.makeShot();
+      const answer = this.playComp.takeShot(coord);
+      if (answer === 'Miss') {
+         this.shotComp()
+      } else {
+         this.shotUser()
+      }
+
+   }
+   async shotComp() {
+      const coord = await this.logicComp.makeShot();
+      const answer = this.playUser.takeShot(coord);
+      this.logicComp.getAnswer(answer);
+      if (answer === 'Miss') {
+         this.shotUser()
+      } else {
+         this.shotComp()
+      }
+   }
+}
 
 
 
@@ -60,6 +97,10 @@ document.querySelector('#btn-print').addEventListener('click', () => {
    console.log(logicComp.area);
    console.log(playUser.area);
 });
+document.querySelector('#btn-start').addEventListener('click', () => {
+   new Referee(playUser, playComp, logicComp);
+});
+
 
 // console.log(playUser);
 // playUser.createShips();

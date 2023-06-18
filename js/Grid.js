@@ -28,6 +28,7 @@ import { GridError } from './Error.js';
  */
 class Grid {
    constructor() {
+      this.createPlayArea();
       this.totalShips = Object.values(this.schemeShips).reduce((total, num) => total + num, 0);
    }
    /**
