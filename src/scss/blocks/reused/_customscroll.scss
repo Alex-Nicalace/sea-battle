@@ -1,0 +1,38 @@
+.customscroll {
+   position: relative;
+   overflow: auto;
+   &__scroll-v {
+      position: absolute;
+      width: 12px;
+      height: 100%;
+      top: 0;
+      right: 20px;
+      display: flex;
+      flex-direction: column;
+   }
+   &__track-v {
+      position: relative;
+      flex-grow: 1;
+      background-color: green;
+   }
+   &__thumb {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-color: yellow;
+      &:active {
+         background-color: darken(yellow, 10);
+      }
+   }
+   &__thumb_v {
+      width: 12px;
+      height: 30px;
+   }
+   &__button {
+      height: 15px;
+   }
+   &__button_up {
+   }
+   &__button_down {
+   }
+}
