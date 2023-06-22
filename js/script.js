@@ -1,6 +1,6 @@
 import PlayArea from './PlayArea.js';
 import LogicComp from './LogicComp.js';
-// import Referee from './Referee.js';
+import Game from './Game.js';
 
 
 const playComp = new PlayArea();
@@ -14,7 +14,7 @@ playComp.assignHtml({
    nameAttrShotTarget: 'data-shot-target',
 }
 );
-playComp.printPlayArea();
+// playComp.printPlayArea();
 // playComp.makeShootable();
 console.log('playComp', playComp);
 
@@ -41,42 +41,8 @@ console.log('playUser', playUser);
 
 const logicComp = new LogicComp();
 
-// const referee = new Referee(playUser, logicComp);
 
-class Referee {
-   /**
-    * 
-    * @param {PlayArea} playUser 
-    * @param {LogicComp} logicComp 
-    */
-   constructor(playUser, playComp, logicComp) {
-      this.playUser = playUser;
-      this.logicComp = logicComp;
-      this.playComp = playComp;
-
-      this.shotComp();
-   }
-   async shotUser() {
-      const coord = await this.playComp.makeShot();
-      const answer = this.playComp.takeShot(coord);
-      if (answer === 'Miss') {
-         this.shotComp()
-      } else {
-         this.shotUser()
-      }
-
-   }
-   async shotComp() {
-      const coord = await this.logicComp.makeShot();
-      const answer = this.playUser.takeShot(coord);
-      this.logicComp.getAnswer(answer);
-      if (answer === 'Miss') {
-         this.shotUser()
-      } else {
-         this.shotComp()
-      }
-   }
-}
+const game = new Game(playUser, playComp, logicComp);
 
 
 
@@ -98,7 +64,7 @@ document.querySelector('#btn-print').addEventListener('click', () => {
    console.log(playUser.area);
 });
 document.querySelector('#btn-start').addEventListener('click', () => {
-   new Referee(playUser, playComp, logicComp);
+   game.start('pc');
 });
 
 

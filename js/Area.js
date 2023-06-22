@@ -14,7 +14,9 @@ import { GridError } from './Error.js';
  * @typedef {Object} AreaItem
  * @property {Any} cell - значение ячейки в массиве
  * @property {Node} cellHtml - узел HTML соответсвующий ячейке массива
- * @property {Coord[]} track - координаты всего корабля
+ * @property {Object} dataShip - координаты корабля
+ * @property {Coord[]} dataShip.track - координаты непосредственно корабля.
+ * @property {Coord[]} dataShip.aroundTrack - координаты примыкающих к кораблю ячеек.
  * @property {boolean} isShooted - был ли выстрел по этой ячейке.
  */
 
@@ -26,7 +28,7 @@ import { GridError } from './Error.js';
  * Класс, представляющий объект сетки 10 * 10
  * @class
  */
-class Grid {
+class Area {
    constructor() {
       this.createPlayArea();
       this.totalShips = Object.values(this.schemeShips).reduce((total, num) => total + num, 0);
@@ -166,7 +168,7 @@ class Grid {
          const kMax = Math.min(k + 1, 9);
          for (let ii = iMin; ii <= iMax; ii++) {
             for (let kk = kMin; kk <= kMax; kk++) {
-               if (this.area[ii][kk].cell !== this.emptyCell || track.find(({ i, k }) => ii === i && kk === k)) continue;
+               if (/* this.area[ii][kk].cell !== this.emptyCell || */ track.find(({ i, k }) => ii === i && kk === k)) continue;
                this.area[ii][kk].cell = this.markCell;
                // res.push({ i: ii, k: kk })
                aroundTrack.push({ i: ii, k: kk })
@@ -182,4 +184,4 @@ class Grid {
    }
 }
 
-export default Grid;
+export default Area;

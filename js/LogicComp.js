@@ -1,7 +1,7 @@
 /**
  * @module
  */
-import Grid from './Grid.js';
+import Area from './Area.js';
 import { LogicCompError } from './Error.js';
 
 /**
@@ -20,7 +20,14 @@ import { LogicCompError } from './Error.js';
  * логика ПК
  * @class
  */
-class LogicComp extends Grid {
+class LogicComp extends Area {
+   constructor() {
+      super();
+   }
+   /**
+    * @type {number} количество уничтоженных кораблей собственных
+    */
+   numberKillsShips = 0;
    /**
     * @type {Coord} координата последнего выстрела.
     */
@@ -29,9 +36,6 @@ class LogicComp extends Grid {
     * @type {Coord[]} стек последних попаданий.
     */
    lastSuccessfulHits = [];
-   constructor() {
-      super();
-   }
    /**
     * сгенерить координату выстрела компьютером
     * @returns {Coord}
@@ -55,7 +59,7 @@ class LogicComp extends Grid {
                   let i, k, direct;
                   do {
                      direct = this.getRandomDirect(excludeDirect);
-                     if (!direct) throw new LogicCompError('Logical error of the second shot, after the first hit.');
+                     if (!direct) throw new LogicCompError('Logical error of the second shot, after the first hit.', this.area, excludeDirect);
                      excludeDirect.push(direct);
                      const { incI, incK } = inc[direct];
                      i = prevI + incI;
@@ -97,10 +101,10 @@ class LogicComp extends Grid {
     * @param {ShotResult} answer ответ, получаемый после выстрела
     */
    getAnswer(answer) {
-      console.log('Ответ по выстрелу', answer);
       if (answer === 'Miss') return;
       this.lastSuccessfulHits.push(this.lastShot);
       if (answer === 'Sunk') {
+         ++this.numberKillsShips;
          this.buildShip(this.lastSuccessfulHits);
          this.lastSuccessfulHits = [];
       }

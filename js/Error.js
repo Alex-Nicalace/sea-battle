@@ -6,8 +6,10 @@ class SeaBatleError extends Error {
 }
 
 class LogicCompError extends SeaBatleError {
-   constructor(message) {
+   constructor(message, area, excludeDirect) {
       super(message);
+      console.log(area);
+      console.log(excludeDirect);
    }
 }
 

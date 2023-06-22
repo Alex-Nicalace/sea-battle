@@ -1,5 +1,5 @@
 import Dragable from './Dragable.js';
-import Grid from './Grid.js';
+import Area from './Area.js';
 import { PlayAreaError } from './Error.js';
 
 /**
@@ -41,14 +41,14 @@ import { PlayAreaError } from './Error.js';
  */
 
 /**
- * @typedef {'Miss' | 'Hit' | 'Sunk'} ShotResult
+ * @typedef {'Miss' | 'Hit' | 'Sunk' | 'Victory'} ShotResult
  */
 
 /**
  * Класс, представляющий объект игрового поля
  * @class
  */
-class PlayArea extends Grid {
+class PlayArea extends Area {
    /**
     * селектор контейнера клеток игорового поля
     * @type {string | null;}
@@ -193,9 +193,9 @@ class PlayArea extends Grid {
     */
    isReadyPlacement = false;
    /**
-    * @type {boolean} можно ли кликать-стрелять
+    * @type {number} количество уничтоженных кораблей собственных
     */
-   isShootable = true;
+   numberKillsShips = 0;
    /**
     * Проверить возможность размещения корабля по заданным координатам
     * @param {Coord[]} track массив координат корабля
@@ -331,7 +331,7 @@ class PlayArea extends Grid {
       if (coordShip.length) {
          coordShip.forEach(({ i, k }) => {
             this.area[i][k].cell = this.emptyCell;
-            this.area[i][k].track = [];
+            delete this.area[i][k].dataShip;
          });
          this.removeDekorCells(this.listShips[key].track);
          delete this.listShips[key];
@@ -595,12 +595,14 @@ class PlayArea extends Grid {
       this.area[i][k].isShooted = true;
       const cellHtml = this.area[i][k].cellHtml
       cellHtml.setAttribute(this.nameAttrShot, '')
-      const track = this.area[i][k].track;
-      if (!track?.length) {
+
+      if (!this.area[i][k].dataShip) {
          // выстрел мимо
          console.log('мимо');
          return 'Miss';
       }
+
+      const { track, aroundTrack } = this.area[i][k].dataShip;
       // попадание в цель
       const coord = track.find(({ i: ii, k: kk }) => i === ii && k === kk);
       coord.isShooted = true;
@@ -609,7 +611,12 @@ class PlayArea extends Grid {
       if (health === track.length) {
          // попадание и убил
          console.log('убил');
+         ++this.numberKillsShips;
          track.map(({ i, k }) => this.area[i][k].cellHtml).forEach(elCell => elCell.setAttribute(this.nameAttrShotDied, ''));
+         aroundTrack.map(({ i, k }) => this.area[i][k].cellHtml).forEach(elCell => elCell.setAttribute(this.nameAttrShot, ''));
+         if (this.numberKillsShips === this.totalShips) {
+            return 'Victory';
+         };
          return 'Sunk';
       }
       // попадание и ранение
@@ -624,7 +631,7 @@ class PlayArea extends Grid {
    bindShipsToArrayCells() {
       Object.entries(this.listShips).forEach(([key, { track }]) => {
          track.forEach(({ i, k }) => {
-            this.area[i][k].track = this.listShips[key].track;
+            this.area[i][k].dataShip = this.listShips[key];
          })
       });
    }
