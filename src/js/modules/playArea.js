@@ -372,11 +372,10 @@ class PlayArea extends Area {
          canBuild,
          sizeShip,
          prevCellBegin;
-      const cbMouseDown = (e) => {
+      const cbMouseDown = (dragElement, e) => {
          // если клик просходит по тулбару корабля, то не отрабатывать этот клик
          if (e.target.closest(this.toolbarSelector)) return true;
 
-         const dragElement = e && e.currentTarget;
          sizeShip = +dragElement.dataset.ship;
          dragElement.setAttribute(this.nameAttrDrag, '');
          this.clearCellsUnderShip(dragElement);

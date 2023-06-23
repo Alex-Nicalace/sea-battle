@@ -1,5 +1,13 @@
 /**
+ * @typedef {Function} CallbackType - Функция, принимающая параметры node типа Node и event типа Event.
+ * @param {Node} dragElement - Перетаскиваемый узел.
+ * @param {Event} event - Объект события.
+ * @returns {boolean} - если True то выйти из функции
+ */
+/**
  * Класс, представляющий перетаскиваемый элемент.
+ * чтобы работало на ТАЧСКРИНАХ нужно для передвигаемого
+ * эелемента установить TOUCH-ACTION: NONE;
  * @class Dragable
  */
 class Dragable {
@@ -8,9 +16,9 @@ class Dragable {
     * @constructor
     * @param {String} selector - селектор
     * @param {Object} options - настройки
-    * @param {Function} [options.cbMouseDown = e => {}] - функция обратного вызова, вызываемая при нажатии кнопки мыши на перетаскиваемый элемент.
-    * @param {Function} [options.cbMouseMove = dragElement => {}] - Функция обратного вызова, вызываемая при наведении курсора мыши на перетаскиваемый элемент.
-    * @param {Function} [options.cbMouseUp = dragElement => {}] - Функция обратного вызова, которая вызывается при отпускании кнопки мыши на перетаскиваемом элементе.
+    * @param {CallbackType} [options.cbMouseDown] 
+    * @param {CallbackType} [options.cbMouseMove]
+    * @param {CallbackType} [options.cbMouseUp = (dragElement) => {}]
     */
    constructor(selector, {
       cbMouseDown,
@@ -29,11 +37,37 @@ class Dragable {
       this.onMouseDown = this.onMouseDown.bind(this);
    }
    /**
+    * @type {Array<Node>} массив элементов, которые должны переаскиваться
+    */
+   dragElements = [];
+   /** 
+    * @type {CallbackType}
+    * @param {Node} dragElement - Перетаскиваемый узел.
+    * @param {Event} event - Объект события.
+    * @returns {boolean} если True то выйти из функции
+    */
+   cbMouseDown;
+   /**
+    * @type {CallbackType}
+    * @param {Node} dragElement - Перетаскиваемый узел.
+    * @param {Event} event - Объект события.
+    * @returns {boolean} если True то выйти из функции
+    */
+   cbMouseMove;
+   /**
+    * @type {CallbackType}
+    * @param {Node} dragElement - Перетаскиваемый узел.
+    * @param {Event} event - Объект события.
+    * @returns {boolean} если True то выйти из функции
+    */
+   cbMouseUp;
+   /**
     * включить Drag'n drop
     */
    on() {
       this.dragElements.forEach(dragElement => {
-         dragElement.addEventListener('mousedown', this.onMouseDown);
+         dragElement.style.touchAction = 'none';
+         dragElement.addEventListener('pointerdown', this.onMouseDown);
       });
    }
    /**
@@ -41,19 +75,19 @@ class Dragable {
     */
    off() {
       this.dragElements.forEach(dragElement => {
-         dragElement.removeEventListener('mousedown', this.onMouseDown);
+         dragElement.style.touchAction = '';
+         dragElement.removeEventListener('pointerdown', this.onMouseDown);
       });
    }
    /**
-    * 
-    * @param {Event} e 
-    * @returns 
+    * @param {Event} e - объект события
     */
    onMouseDown(e) {
       const dragElement = e && e.currentTarget;
       e.preventDefault();
       if (!dragElement) return;
 
+      dragElement.setPointerCapture(e.pointerId);
       dragElement.ondragstart = function () {
          return false;
       };
@@ -61,7 +95,7 @@ class Dragable {
       let isBreak = false
 
       if (typeof this.cbMouseDown === 'function') {
-         isBreak = this.cbMouseDown(e);
+         isBreak = this.cbMouseDown(dragElement, e);
       }
 
       if (isBreak) return;
@@ -73,14 +107,14 @@ class Dragable {
       startDrag(dragElement, e.clientX, e.clientY); // e.clientX, e.clientY координаты относительно окна
 
       function onMouseUp(e) {
-         finishDrag();
+         finishDrag(e);
       };
 
       function onMouseMove(e) {
          moveAt(e.clientX, e.clientY);
 
          if (typeof (cbMouseMove) == 'function') {
-            cbMouseMove(dragElement);
+            cbMouseMove(dragElement, e);
          }
       }
 
@@ -94,8 +128,8 @@ class Dragable {
 
          Dragable.isDragging = true;
 
-         document.addEventListener('mousemove', onMouseMove);
-         document.addEventListener('mouseup', onMouseUp);
+         dragElement.addEventListener('pointermove', onMouseMove);
+         dragElement.addEventListener('pointerup', onMouseUp);
 
          shiftX = clientX - element.getBoundingClientRect().left;
          shiftY = clientY - element.getBoundingClientRect().top;
@@ -105,7 +139,7 @@ class Dragable {
          moveAt(clientX, clientY);
       };
 
-      function finishDrag() {
+      function finishDrag(e) {
          if (!Dragable.isDragging) {
             return;
          }
@@ -113,11 +147,11 @@ class Dragable {
          Dragable.isDragging = false;
 
          if (typeof cbMouseUp === 'function') {
-            cbMouseUp(dragElement);
+            cbMouseUp(dragElement, e);
          }
 
-         document.removeEventListener('mousemove', onMouseMove);
-         document.removeEventListener('mouseup', onMouseUp);
+         dragElement.removeEventListener('pointermove', onMouseMove);
+         dragElement.removeEventListener('pointerup', onMouseUp);
       }
 
       function moveAt(clientX, clientY) {
