@@ -1,0 +1,11 @@
+.dock {
+   // .dock__weight
+   &__weight {
+      &:not(:last-child) {
+         margin-bottom: rem(70);
+      }
+      & > *:not(:last-child) {
+         margin-right: rem(60);
+      }
+   }
+}

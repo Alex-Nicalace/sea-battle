@@ -5,14 +5,25 @@
    // .sea-battle__container
    &__container {
    }
-   &__players {
-      display: flex;
-      flex-wrap: wrap;
-      // justify-content: space-between;
-      margin: rem(-20);
-   }
+   // .sea-battle__player
    &__player {
-      padding: rem(20);
-      flex: 0 0 50%;
+   }
+   // .sea-battle__players
+   &__players {
+      // .sea-battle__players_gaming
+      &_gaming {
+         display: flex;
+         flex-wrap: wrap;
+         justify-content: space-between;
+         margin: rem(-20);
+
+         .sea-battle__player {
+            display: block;
+            .sea-battle__players_gaming & {
+               padding: rem(20);
+               // flex: 0 0 50%;
+            }
+         }
+      }
    }
 }

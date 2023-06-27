@@ -28,7 +28,7 @@ playUser.assignHtml({
 });
 playUser.setShips({
    dockSelector: '.dock',
-   shipSelector: '.dock .ship',
+   shipSelector: '.ship',
    toolbarSelector: '.ship .ship__toolbar',
    rotateBtnSelector: '.ship .ship__rotate-btn',
    classNameVertical: 'ship_vertical',

@@ -305,6 +305,25 @@ class PlayArea extends Area {
          shipEl.classList.toggle(this.classNameVertical);
          this.clearCellsUnderShip(shipEl);
          shipEl.removeAttribute(this.nameAttrCanDrop);
+
+         const { cellBegin, dir } = this.getCellsUnderShip(shipEl);
+         const
+            cellBeginCoord = this.cellsHtml.get(cellBegin),
+            sizeShip = +shipEl.dataset.ship,
+            track = this.tracks[dir].filler(cellBeginCoord.i, cellBeginCoord.k, sizeShip);
+         if (!this.canBuildShip(track)) {
+            // shipEl.classList.add('[data-drag]');
+            shipEl.setAttribute(this.nameAttrDrag, '')
+            return;
+         }
+         const { i, k } = track[0];
+
+         this.positioningElInArea(i, k, shipEl);
+
+         const aroundTrack = this.buildShip(track);
+         const keyShip = this.addListShips(track, aroundTrack);
+         this.shipsNodes.set(shipEl, keyShip);
+         this.printPlayArea();
       }
       const rotateBtns = document.querySelectorAll(rotateBtnSelector);
       for (const btn of rotateBtns) {
@@ -377,25 +396,7 @@ class PlayArea extends Area {
          this.clearCellsUnderShip(dragElement);
       }
       const cbMouseMove = (dragElement) => {
-         const dragElementCoord = dragElement.getBoundingClientRect();
-         dragElement.style.display = 'none';
-         const topLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.top)?.closest(this.cellSelector);
-         const topRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.top)?.closest(this.cellSelector);
-         const bottomLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.bottom)?.closest(this.cellSelector);
-         const bottomRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.bottom)?.closest(this.cellSelector);
-         dragElement.style.display = '';
-
-         let cellBegin, cellEnd, dir;
-         if (dragElementCoord.width > dragElementCoord.height) {
-            cellBegin = topLeft || bottomLeft;
-            cellEnd = topLeft ? topRight : bottomRight;
-            dir = 'right';
-         } else {
-            cellBegin = topLeft || topRight;
-            cellEnd = topLeft ? bottomLeft : bottomRight;
-            dir = 'down';
-         }
-
+         const { cellBegin, cellEnd, dir } = this.getCellsUnderShip(dragElement);
          if (prevCellBegin === cellBegin) return;
          prevCellBegin = cellBegin;
 
@@ -424,9 +425,11 @@ class PlayArea extends Area {
       const cbMouseUp = (dragElement) => {
          if (!canBuild) {
             dragElement.removeAttribute('style');
-            dragElement.removeAttribute(this.nameAttrDrag, '');
-            if (dragElement.parentElement !== this.dock) {
-               this.dock.append(dragElement);
+            dragElement.removeAttribute(this.nameAttrDrag);
+            const sizeShip = dragElement.dataset.ship - 1;
+            if (dragElement.parentElement !== this.dock.children[sizeShip]) {
+               this.dock.children[sizeShip].append(dragElement);
+               // dragElement.classList.remove(this.classNameVertical);
             }
             resetVariable();
             return;
@@ -441,6 +444,7 @@ class PlayArea extends Area {
          this.printPlayArea();
          dragElement.removeAttribute(this.nameAttrDrag);
          dragElement.removeAttribute(this.nameAttrCanDrop);
+         this.removeDekorCells(track);
          resetVariable();
       }
       this.dragable = new Dragable(this.shipSelector, {
@@ -453,6 +457,35 @@ class PlayArea extends Area {
          track = [];
          isOverArea = canBuild = sizeShip = prevCellBegin = null;
       }
+   }
+   /**
+    * 
+    * @param {Node} dragElement перетаскиваемый корабль
+    * @returns {Object}
+    * @property {Element} cellBegin
+    * @property {Element} cellEnd
+    * @property {string} dir
+    */
+   getCellsUnderShip(dragElement) {
+      const dragElementCoord = dragElement.getBoundingClientRect();
+      dragElement.style.display = 'none';
+      const topLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.top)?.closest(this.cellSelector);
+      const topRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.top)?.closest(this.cellSelector);
+      const bottomLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.bottom)?.closest(this.cellSelector);
+      const bottomRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.bottom)?.closest(this.cellSelector);
+      dragElement.style.display = '';
+
+      let cellBegin, cellEnd, dir;
+      if (dragElementCoord.width > dragElementCoord.height) {
+         cellBegin = topLeft || bottomLeft;
+         cellEnd = topLeft ? topRight : bottomRight;
+         dir = 'right';
+      } else {
+         cellBegin = topLeft || topRight;
+         cellEnd = topLeft ? bottomLeft : bottomRight;
+         dir = 'down';
+      }
+      return { cellBegin, cellEnd, dir }
    }
    /**
     * отключить Drag'n drop
@@ -528,7 +561,7 @@ class PlayArea extends Area {
       }
    }
    /**
-    * 
+    * позиционирование корабля по заданным координатам
     * @param {Number} i строка
     * @param {Number} k столбец
     * @param {Node} element HTML-узел

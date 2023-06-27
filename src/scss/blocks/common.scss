@@ -1,10 +1,15 @@
+[data-dragable] {
+   cursor: all-scroll;
+}
+
 [data-drag] {
-   transform: scale(0.85);
-   /* transform-origin: 'left top'; */
+   &:not([data-can-drop]) {
+      background-color: $color-background-drop-error;
+   }
 }
 
 [data-can-drop] {
-   background-color: rgba(0, 128, 0, 0.3);
+   background-color: $color-background-drop-success;
 }
 
 [data-shot] {

@@ -14,13 +14,15 @@ class Dragable {
    /**
     * Создайте перетаскиваемый элемент.
     * @constructor
-    * @param {String} selector - селектор
+    * @param {string} selector - селектор
     * @param {Object} options - настройки
+    * @param {string} nameAttrDragable название атрибуту, кот. будет присаиватся перетаскиваемым элементам
     * @param {CallbackType} [options.cbMouseDown] 
     * @param {CallbackType} [options.cbMouseMove]
     * @param {CallbackType} [options.cbMouseUp = (dragElement) => {}]
     */
    constructor(selector, {
+      nameAttrDragable = 'data-dragable',
       cbMouseDown,
       cbMouseMove,
       cbMouseUp = (dragElement) => {
@@ -35,6 +37,7 @@ class Dragable {
       this.cbMouseMove = cbMouseMove;
       this.cbMouseUp = cbMouseUp;
       this.onMouseDown = this.onMouseDown.bind(this);
+      this.nameAttrDragable = nameAttrDragable;
    }
    /**
     * @type {Array<Node>} массив элементов, которые должны переаскиваться
@@ -68,6 +71,7 @@ class Dragable {
       this.dragElements.forEach(dragElement => {
          dragElement.style.touchAction = 'none';
          dragElement.addEventListener('pointerdown', this.onMouseDown);
+         dragElement.setAttribute(this.nameAttrDragable, '');
       });
    }
    /**
@@ -77,6 +81,7 @@ class Dragable {
       this.dragElements.forEach(dragElement => {
          dragElement.style.touchAction = '';
          dragElement.removeEventListener('pointerdown', this.onMouseDown);
+         dragElement.removeAttribute(this.nameAttrDragable, '')
       });
    }
    /**
@@ -127,6 +132,9 @@ class Dragable {
 
          dragElement.addEventListener('pointermove', onMouseMove);
          dragElement.addEventListener('pointerup', onMouseUp);
+
+         console.log('element.getBoundingClientRect().left', element.getBoundingClientRect().left);
+         console.log('element.getBoundingClientRect().top', element.getBoundingClientRect().top);
 
          shiftX = clientX - element.getBoundingClientRect().left;
          shiftY = clientY - element.getBoundingClientRect().top;

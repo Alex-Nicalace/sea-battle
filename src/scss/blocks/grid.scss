@@ -6,19 +6,19 @@
    grid-template-columns: repeat(10, auto);
    grid-template-rows: repeat(10, auto);
 
-   & > * {
+   & > .cell {
       border-left: 1px solid $color-grid-border;
    }
 
-   & > *:nth-child(10n) {
+   & > .cell:nth-child(10n) {
       border-right: 1px solid $color-grid-border;
    }
 
-   & > * {
+   & > .cell {
       border-top: 1px solid $color-grid-border;
    }
 
-   & > *:nth-child(1n + 91) {
+   & > .cell:nth-child(1n + 91) {
       border-bottom: 1px solid $color-grid-border;
    }
 }

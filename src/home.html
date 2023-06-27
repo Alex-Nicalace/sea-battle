@@ -114,8 +114,8 @@
 							<div class="cell"></div>
 						</div>
 					</div>
-					<div class="sea-battle__player player player_human">
-						<div class="grid">
+					<div class="sea-battle__player player player_human player_prepared">
+						<div class="player__grid grid">
 							<div class="cell"></div>
 							<div class="cell"></div>
 							<div class="cell"></div>
@@ -216,86 +216,95 @@
 							<div class="cell"></div>
 							<div class="cell"></div>
 							<div class="cell"></div>
+						</div>
+						<div class="player__wrap-dock">
+							<div class="player__dock dock">
+								<div class="dock__weight">
+									<div class="ship" data-ship="1">
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
+									</div>
+									<div class="ship" data-ship="1">
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
+									</div>
+									<div class="ship" data-ship="1">
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
+									</div>
+									<div class="ship" data-ship="1">
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
+									</div>
+								</div>
+								<div class="dock__weight">
+									<div class="ship" data-ship="2">
+										<div class="ship__toolbar">
+											<button class="ship__rotate-btn">rotate</button>
+										</div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/2_h.png" alt="image of ship">
+									</div>
+									<div class="ship" data-ship="2">
+										<div class="ship__toolbar">
+											<button class="ship__rotate-btn">rotate</button>
+										</div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/2_h.png" alt="image of ship">
+									</div>
+									<div class="ship" data-ship="2">
+										<div class="ship__toolbar">
+											<button class="ship__rotate-btn">rotate</button>
+										</div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/2_h.png" alt="image of ship">
+									</div>
+								</div>
+								<div class="dock__weight">
+									<div class="ship" data-ship="3">
+										<div class="ship__toolbar">
+											<button class="ship__rotate-btn">rotate</button>
+										</div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/3_h.png" alt="image of ship">
+									</div>
+									<div class="ship" data-ship="3">
+										<div class="ship__toolbar">
+											<button class="ship__rotate-btn">rotate</button>
+										</div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/3_h.png" alt="image of ship">
+									</div>
+								</div>
+								<div class="dock__weight">
+									<div class="ship" data-ship="4">
+										<div class="ship__toolbar">
+											<button class="ship__rotate-btn">rotate</button>
+										</div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<div class="cell"></div>
+										<img class="ship__img" src="@img/ships/4_h.png" alt="image of ship">
+									</div>
+								</div>
+							</div>
+							<div class="player__buttons">
+								<button id="btn-auto-place">auto place</button>
+								<button id="btn-ready">i am ready</button>
+							</div>
 						</div>
 					</div>
 				</div>
 
-				<div class="dock">
-					<div class="ship" data-ship="1">
-						<div class="cell"></div>
-						<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
-					</div>
-					<div class="ship" data-ship="1">
-						<div class="cell"></div>
-						<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
-					</div>
-					<div class="ship" data-ship="1">
-						<div class="cell"></div>
-						<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
-					</div>
-					<div class="ship" data-ship="1">
-						<div class="cell"></div>
-						<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
-					</div>
-					<br>
-					<div class="ship" data-ship="2">
-						<div class="ship__toolbar">
-							<button class="ship__rotate-btn">rotate</button>
-						</div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<img class="ship__img" src="@img/ships/2_h.png" alt="image of ship">
-					</div>
-					<div class="ship" data-ship="2">
-						<div class="ship__toolbar">
-							<button class="ship__rotate-btn">rotate</button>
-						</div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<img class="ship__img" src="@img/ships/2_h.png" alt="image of ship">
-					</div>
-					<div class="ship" data-ship="2">
-						<div class="ship__toolbar">
-							<button class="ship__rotate-btn">rotate</button>
-						</div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<img class="ship__img" src="@img/ships/2_h.png" alt="image of ship">
-					</div>
-					<br>
-					<div class="ship" data-ship="3">
-						<div class="ship__toolbar">
-							<button class="ship__rotate-btn">rotate</button>
-						</div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<img class="ship__img" src="@img/ships/3_h.png" alt="image of ship">
-					</div>
-					<div class="ship" data-ship="3">
-						<div class="ship__toolbar">
-							<button class="ship__rotate-btn">rotate</button>
-						</div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<img class="ship__img" src="@img/ships/3_h.png" alt="image of ship">
-					</div>
-					<br>
-					<div class="ship" data-ship="4">
-						<div class="ship__toolbar">
-							<button class="ship__rotate-btn">rotate</button>
-						</div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<div class="cell"></div>
-						<div class="ship__wrap-img"><img class="ship__img" src="@img/ships/4_h.png" alt="image of ship"></div>
-					</div>
-				</div>
 
-				<button id="btn-auto-place">auto place</button>
-				<button id="btn-ready">i am ready</button>
 				<button id="btn-comp-shot">comp shot</button>
 				<button id="btn-print">console logic area</button>
 				<button id="btn-start">start game</button>
