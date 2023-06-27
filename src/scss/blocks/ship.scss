@@ -1,0 +1,54 @@
+.ship {
+   display: inline-flex;
+   position: relative;
+   &__wrap-img {
+      position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+   }
+   // .ship__img
+   &__img {
+      // position: absolute;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      // transform: rotate(90deg);
+   }
+   // .ship__toolbar
+   &__toolbar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      transform: translate(100%, -100%);
+   }
+   // .ship__rotate-btn
+   &__rotate-btn {
+   }
+   // .ship_vertical
+   &_vertical {
+      flex-direction: column;
+      border: 1px solid gray;
+      border-bottom: none;
+      & > *:last-child {
+         border-bottom: 1px solid gray;
+      }
+      .ship__wrap-img {
+      }
+      .ship__img {
+         transform: rotate(90deg);
+         transform-origin: top left; /* Изменение точки применения трансформации */
+      }
+   }
+
+   & > * {
+      border: 1px solid gray;
+      border-right: none;
+   }
+
+   & > *:last-child {
+      border-right: 1px solid gray;
+   }
+}

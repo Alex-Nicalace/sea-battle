@@ -1,0 +1,24 @@
+.grid {
+   /* width: 430px;
+         height: 430px; */
+   display: grid;
+   justify-content: start;
+   grid-template-columns: repeat(10, auto);
+   grid-template-rows: repeat(10, auto);
+
+   & > * {
+      border-left: 1px solid $color-grid-border;
+   }
+
+   & > *:nth-child(10n) {
+      border-right: 1px solid $color-grid-border;
+   }
+
+   & > * {
+      border-top: 1px solid $color-grid-border;
+   }
+
+   & > *:nth-child(1n + 91) {
+      border-bottom: 1px solid $color-grid-border;
+   }
+}

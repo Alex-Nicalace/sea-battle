@@ -149,10 +149,10 @@ class PlayArea extends Area {
    */
    shipsNodes = new Map;
    /**
-    * вертикальный корабль имеет указанный атрибут
+    * вертикальный корабль имеет указанный класс
     * @type {String}
     */
-   nameAttrVertical;
+   classNameVertical;
    /**
     * атрибут указывающий на возможность размещения корабля
     * @type {String}
@@ -283,13 +283,13 @@ class PlayArea extends Area {
    * @param {string} [options.shipSelector] - селектор кораблей
    * @param {string} [options.rotateBtnSelector] - селектор кнопки повората корабля
    * @param {string} [options.toolbarSelector] - селектор панели настроек корабля
-   * @param {string} [options.nameAttrVertical] - вертикальный корабль имеет указанный атрибут
+   * @param {string} [options.classNameVertical] - вертикальный корабль имеет указанный атрибут
    * @param {string} [options.nameAttrCanDrop] - атрибут указывающий на возможность размещения корабля
    * @param {string} [options.nameAttrDrag] - атрибут - признак перемещения крабля
    */
-   setShips({ dockSelector, shipSelector, rotateBtnSelector, toolbarSelector, nameAttrVertical, nameAttrCanDrop, nameAttrDrag } = {}) {
+   setShips({ dockSelector, shipSelector, rotateBtnSelector, toolbarSelector, classNameVertical, nameAttrCanDrop, nameAttrDrag } = {}) {
       this.shipSelector = shipSelector;
-      this.nameAttrVertical = nameAttrVertical;
+      this.classNameVertical = classNameVertical;
       this.nameAttrCanDrop = nameAttrCanDrop;
       this.nameAttrDrag = nameAttrDrag;
       const ships = document.querySelectorAll(shipSelector);
@@ -302,11 +302,7 @@ class PlayArea extends Area {
          if (this.isReadyPlacement) return;
          const shipEl = e.target.closest(this.shipSelector);
          if (!shipEl) return;
-         if (shipEl.hasAttribute(this.nameAttrVertical)) {
-            shipEl.removeAttribute(this.nameAttrVertical, '');
-         } else {
-            shipEl.setAttribute(this.nameAttrVertical, '');
-         }
+         shipEl.classList.toggle(this.classNameVertical);
          this.clearCellsUnderShip(shipEl);
          shipEl.removeAttribute(this.nameAttrCanDrop);
       }
@@ -524,7 +520,7 @@ class PlayArea extends Area {
             if (maxK < k) maxK = k;
          });
 
-         if (minI < maxI) shipNode.setAttribute(this.nameAttrVertical, '');
+         if (minI < maxI) shipNode.classList.add(this.classNameVertical);
 
          this.positioningElInArea(minI, minK, shipNode);
 

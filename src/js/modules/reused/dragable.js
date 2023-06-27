@@ -87,18 +87,15 @@ class Dragable {
       e.preventDefault();
       if (!dragElement) return;
 
+      // по результатм колюэка выполнять далее функцию или нет
+      if (typeof this.cbMouseDown === 'function') {
+         if (this.cbMouseDown(dragElement, e)) return;
+      }
+
       dragElement.setPointerCapture(e.pointerId);
       dragElement.ondragstart = function () {
          return false;
       };
-
-      let isBreak = false
-
-      if (typeof this.cbMouseDown === 'function') {
-         isBreak = this.cbMouseDown(dragElement, e);
-      }
-
-      if (isBreak) return;
 
       const cbMouseMove = this.cbMouseMove;
       const cbMouseUp = this.cbMouseUp;

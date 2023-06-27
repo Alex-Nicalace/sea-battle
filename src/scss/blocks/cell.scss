@@ -1,0 +1,6 @@
+.cell {
+   --size: 45px;
+   @include adaptiveValue("--size", 55, 29);
+   width: var(--size);
+   height: var(--size);
+}

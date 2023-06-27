@@ -7,8 +7,8 @@ const playComp = new PlayArea();
 playComp.createShips();
 playComp.finalisePlacementShips();
 playComp.assignHtml({
-   containerCellSelector: '#comp tbody',
-   cellSelector: '#comp tbody tr td',
+   containerCellSelector: '.player_pc .grid',
+   cellSelector: '.player_pc .grid .cell',
    nameAttrShot: 'data-shot',
    nameAttrShotDied: 'data-shot-died',
    nameAttrShotTarget: 'data-shot-target',
@@ -20,18 +20,18 @@ console.log('playComp', playComp);
 
 const playUser = new PlayArea();
 playUser.assignHtml({
-   containerCellSelector: '#user [data-square]',
-   cellSelector: '#user [data-square] [data-cell]',
+   containerCellSelector: '.player_human .grid',
+   cellSelector: '.player_human .grid .cell',
    nameAttrShot: 'data-shot',
    nameAttrShotDied: 'data-shot-died',
    nameAttrShotTarget: 'data-shot-target',
 });
 playUser.setShips({
-   dockSelector: '#user [data-dock]',
-   shipSelector: '#user [data-ship]',
-   toolbarSelector: '#user [data-toolbar]',
-   rotateBtnSelector: '#user [data-rotate]',
-   nameAttrVertical: 'data-vertical',
+   dockSelector: '.dock',
+   shipSelector: '.dock .ship',
+   toolbarSelector: '.ship .ship__toolbar',
+   rotateBtnSelector: '.ship .ship__rotate-btn',
+   classNameVertical: 'ship_vertical',
    nameAttrCanDrop: 'data-can-drop',
    nameAttrDrag: 'data-drag',
 });
