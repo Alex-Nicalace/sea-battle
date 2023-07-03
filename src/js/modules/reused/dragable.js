@@ -133,9 +133,6 @@ class Dragable {
          dragElement.addEventListener('pointermove', onMouseMove);
          dragElement.addEventListener('pointerup', onMouseUp);
 
-         console.log('element.getBoundingClientRect().left', element.getBoundingClientRect().left);
-         console.log('element.getBoundingClientRect().top', element.getBoundingClientRect().top);
-
          shiftX = clientX - element.getBoundingClientRect().left;
          shiftY = clientY - element.getBoundingClientRect().top;
 

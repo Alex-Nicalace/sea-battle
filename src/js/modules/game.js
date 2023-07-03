@@ -1,6 +1,9 @@
 import { randomInteger } from './reused/numbers.js';
 class Game {
    /**
+    * @typedef {'Miss' | 'Hit' | 'Sunk' | 'Victory'} ShotResult
+    */
+   /**
     * 
     * @param {PlayArea} playUser 
     * @param {PlayArea} playComp 
@@ -11,7 +14,17 @@ class Game {
       this.logicComp = logicComp;
       this.playComp = playComp;
    }
+   /**
+    * Текущая функция выстрела.
+    * @type {function(): Promise<string>}
+    * @typedef {('shotUser' | 'shotComp')} CurrentShotType
+    * @type {CurrentShotType}
+    */
    currentShot;
+   /**
+    * функция выстрела пользователя
+    * @returns {ShotResult}
+    */
    async shotUser() {
       const coord = await this.playComp.makeShot();
       const answer = this.playComp.takeShot(coord);
@@ -20,6 +33,10 @@ class Game {
       }
       return answer
    }
+   /**
+    * функция выстрела ПК
+    * @returns {ShotResult}
+    */
    async shotComp() {
       const coord = await this.logicComp.makeShot();
       const answer = this.playUser.takeShot(coord);
@@ -32,7 +49,6 @@ class Game {
    /**
     * 
     * @param {'random' | 'user' | 'pc'} mode 
-    * @returns 
     */
    async start(mode = 'random') {
       if (this.isGaming) {
@@ -47,6 +63,12 @@ class Game {
          console.log('PC не подтвердил готовность к игре');
          return
       }
+
+      const playerHuman = document.querySelector('.sea-battle_prep');
+      playerHuman.classList.remove('sea-battle_prep');
+
+      // const players = document.querySelector('.sea-battle__players');
+      // players.classList.add('sea-battle__players_gaming');
 
       switch (mode) {
          case 'user':
@@ -67,6 +89,7 @@ class Game {
       const winner = this.currentShot === this.shotUser ? 'User' : 'PC';
       alert('Winner ' + winner);
    }
+
 }
 
 export default Game;

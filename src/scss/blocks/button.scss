@@ -1,0 +1,27 @@
+.button {
+   background-color: $color-button-bg;
+   color: $color-button-font;
+   padding: rem(10) rem(20);
+   border-radius: rem(5);
+   letter-spacing: em(1.5, 16);
+
+   box-shadow: 0 rem(2) rem(4) rgba(0, 0, 0, 0.4);
+
+   transition: all 0.3s ease 0s;
+
+   @media (any-hover: hover) {
+      &:hover {
+         background-color: $color-button-bg-hover;
+      }
+   }
+
+   &__icon {
+      fill: currentColor;
+   }
+
+   &_small {
+      padding: rem(5) rem(10);
+      border-radius: rem(3);
+      font-size: rem(14);
+   }
+}

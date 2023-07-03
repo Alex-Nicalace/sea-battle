@@ -323,7 +323,7 @@ class PlayArea extends Area {
          const aroundTrack = this.buildShip(track);
          const keyShip = this.addListShips(track, aroundTrack);
          this.shipsNodes.set(shipEl, keyShip);
-         this.printPlayArea();
+         // this.printPlayArea();
       }
       const rotateBtns = document.querySelectorAll(rotateBtnSelector);
       for (const btn of rotateBtns) {
@@ -351,7 +351,7 @@ class PlayArea extends Area {
          this.removeDekorCells(this.listShips[key].track);
          delete this.listShips[key];
          this.shipsNodes.set(shipEl, null);
-         this.printPlayArea();
+         // this.printPlayArea();
       }
       // обновить буферные зоны кораблей, т.к. циклы выше почистил
       this.refreshBufferZone();
@@ -427,9 +427,14 @@ class PlayArea extends Area {
             dragElement.removeAttribute('style');
             dragElement.removeAttribute(this.nameAttrDrag);
             const sizeShip = dragElement.dataset.ship - 1;
-            if (dragElement.parentElement !== this.dock.children[sizeShip]) {
-               this.dock.children[sizeShip].append(dragElement);
-               // dragElement.classList.remove(this.classNameVertical);
+            if (!this.dock.contains(dragElement)) {
+               for (const portNode of this.dock.children[sizeShip].children) {
+                  if (!portNode.querySelector(this.shipSelector)) {
+                     portNode.append(dragElement);
+                     break;
+                  }
+               }
+               dragElement.classList.remove(this.classNameVertical);
             }
             resetVariable();
             return;
@@ -441,7 +446,7 @@ class PlayArea extends Area {
          const aroundTrack = this.buildShip(track);
          const keyShip = this.addListShips(track, aroundTrack);
          this.shipsNodes.set(dragElement, keyShip);
-         this.printPlayArea();
+         // this.printPlayArea();
          dragElement.removeAttribute(this.nameAttrDrag);
          dragElement.removeAttribute(this.nameAttrCanDrop);
          this.removeDekorCells(track);

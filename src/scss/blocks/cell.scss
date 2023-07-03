@@ -1,6 +1,5 @@
 .cell {
-   --size: 45px;
-   @include adaptiveValue("--size", 55, 29);
+   @include adaptiveValue("--size", $size-max-cell, $size-min-cell);
    width: var(--size);
    height: var(--size);
 }

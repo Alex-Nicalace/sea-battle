@@ -7,8 +7,8 @@ const playComp = new PlayArea();
 playComp.createShips();
 playComp.finalisePlacementShips();
 playComp.assignHtml({
-   containerCellSelector: '.player_pc .grid',
-   cellSelector: '.player_pc .grid .cell',
+   containerCellSelector: '.sea-battle__player_pc .grid',
+   cellSelector: '.sea-battle__player_pc .grid .cell',
    nameAttrShot: 'data-shot',
    nameAttrShotDied: 'data-shot-died',
    nameAttrShotTarget: 'data-shot-target',
@@ -20,8 +20,8 @@ console.log('playComp', playComp);
 
 const playUser = new PlayArea();
 playUser.assignHtml({
-   containerCellSelector: '.player_human .grid',
-   cellSelector: '.player_human .grid .cell',
+   containerCellSelector: '.sea-battle__player_human .grid',
+   cellSelector: '.sea-battle__player_human .grid .cell',
    nameAttrShot: 'data-shot',
    nameAttrShotDied: 'data-shot-died',
    nameAttrShotTarget: 'data-shot-target',
@@ -48,13 +48,18 @@ const game = new Game(playUser, playComp, logicComp);
 
 document.querySelector('#btn-auto-place').addEventListener('click', () => {
    playUser.locateShips();
-   playUser.printPlayArea();
+   // playUser.printPlayArea();
 });
 document.querySelector('#btn-ready').addEventListener('click', () => {
    const { message } = playUser.finalisePlacementShips();
-   console.log(message);
+   if (message) {
+      console.log(message);
+      return;
+   }
+   game.start();
+
 });
-document.querySelector('#btn-comp-shot').addEventListener('click', () => {
+/* document.querySelector('#btn-comp-shot').addEventListener('click', () => {
    const coordShot = logicComp.makeShot();
    const answer = playUser.takeShot(coordShot);
    logicComp.getAnswer(answer);
@@ -65,7 +70,7 @@ document.querySelector('#btn-print').addEventListener('click', () => {
 });
 document.querySelector('#btn-start').addEventListener('click', () => {
    game.start('pc');
-});
+}); */
 
 
 // console.log(playUser);

@@ -1,11 +1,9 @@
 .ship {
    display: inline-flex;
    position: relative;
+   @include adaptiveValue("transform-origin", math.div($size-max-cell, 2), math.div($size-min-cell, 2));
    &[data-drag] {
-      // transform: scale(0.85);
-      // transform-origin: 27px;
-   }
-   &__wrap-img {
+      transform: scale(0.85);
    }
    // .ship__img
    &__img {
@@ -34,9 +32,9 @@
    // .ship_vertical
    &_vertical {
       transform: rotate(90deg);
-      transform-origin: 27px;
+      // transform-origin: 27px;
       .ship__toolbar {
-         transform: translate(-30%, -180%) rotate(-90deg);
+         transform: translate(-90%, -110%) rotate(-90deg);
          right: auto;
          left: 0;
       }
@@ -47,13 +45,5 @@
    // .ship_error
    &_error {
       background-color: $color-background-drop-error;
-   }
-   @media (any-hover: hover) {
-      &:hover {
-         .ship__toolbar {
-            opacity: 1;
-            visibility: visible;
-         }
-      }
    }
 }

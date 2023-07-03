@@ -1,3 +1,7 @@
+body {
+   letter-spacing: em(1.5, 16);
+}
+
 [data-dragable] {
    cursor: all-scroll;
 }

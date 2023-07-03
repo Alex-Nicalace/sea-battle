@@ -5,25 +5,52 @@
    // .sea-battle__container
    &__container {
    }
+   // .sea-battle__wrap
+   &__wrap {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      margin: rem(-10);
+      & > * {
+         padding: rem(10);
+      }
+   }
    // .sea-battle__player
    &__player {
+      // .sea-battle__player_pc
+      &_pc {
+      }
+      // .sea-battle__player_human
+      &_human {
+      }
    }
-   // .sea-battle__players
-   &__players {
-      // .sea-battle__players_gaming
-      &_gaming {
-         display: flex;
-         flex-wrap: wrap;
-         justify-content: space-between;
-         margin: rem(-20);
-
-         .sea-battle__player {
-            display: block;
-            .sea-battle__players_gaming & {
-               padding: rem(20);
-               // flex: 0 0 50%;
+   // .sea-battle__dock
+   &__dock {
+      flex-grow: 1;
+   }
+   // .sea-battle__wrap-dock
+   &__wrap-dock {
+      display: none;
+   }
+   &_prep {
+      .sea-battle__player_pc {
+         display: none;
+      }
+      .grid .ship {
+         @media (any-hover: hover) {
+            &:hover {
+               .ship__toolbar {
+                  opacity: 1;
+                  visibility: visible;
+               }
             }
          }
+      }
+      .sea-battle__wrap-dock {
+         @include adaptiveValue("--size", $size-max-cell, $size-min-cell);
+         width: calc(var(--size) * 10);
+         display: flex;
+         flex-direction: column;
       }
    }
 }
