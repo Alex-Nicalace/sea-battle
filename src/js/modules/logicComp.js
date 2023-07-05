@@ -5,18 +5,6 @@ import Area from './area.js';
 import { LogicCompError } from './error.js';
 
 /**
- * Объект, представляющий координату в массиве
- * @typedef {Object} Coord
- * @property {number} i - строка массива.
- * @property {number} k - столбец массива.
- * @property {boolean} isShooted - был ли выстрел по этой ячейке.
- */
-
-/**
- * @typedef {'Miss' | 'Hit' | 'Sunk'} ShotResult
- */
-
-/**
  * логика ПК
  * @class
  */
@@ -29,16 +17,16 @@ class LogicComp extends Area {
     */
    numberKillsShips = 0;
    /**
-    * @type {Coord} координата последнего выстрела.
+    * @type {import('./area.js').Coord} координата последнего выстрела.
     */
    lastShot;
    /**
-    * @type {Coord[]} стек последних попаданий.
+    * @type {import('./area.js').Coord[]} стек последних попаданий.
     */
    lastSuccessfulHits = [];
    /**
     * сгенерить координату выстрела компьютером
-    * @returns {Coord}
+    * @returns {import('./area.js').Coord}
     */
    makeShot() {
       return new Promise(res => {
@@ -98,7 +86,7 @@ class LogicComp extends Area {
    }
    /**
     * 
-    * @param {ShotResult} answer ответ, получаемый после выстрела
+    * @param {import('./playArea.js').ShotResult} answer ответ, получаемый после выстрела
     */
    getAnswer(answer) {
       if (answer === 'Miss') return;
@@ -112,8 +100,3 @@ class LogicComp extends Area {
 }
 
 export default LogicComp;
-
-/* 
-остановился на getAnswer
-как отрабатывать ответ ????
- */

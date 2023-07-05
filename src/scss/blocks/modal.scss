@@ -1,0 +1,100 @@
+.modal {
+   top: 50%;
+   // bottom: 50%;
+   left: 50%;
+   // right: 50%;
+   transform: translate(-50%, -50%);
+
+   overflow: hidden;
+   overflow-y: auto;
+
+   background-color: $color-modal-bg;
+   border: rem(1) solid $color-modal-border;
+   border-radius: rem(4);
+   // @extend %shadow-large;
+
+   &::backdrop {
+      background-color: $color-modal-backdrop;
+      opacity: 0.75;
+   }
+   // .modal__dialog
+   &__dialog {
+   }
+   // .modal__content
+   &__content {
+      position: relative;
+      padding: rem(48);
+      @include adaptiveValue("padding-left", 48, 5);
+      @include adaptiveValue("padding-right", 48, 5);
+      // padding: percent(48, 872);
+   }
+   // .modal__icon-close
+   &__icon-close {
+      position: absolute;
+      top: rem(24);
+      right: rem(24);
+      color: #aaa;
+      font-size: rem(28);
+      font-weight: bold;
+   }
+   // .modal__header
+   &__header {
+      &:not(:last-child) {
+         margin-bottom: rem(32);
+      }
+   }
+   // .modal__title
+   &__title {
+      @include adaptiveValue("font-size", 28, 16);
+      // color: $color-gray-900;
+      text-align: center;
+   }
+   // .modal__body
+   &__body {
+   }
+   // .modal_right-side
+   &_right-side {
+      top: 0;
+      left: auto;
+      right: 0;
+      height: 100%;
+      transform: none;
+      max-height: none;
+      border-top-right-radius: 0;
+      border-bottom-right-radius: 0;
+      width: rem(352);
+      .modal__dialog {
+         height: 100%;
+      }
+      .modal__content {
+         height: 100%;
+         display: flex;
+         flex-direction: column;
+         padding: 0;
+      }
+      .modal__header {
+         padding: rem(32) rem(72) rem(24) rem(24);
+         border-bottom: rem(1) solid gray;
+         margin-bottom: 0;
+      }
+      .modal__title {
+         // @extend h5;
+         text-align: left;
+      }
+      .modal__body {
+         flex-grow: 1;
+      }
+      .modal__icon-close {
+         right: rem(24);
+         top: rem(33);
+      }
+   }
+   &_left-side {
+      @extend .modal_right-side;
+      right: auto;
+      left: 0;
+      border-radius: rem(4);
+      border-top-left-radius: 0;
+      border-bottom-left-radius: 0;
+   }
+}

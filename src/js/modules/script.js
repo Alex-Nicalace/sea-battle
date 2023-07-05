@@ -42,42 +42,4 @@ console.log('playUser', playUser);
 const logicComp = new LogicComp();
 
 
-const game = new Game(playUser, playComp, logicComp);
-
-
-
-document.querySelector('#btn-auto-place').addEventListener('click', () => {
-   playUser.locateShips();
-   // playUser.printPlayArea();
-});
-document.querySelector('#btn-ready').addEventListener('click', () => {
-   const { message } = playUser.finalisePlacementShips();
-   if (message) {
-      console.log(message);
-      return;
-   }
-   game.start();
-
-});
-/* document.querySelector('#btn-comp-shot').addEventListener('click', () => {
-   const coordShot = logicComp.makeShot();
-   const answer = playUser.takeShot(coordShot);
-   logicComp.getAnswer(answer);
-});
-document.querySelector('#btn-print').addEventListener('click', () => {
-   console.log(logicComp.area);
-   console.log(playUser.area);
-});
-document.querySelector('#btn-start').addEventListener('click', () => {
-   game.start('pc');
-}); */
-
-
-// console.log(playUser);
-// playUser.createShips();
-// playUser.assignHtml('#user tbody tr td');
-// playUser.printPlayArea();
-
-// todo:
-
-// подсветка тулбара только когда в движении и на поле
+new Game(playUser, playComp, logicComp, '#btn-auto-place', '#btn-ready');

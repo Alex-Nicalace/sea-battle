@@ -3,28 +3,7 @@ import Area from './area.js';
 import { PlayAreaError } from './error.js';
 
 /**
- * Объект, представляющий координату в массиве
- * @typedef {Object} Coord
- * @property {number} i - строка массива.
- * @property {number} k - столбец массива.
- * @property {boolean} isShooted - был ли выстрел по этой ячейке.
- */
-
-/**
- * ячейка игрового поля
- * @typedef {Object} AreaItem
- * @property {Any} cell - значение ячейки в массиве
- * @property {Node} cellHtml - узел HTML соответсвующий ячейке массива
- * @property {Coord[]} track - координаты всего корабля
- * @property {boolean} isShooted - был ли выстрел по этой ячейке.
- */
-
-/**
- * @typedef {Array<Array<AreaItem>>} Area
- */
-
-/**
- * @typedef {Array<Coord>} AreaCoord
+ * @typedef {Array<import('./area.js').Coord>} AreaCoord
  */
 
 /**
@@ -60,7 +39,7 @@ class PlayArea extends Area {
    containerCell;
    /**
     * Поле, представляющее Map с ключами в виде HTML-узлов и значениями в виде объектов {i, k} - координаты 2-мерного массива.
-    * @type {Map<Node, Coord>}
+    * @type {Map<Node, import('./area.js').Coord>}
     */
    cellsHtml;
    /**
@@ -174,8 +153,8 @@ class PlayArea extends Area {
    /**
     * Тип для координат корабля и буферной зоны
     * @typedef {Object} ShipCoords
-    * @property {Coord[]} track - координаты занятые кораблем
-    * @property {Coord[]} aroundTrack - координаты буферной зоны
+    * @property {import('./area.js').Coord[]} track - координаты занятые кораблем
+    * @property {import('./area.js').Coord[]} aroundTrack - координаты буферной зоны
     */
    /**
     * Объект содержит по определенному ключу координаты занятые кораблем и координаты буферной зоны
@@ -198,7 +177,7 @@ class PlayArea extends Area {
    numberKillsShips = 0;
    /**
     * Проверить возможность размещения корабля по заданным координатам
-    * @param {Coord[]} track массив координат корабля
+    * @param {import('./area.js').Coord[]} track массив координат корабля
     * @returns {Boolean}
     */
    canBuildShip(track = []) {
@@ -340,7 +319,7 @@ class PlayArea extends Area {
       if (!key) return;
       /**
        * массив координат корабаля и буферной зоны
-       * @type {Coord[]}
+       * @type {import('./area.js').Coord[]}
        */
       const coordShip = [...this.listShips[key].track, ...this.listShips[key].aroundTrack];
       if (coordShip.length) {
@@ -358,7 +337,7 @@ class PlayArea extends Area {
    }
    /**
     * 
-    * @param {Array<Coord>} track 
+    * @param {Array<import('./area.js').Coord>} track 
     */
    removeDekorCells(track) {
       track.forEach(({ i, k }) => {
@@ -367,7 +346,7 @@ class PlayArea extends Area {
    }
    /**
     * 
-    * @param {Array<Coord>} track 
+    * @param {Array<import('./area.js').Coord>} track 
     */
    setDekorCells(track) {
       track.forEach(({ i, k }) => {
@@ -510,8 +489,8 @@ class PlayArea extends Area {
    }
    /**
     * 
-    * @param {Array<Coord>} track координаты корабля
-    * @param {Array<Coord>} aroundTrack координаты буфера вокруг корабля
+    * @param {Array<import('./area.js').Coord>} track координаты корабля
+    * @param {Array<import('./area.js').Coord>} aroundTrack координаты буфера вокруг корабля
     * @returns {String} ключ корабля в объекте shipsOnArea
     */
    addListShips(track, aroundTrack) {
@@ -620,7 +599,7 @@ class PlayArea extends Area {
    }
    /**
     * 
-    * @param {Coord} coord координаты выстрела
+    * @param {import('./area.js').Coord} coord координаты выстрела
     * @returns {ShotResult} результат выстрела
     */
    takeShot({ i, k }) {

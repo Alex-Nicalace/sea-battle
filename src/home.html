@@ -352,16 +352,28 @@
 						</div>
 					</div>
 				</div>
-
-
-				<!-- <button id="btn-comp-shot" class="button">comp shot</button>
-				<button id="btn-print" class="button">console logic area</button>
-				<button id="btn-start" class="button">start game</button> -->
 			</div>
-
 		</main>
 		@@include('html/_footer.htm',{})
 	</div>
+	<dialog id="modal-first-shot" class="modal">
+		<div class="modal__dialog">
+			<div class="modal__content">
+				<div class="modal__header">
+					<div class="modal__title">Первый выстрел</div>
+				</div>
+				<div class="modal__body first-shot">
+					<button class="button" value="human" data-close>Я</button>
+					<button class="button" value="pc" data-close>ПК</button>
+					<button class="button" value="random" data-close>Случайно</button>
+				</div>
+				<!-- <div class="modal__footer">
+				<button class="modal__close btn btn-danger" data-close>Close</button>
+				<button class="modal__accept btn btn-success">Save changes</button>
+			</div> -->
+			</div>
+		</div>
+	</dialog>
 	@@include('html/_popup.htm',{})
 	@@include('html/_js.htm',{})
 </body>

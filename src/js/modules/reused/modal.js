@@ -1,42 +1,27 @@
-/* class Modal {
-   constructor(element, settings = {}) {
-      if (!element) return this;
-
-      if (typeof (element) === 'string') {
-         const elements = document.querySelectorAll(element);
-         const objects = [];
-         elements.forEach(element => {
-            objects.push(new Modal(element, settings))
-         });
-         return objects.length === 1 ? objects[0] : objects;
-      }
-
-      // <variables>
-      this.element = element;
-      const targetModalSelector = element.dataset.modal;
-      this.modal = document.querySelector(targetModalSelector);
-      // </variables>
-
-      this.element.addEventListener('click', e => this.onClick(e))
-   }
-   onClick(e) {
-      e.preventDefault();
-      // <scroll>
-      // const widthScroll = window.innerWidth - document.documentElement.clientWidth;
-      // document.documentElement.style.marginRight = `${widthScroll}px`;
-      // document.body.style.overflow = 'hidden';
-      // </scroll>
-      this.modal.showModal();
-   }
-} */
 import animate from './animateJS/animate.js';
 import { visibilityScrollDocument } from './visibilityScrollDocument.js';
+/**
+ * Класс, представляющий модальное окно.
+ */
 class Modal {
+   /**
+    * Создает экземпляр класса Modal.
+    * @param {string | undefined} selector - Селектор для выбора всех триггеров открытия окна.
+    */
    constructor(selector) {
       // все триггеры открытия окна
       this.triggers = document.querySelectorAll(selector);
       this.init();
    }
+   /**
+    * Триггеры открытия окна.
+    * @type {NodeList}
+    */
+   triggers;
+   /**
+    * Инициализация модального окна.
+    * @private
+    */
    init() {
       // перебор всех триггеров
       for (const trigger of this.triggers) {
@@ -46,10 +31,12 @@ class Modal {
          trigger.addEventListener('click', (e) => {
             e.preventDefault();
             // открыть соответствующее окно
-            this.showModal(modalEl);
+            Modal.showModal(modalEl);
          })
       }
-      // <открыть модальное окно по хэшу>
+      /**
+       * открыть модальное окно по хэшу
+       */
       const openModalFromHash = () => {
          const hash = window.location.hash;
          const modalEl = hash && (document.querySelector(hash));
@@ -58,9 +45,15 @@ class Modal {
       }
       window.addEventListener('load', openModalFromHash);
       window.addEventListener('hashchange', openModalFromHash);
-      // </открыть модальное окно по хэшу>
    }
-   showModal(modalEl, { hash } = {}) {
+   /**
+    * Отображает модальное окно.
+    * @param {HTMLElement} modalEl - Элемент модального окна.
+    * @param {Object} [options] - Дополнительные параметры.
+    * @param {string} [options.hash] - Хэш модального окна.
+    * @param {Function} [options.afterModalClose] - Колбэк после закрытия модального окна.
+    */
+   static showModal(modalEl, { hash, afterModalClose } = {}) {
       // если нет метода showModal => некий другой ошибочный узел
       if (!modalEl.showModal) return;
 
@@ -77,6 +70,9 @@ class Modal {
             // document.documentElement.style.marginRight = '';
             visibilityScrollDocument.visible();
             modalEl.close();
+            if (typeof afterModalClose === 'function') {
+               afterModalClose();
+            }
          }
          // <анимация закрытия>
          let draw;
@@ -216,4 +212,5 @@ class Modal {
    }
 }
 
-new Modal('[data-modal]');
+// new Modal('[data-modal]');
+export default Modal;

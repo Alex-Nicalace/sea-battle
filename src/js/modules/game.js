@@ -1,18 +1,46 @@
 import { randomInteger } from './reused/numbers.js';
+import Modal from './reused/modal.js';
+/**
+ * @typedef {'random' | 'user' | 'pc'} FirstShot кто первый сделает выстрел
+ */
+/**
+ * @typedef {'Miss' | 'Hit' | 'Sunk' | 'Victory'} ShotResult результат выстрела по противнику
+ */
+/**
+ * алгоритм игры
+ * @class 
+ */
 class Game {
    /**
-    * @typedef {'Miss' | 'Hit' | 'Sunk' | 'Victory'} ShotResult
-    */
-   /**
     * 
-    * @param {PlayArea} playUser 
-    * @param {PlayArea} playComp 
-    * @param {LogicComp} logicComp 
+    * @param {import('./playArea.js').default} playUser Объект игрового поля пользователя
+    * @param {import('./playArea.js').default} playComp Объект игрового поля ПК
+    * @param {import('./logicComp.js').default} logicComp Объект логики ПК
+    * @param {string} btnRndSelector 
+    * @param {string} btnReadyToGameSelector 
     */
-   constructor(playUser, playComp, logicComp) {
+   constructor(playUser, playComp, logicComp, btnRndSelector, btnReadyToGameSelector) {
+      /**
+       * @type {import('./playArea.js').default}
+       */
       this.playUser = playUser;
+      /**
+       * @type {import('./logicComp.js').default}
+       */
       this.logicComp = logicComp;
+      /**
+       * @type {import('./playArea.js').default}
+       */
       this.playComp = playComp;
+
+      document.querySelector(btnRndSelector).addEventListener('click', () => {
+         this.autoLocateShips();
+      });
+
+      document.querySelector(btnReadyToGameSelector).addEventListener('click', () => {
+         this.beginGame();
+
+      });
    }
    /**
     * Текущая функция выстрела.
@@ -22,7 +50,7 @@ class Game {
     */
    currentShot;
    /**
-    * функция выстрела пользователя
+    * Выстрел пользователя
     * @returns {ShotResult}
     */
    async shotUser() {
@@ -34,7 +62,7 @@ class Game {
       return answer
    }
    /**
-    * функция выстрела ПК
+    * Выстрел ПК
     * @returns {ShotResult}
     */
    async shotComp() {
@@ -47,8 +75,8 @@ class Game {
       return answer;
    }
    /**
-    * 
-    * @param {'random' | 'user' | 'pc'} mode 
+    * Запускает игру
+    * @param {FirstShot} mode
     */
    async start(mode = 'random') {
       if (this.isGaming) {
@@ -89,7 +117,69 @@ class Game {
       const winner = this.currentShot === this.shotUser ? 'User' : 'PC';
       alert('Winner ' + winner);
    }
+   /**
+    * Автоматическая расстановка кораблей пользователя
+    */
+   autoLocateShips() {
+      this.playUser.locateShips();
+      // playUser.printPlayArea();
+   }
+   /**
+    * Начать игру
+    */
+   async beginGame() {
+      const { message } = this.playUser.finalisePlacementShips();
+      if (message) {
+         console.log(message);
+         return;
+      }
+      const answer = await this.askWhoGoesFirst();
+      this.start(answer);
+   }
+   /**
+    * Запрашивает у пользователя, кто будет делать первый выстрел в игре.
+    * @returns {Promise<FirstShot>} Промис, который разрешается значением выбранной опции:
+    * - 'user' - если игрок хочет делать первый выстрел.
+    * - 'pc' - если компьютер должен делать первый выстрел.
+    * - 'random' - если случайным образом должно определиться.
+    */
+   askWhoGoesFirst() {
+      /**
+       * @type {HTMLDivElement}
+       */
+      const modalEl = document.querySelector('#modal-first-shot');
 
+      /**
+       * @type {HTMLDivElement}
+       */
+      const buttonsContainer = document.querySelector('.first-shot');
+
+      return new Promise((resolve) => {
+         /**
+          * @type {FirstShot}
+          */
+         let value;
+
+         /**
+          * Обработчик события клика на кнопках.
+          * @param {MouseEvent} e Событие клика.
+          */
+         const onClick = (e) => {
+            const button = e?.target.closest('button');
+            if (!button) return;
+            value = button.value;
+         };
+
+         buttonsContainer.addEventListener('click', onClick);
+
+         Modal.showModal(modalEl, {
+            afterModalClose: () => {
+               buttonsContainer.removeEventListener('click', onClick);
+               resolve(value);
+            },
+         });
+      });
+   }
 }
 
 export default Game;
