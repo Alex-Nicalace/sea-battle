@@ -5,7 +5,8 @@
       display: grid;
       grid-auto-flow: column;
       justify-content: start;
-      column-gap: rem(60);
+      // @include adaptiveValue("column-gap", 60, 30);
+      justify-content: space-between;
       &:not(:last-child) {
          margin-bottom: rem(70);
       }

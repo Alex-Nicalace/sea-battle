@@ -610,6 +610,8 @@ class PlayArea extends Area {
             const cellEl = e?.target?.closest(this.cellSelector);
             const coord = this.cellsHtml.get(cellEl);
             if (!coord) return new PlayAreaError('The HTML node has no coordinates');
+            // если за ячейкой есть атрибут выстрела то не засчитывать этот выстрел
+            if (cellEl.hasAttribute(this.nameAttrShot)) return;
             this.containerCell.removeEventListener('click', onClick);
             res(coord);
          }
