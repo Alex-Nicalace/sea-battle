@@ -1,6 +1,3 @@
-/**
- * @module
- */
 import Area from './area.js';
 import { LogicCompError } from './error.js';
 

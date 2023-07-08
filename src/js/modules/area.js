@@ -10,18 +10,26 @@ import { GridError } from './error.js';
  */
 
 /**
+ * @typedef {Object} DataShip Координаты корабля
+ * @property {Coord[]} DataShip.track Rоординаты непосредственно корабля.
+ * @property {Coord[]} DataShip.aroundTrack Координаты примыкающих к кораблю ячеек.
+ */
+
+/**
  * ячейка игрового поля
  * @typedef {Object} AreaItem
- * @property {Any} cell - значение ячейки в массиве
- * @property {Node} cellHtml - узел HTML соответсвующий ячейке массива
- * @property {Object} dataShip - координаты корабля
- * @property {Coord[]} dataShip.track - координаты непосредственно корабля.
- * @property {Coord[]} dataShip.aroundTrack - координаты примыкающих к кораблю ячеек.
+ * @property {number | string} cell - значение ячейки в массиве
+ * @property {HTMLElement} cellHtml - узел HTML соответсвующий ячейке массива
+ * @property {DataShip} dataShip
  * @property {boolean} isShooted - был ли выстрел по этой ячейке.
  */
 
 /**
- * @typedef {Array<Array<AreaItem>>} Area
+ * @typedef {Array<Array<AreaItem>>} AreaType
+ */
+
+/**
+ * @typedef {'up' | 'left' | 'down' | 'right'} Direct
  */
 
 /**
@@ -78,7 +86,7 @@ class Area {
    }
    /**
     * Поле, представляющее двумерный массив объектов.
-    * @type {Area}
+    * @type {AreaType}
     */
    area = Array(10);
    /**
@@ -140,10 +148,13 @@ class Area {
    }
    /**
     * случайно получить направление для размещения корабля
-    * @param {Array<String>} excludeArr массив исключенных направлений
-    * @returns 
+    * @param {Array<Direct>} excludeArr массив исключенных направлений
+    * @returns {Direct | null}
     */
    getRandomDirect(excludeArr = []) {
+      /**
+       * @type {Direct[]}
+       */
       const directArr = ['up', 'left', 'down', 'right'];
       const isAllOptionsExcluded = directArr.every(val => excludeArr.includes(val));
       if (isAllOptionsExcluded) return null;

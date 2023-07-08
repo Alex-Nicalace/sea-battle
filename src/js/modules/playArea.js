@@ -131,7 +131,12 @@ class PlayArea extends Area {
     * вертикальный корабль имеет указанный класс
     * @type {String}
     */
-   classNameVertical;
+   classNameVerticalShip;
+   /**
+    * уничтоженный корабль имеет указанный класс
+    * @type {String}
+    */
+   classNameDestroyed;
    /**
     * атрибут указывающий на возможность размещения корабля
     * @type {String}
@@ -230,15 +235,29 @@ class PlayArea extends Area {
       * @param {String} [options.containerCellSelector] селектор HTML-узла, кот. является контейнером ячеек
       * @param {String} [options.cellSelector] селектор HTML-узла, кот. будет считаться ячейкой
       * @param {String} [options.nameAttrShot] - атрибут для ячейки по которой был выстрел
+      * @param {String} [options.nameAttrShotPseudo] - атрибут для ячейки по которой был псевдо выстрел
       * @param {String} [options.nameAttrShotTarget] - атрибут для ячейки по которой было попадание
       * @param {String} [options.nameAttrShotDied] - атрибут для ячейки входит в состав убитого корабля
       * @returns 
       */
-   assignHtml({ containerCellSelector, cellSelector, nameAttrShot, nameAttrShotTarget, nameAttrShotDied }) {
+   assignHtml({ containerCellSelector, cellSelector, nameAttrShot, nameAttrShotTarget, nameAttrShotDied, nameAttrShotPseudo }) {
       this.containerCell = document.querySelector(containerCellSelector);
       this.cellSelector = cellSelector;
+      /**
+       * атрибут для ячейки по которой был выстрел
+       */
       this.nameAttrShot = nameAttrShot;
+      /**
+       * атрибут для ячейки по которой был псевдо выстрел
+       */
+      this.nameAttrShotPseudo = nameAttrShotPseudo;
+      /**
+       * атрибут для ячейки по которой было попадание
+       */
       this.nameAttrShotTarget = nameAttrShotTarget;
+      /**
+       * атрибут для ячейки входит в состав убитого корабля
+       */
       this.nameAttrShotDied = nameAttrShotDied;
 
       const elements = [...document.querySelectorAll(this.cellSelector)];
@@ -262,26 +281,36 @@ class PlayArea extends Area {
    * @param {string} [options.shipSelector] - селектор кораблей
    * @param {string} [options.rotateBtnSelector] - селектор кнопки повората корабля
    * @param {string} [options.toolbarSelector] - селектор панели настроек корабля
-   * @param {string} [options.classNameVertical] - вертикальный корабль имеет указанный атрибут
+   * @param {string} [options.classNameVertical] - вертикальный корабль имеет указанный класс
+   * @param {string} [options.classNameDestroyed] - уничтоженный корабль имеет указанный класс
    * @param {string} [options.nameAttrCanDrop] - атрибут указывающий на возможность размещения корабля
    * @param {string} [options.nameAttrDrag] - атрибут - признак перемещения крабля
    */
-   setShips({ dockSelector, shipSelector, rotateBtnSelector, toolbarSelector, classNameVertical, nameAttrCanDrop, nameAttrDrag } = {}) {
+   setShips({ dockSelector, shipSelector, rotateBtnSelector, toolbarSelector, classNameVertical, nameAttrCanDrop, nameAttrDrag, classNameDestroyed, } = {}) {
       this.shipSelector = shipSelector;
-      this.classNameVertical = classNameVertical;
+      this.classNameVerticalShip = classNameVertical;
+      this.classNameDestroyed = classNameDestroyed;
       this.nameAttrCanDrop = nameAttrCanDrop;
       this.nameAttrDrag = nameAttrDrag;
-      const ships = document.querySelectorAll(shipSelector);
-      for (const ship of ships) {
-         this.shipsNodes.set(ship, null)
-      }
+
       this.dock = document.querySelector(dockSelector);
+
+      /**
+       * @type {HTMLElement | undefined}
+       */
+      const ships = this.dock?.querySelectorAll(shipSelector);
+      if (ships) {
+         for (const ship of ships) {
+            this.shipsNodes.set(ship, null)
+         }
+      }
+
       this.toolbarSelector = toolbarSelector;
       const rotateShip = (e) => {
          if (this.isReadyPlacement) return;
          const shipEl = e.target.closest(this.shipSelector);
          if (!shipEl) return;
-         shipEl.classList.toggle(this.classNameVertical);
+         shipEl.classList.toggle(this.classNameVerticalShip);
          this.clearCellsUnderShip(shipEl);
          shipEl.removeAttribute(this.nameAttrCanDrop);
 
@@ -304,11 +333,15 @@ class PlayArea extends Area {
          this.shipsNodes.set(shipEl, keyShip);
          // this.printPlayArea();
       }
-      const rotateBtns = document.querySelectorAll(rotateBtnSelector);
-      for (const btn of rotateBtns) {
-         btn.addEventListener('click', rotateShip);
+      /**
+       * @type {HTMLElement | undefined}
+       */
+      const rotateBtns = this.dock?.querySelectorAll(rotateBtnSelector);
+      if (rotateBtns) {
+         for (const btn of rotateBtns) {
+            btn.addEventListener('click', rotateShip);
+         }
       }
-
    }
    /**
     * Очищает поле от корабля
@@ -413,7 +446,7 @@ class PlayArea extends Area {
                      break;
                   }
                }
-               dragElement.classList.remove(this.classNameVertical);
+               dragElement.classList.remove(this.classNameVerticalShip);
             }
             resetVariable();
             return;
@@ -525,23 +558,44 @@ class PlayArea extends Area {
          if (!listShipsItem) continue;
 
          const [listShipsKey, { track }] = listShipsItem;
-         // найти стартовую ячеку корабля
-         let minI = Infinity;
-         let minK = Infinity;
-         let maxI = -Infinity;
-         let maxK = -Infinity;
-         track.forEach(({ i, k }) => {
-            if (minI > i) minI = i;
-            if (minK > k) minK = k;
-            if (maxI < i) maxI = i;
-            if (maxK < k) maxK = k;
-         });
 
-         if (minI < maxI) shipNode.classList.add(this.classNameVertical);
+         const { coord: { i, k }, isVertical } = this.minCell(track);
 
-         this.positioningElInArea(minI, minK, shipNode);
+         if (isVertical) shipNode.classList.add(this.classNameVerticalShip);
+
+         this.positioningElInArea(i, k, shipNode);
 
          this.shipsNodes.set(shipNode, listShipsKey);
+      }
+   }
+   /**
+    * 
+    * @typedef {Object} result Информация о минимальной ячейке
+    * @property {import('./area.js').Coord} result.coord
+    * @property {boolean} result.isVertical Признак, что корабль расположен вертикально
+    */
+   /**
+    * Находит минимальную ячейку на треке и возвращает информацию о ней.
+    * @param {import('./area.js').Coord[]} track 
+    * @returns {result} 
+    *   - coord: {Coord} Объект с координатами минимальной ячейки (i, k).
+    *   - isVertical: {boolean} Флаг, указывающий, является ли трек вертикальным.
+    */
+   minCell(track) {
+      // найти стартовую ячеку корабля
+      let minI = Infinity;
+      let minK = Infinity;
+      let maxI = -Infinity;
+      let maxK = -Infinity;
+      track.forEach(({ i, k }) => {
+         if (minI > i) minI = i;
+         if (minK > k) minK = k;
+         if (maxI < i) maxI = i;
+         if (maxK < k) maxK = k;
+      });
+      return {
+         coord: { i: minI, k: minK },
+         isVertical: minI < maxI,
       }
    }
    /**
@@ -598,6 +652,32 @@ class PlayArea extends Area {
       })
    }
    /**
+    * По указанной координате получить ключ корабля в списке listShips
+    * @param {import('./area.js').Coord} coord
+    * @returns {string} Ключ
+    */
+   getKeyShipFromListShips({ i, k }) {
+      return Object.keys(this.listShips).find(key => this.listShips[key] == this.area[i][k].dataShip);
+   }
+   /**
+    * 
+    * @param {string} keyListShips Ключ объекта listShips
+    * @returns {HTMLElement} HTML-узел корабля
+    */
+   getShipElementFromShipsNodes(keyListShips) {
+      /**
+       * @type {HTMLElement}
+       */
+      let shipHtml;
+      for (const [HTML, key] of this.shipsNodes) {
+         if (key === keyListShips) {
+            shipHtml = HTML;
+            break;
+         }
+      }
+      return shipHtml;
+   }
+   /**
     * 
     * @param {import('./area.js').Coord} coord координаты выстрела
     * @returns {ShotResult} результат выстрела
@@ -616,18 +696,41 @@ class PlayArea extends Area {
          return 'Miss';
       }
 
+      const keyListShips = this.getKeyShipFromListShips({ i, k });
+      const shipHtml = this.getShipElementFromShipsNodes(keyListShips);
+
       const { track, aroundTrack } = this.area[i][k].dataShip;
       // попадание в цель
       const coord = track.find(({ i: ii, k: kk }) => i === ii && k === kk);
       coord.isShooted = true;
       cellHtml.setAttribute(this.nameAttrShotTarget, '');
       const health = track.filter(({ isShooted }) => isShooted).length;
+
+      const { coord: start, isVertical } = this.minCell(track);
+      const idxCell = i + k - start.i - start.k;
+      if (shipHtml) {
+         [...shipHtml.querySelectorAll(this.cellSelector)][idxCell].setAttribute(this.nameAttrShotTarget, '');
+      }
       if (health === track.length) {
          // попадание и убил
          console.log('убил');
          ++this.numberKillsShips;
          track.map(({ i, k }) => this.area[i][k].cellHtml).forEach(elCell => elCell.setAttribute(this.nameAttrShotDied, ''));
-         aroundTrack.map(({ i, k }) => this.area[i][k].cellHtml).forEach(elCell => elCell.setAttribute(this.nameAttrShot, ''));
+         aroundTrack.map(({ i, k }) => this.area[i][k].cellHtml).forEach(elCell => {
+            if (!elCell.hasAttribute(this.nameAttrShot))
+               elCell.setAttribute(this.nameAttrShotPseudo, '');
+         });
+         shipHtml?.classList.add(this.classNameDestroyed);
+
+         // если нет кораблей на поле, то это поле противника и после попадания необходимо его показать, а прежде создать
+         if (this.shipsNodes.size !== this.totalShips) {
+            const shipDied = this.createShipElement(health);
+            shipDied.classList.add(this.classNameDestroyed);
+            this.shipsNodes.set(shipDied, keyListShips);
+            if (isVertical) shipDied.classList.add(this.classNameVerticalShip);
+            this.positioningElInArea(start.i, start.k, shipDied);
+            this.containerCell.append(shipDied);
+         }
          if (this.numberKillsShips === this.totalShips) {
             return 'Victory';
          };
@@ -638,6 +741,7 @@ class PlayArea extends Area {
       return 'Hit';
 
    }
+
    /**
     * связать ключ списка (объекта) кораблей с ячейками корабля
     * т.о. по координатам ячейки можно выйти на весь корабль
@@ -648,6 +752,19 @@ class PlayArea extends Area {
             this.area[i][k].dataShip = this.listShips[key];
          })
       });
+   }
+   /**
+    * Создает элемент корабля и возвращает его.
+    *
+    * @param {number} size - Размер корабля.
+    * @returns {HTMLElement} Элемент корабля.
+    */
+   createShipElement(size) {
+      const shipEl = document.createElement('div');
+      shipEl.classList.add('ship');
+      shipEl.dataset.ship = size;
+      shipEl.insertAdjacentHTML('afterbegin', `${'<div class="cell"></div>'.repeat(size)} <img class="ship__img" src="img/ships/${size}_h.png" alt="image of ship">`);
+      return shipEl;
    }
 }
 

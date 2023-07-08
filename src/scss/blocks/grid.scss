@@ -6,6 +6,8 @@
    grid-template-columns: repeat(10, auto);
    grid-template-rows: repeat(10, auto);
 
+   position: relative;
+
    & > .cell {
       border-left: 1px solid $color-grid-border;
    }

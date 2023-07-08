@@ -10,10 +10,14 @@ playComp.assignHtml({
    containerCellSelector: '.sea-battle__player_pc .grid',
    cellSelector: '.sea-battle__player_pc .grid .cell',
    nameAttrShot: 'data-shot',
+   nameAttrShotPseudo: 'data-shot-pseudo',
    nameAttrShotDied: 'data-shot-died',
    nameAttrShotTarget: 'data-shot-target',
-}
-);
+});
+playComp.setShips({
+   classNameVertical: 'ship_vertical',
+   classNameDestroyed: 'ship_destroyed',
+});
 // playComp.printPlayArea();
 // playComp.makeShootable();
 console.log('playComp', playComp);
@@ -23,6 +27,7 @@ playUser.assignHtml({
    containerCellSelector: '.sea-battle__player_human .grid',
    cellSelector: '.sea-battle__player_human .grid .cell',
    nameAttrShot: 'data-shot',
+   nameAttrShotPseudo: 'data-shot-pseudo',
    nameAttrShotDied: 'data-shot-died',
    nameAttrShotTarget: 'data-shot-target',
 });
@@ -32,6 +37,7 @@ playUser.setShips({
    toolbarSelector: '.ship .ship__toolbar',
    rotateBtnSelector: '.ship .ship__rotate-btn',
    classNameVertical: 'ship_vertical',
+   classNameDestroyed: 'ship_destroyed',
    nameAttrCanDrop: 'data-can-drop',
    nameAttrDrag: 'data-drag',
 });

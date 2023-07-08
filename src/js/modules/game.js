@@ -99,7 +99,7 @@ class Game {
       // players.classList.add('sea-battle__players_gaming');
 
       switch (mode) {
-         case 'user':
+         case 'human':
             this.currentShot = this.shotUser;
             break;
          case 'pc':

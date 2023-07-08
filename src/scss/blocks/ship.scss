@@ -46,4 +46,16 @@
    &_error {
       background-color: $color-background-drop-error;
    }
+   [data-shot-target] {
+      position: relative;
+      z-index: 1;
+   }
+   // .ship_destroyed
+   &_destroyed {
+      .cell {
+         position: relative;
+         z-index: 1;
+         @extend [data-shot-target];
+      }
+   }
 }
