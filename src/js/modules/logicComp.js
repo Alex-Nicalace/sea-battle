@@ -23,9 +23,10 @@ class LogicComp extends Area {
    lastSuccessfulHits = [];
    /**
     * сгенерить координату выстрела компьютером
+    * @param {number} delay Количество ms
     * @returns {import('./area.js').Coord}
     */
-   makeShot() {
+   makeShot(delay = 0) {
       return new Promise(res => {
          const inc = {
             up: { incI: -1, incK: 0 },
@@ -78,7 +79,9 @@ class LogicComp extends Area {
          const { i, k } = this.lastShot;
          this.area[i][k].cell = this.markCell;
          this.area[i][k].isShooted = true;
-         res(this.lastShot);
+         setTimeout(() => {
+            res(this.lastShot);
+         }, delay)
       })
    }
    /**

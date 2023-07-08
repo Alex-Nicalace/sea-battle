@@ -18,8 +18,9 @@ class Game {
     * @param {import('./logicComp.js').default} logicComp Объект логики ПК
     * @param {string} btnRndSelector 
     * @param {string} btnReadyToGameSelector 
+    * @param {string} cellSelector Селектор ячейки  
     */
-   constructor(playUser, playComp, logicComp, btnRndSelector, btnReadyToGameSelector) {
+   constructor(playUser, playComp, logicComp, btnRndSelector, btnReadyToGameSelector, cellSelector) {
       /**
        * @type {import('./playArea.js').default}
        */
@@ -32,6 +33,20 @@ class Game {
        * @type {import('./playArea.js').default}
        */
       this.playComp = playComp;
+      /**
+       * количество mc
+       * @type {number}
+       */
+      this.delay = 0;
+      const cellElement = document.querySelector(cellSelector);
+      if (cellElement) {
+         const animDurationStr = getComputedStyle(cellElement).animationDuration;
+         this.delay = animDurationStr.replace(/(\d+)(s|ms)/gi, (m, p1, p2) => {
+            return +p1 * (p2.toLowerCase() === 's' ? 1000 : 1);
+         }).split(',').reduce((sum, num) => sum += +num, 0);
+      }
+
+
 
       document.querySelector(btnRndSelector).addEventListener('click', () => {
          this.autoLocateShips();
@@ -66,7 +81,7 @@ class Game {
     * @returns {ShotResult}
     */
    async shotComp() {
-      const coord = await this.logicComp.makeShot();
+      const coord = await this.logicComp.makeShot(this.delay);
       const answer = this.playUser.takeShot(coord);
       this.logicComp.getAnswer(answer);
       if (answer === 'Miss') {
@@ -110,6 +125,9 @@ class Game {
             break;
       }
       this.isGaming = true;
+      /**
+       * @type {import('./playArea.js').ShotResult}
+       */
       let answer;
       do {
          answer = await this.currentShot.call(this);

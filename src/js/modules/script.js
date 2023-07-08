@@ -48,4 +48,4 @@ console.log('playUser', playUser);
 const logicComp = new LogicComp();
 
 
-new Game(playUser, playComp, logicComp, '#btn-auto-place', '#btn-ready');
+new Game(playUser, playComp, logicComp, '#btn-auto-place', '#btn-ready', '.cell');

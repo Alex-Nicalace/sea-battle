@@ -7,6 +7,9 @@
    justify-content: center;
    align-items: center;
    font-size: 0;
+
+   animation-duration: 1s;
+   animation-fill-mode: forwards;
    &:before {
       content: "\2716";
    }
@@ -14,8 +17,6 @@
    &[data-shot-pseudo] {
       color: $color-shot-pseudo;
       animation-name: shot-pseudo;
-      animation-duration: 1s;
-      animation-fill-mode: forwards;
       @keyframes shot-pseudo {
          0% {
             font-size: rem(0);
@@ -29,8 +30,6 @@
    &[data-shot]:not([data-shot-target]) {
       color: $color-shot;
       animation-name: shot;
-      animation-duration: 1s;
-      animation-fill-mode: forwards;
       @keyframes shot {
          0% {
             background: url("@img/bang2.png") center / 0 0 no-repeat;
@@ -49,8 +48,6 @@
    }
    &[data-shot-target]:not([data-shot-died]) {
       animation-name: shot-target;
-      animation-duration: 1s;
-      animation-fill-mode: forwards;
       @keyframes shot-target {
          0% {
             background: url("@img/bang.png") center / 0 0 no-repeat;
