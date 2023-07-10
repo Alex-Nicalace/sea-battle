@@ -45,7 +45,21 @@ playUser.makeDragableShips();
 
 console.log('playUser', playUser);
 
-const logicComp = new LogicComp();
+const logicComp = new LogicComp({
+   quantityShotsSelector: '.sea-battle__player_human .shots-state__count',
+});
 
 
-new Game(playUser, playComp, logicComp, '#btn-auto-place', '#btn-ready', '.cell');
+new Game({
+   playUser: playUser,
+   playComp: playComp,
+   logicComp: logicComp,
+   btnRndSelector: '#btn-auto-place',
+   btnReadyToGameSelector: '#btn-ready',
+   cellSelector: '.cell',
+   quantityShotsHuman: '.sea-battle__player_pc .shots-state__count',
+   listShipsHuman: '.sea-battle__player_pc .list-ships',
+   quantityShotsPC: '.sea-battle__player_human .shots-state__count',
+   listShipsPC: '.sea-battle__player_human .list-ships',
+   classNameDeadShip: 'list-ships__ship_dead',
+});

@@ -1,0 +1,44 @@
+.list-ships {
+   // .list-ships__row
+   &__row {
+      display: grid;
+      grid-auto-flow: column;
+      justify-content: start;
+      // justify-items: center;
+      column-gap: rem(30);
+
+      &:nth-child(1) {
+         .list-ships__ship {
+            background: url("@img/ships/1_h.png") 0 0 / 100% 100% no-repeat;
+            width: var(--cell-size);
+         }
+      }
+      &:nth-child(2) {
+         .list-ships__ship {
+            background: url("@img/ships/2_h.png") 0 0 / 100% 100% no-repeat;
+            width: calc(var(--cell-size) * 2);
+         }
+      }
+      &:nth-child(3) {
+         .list-ships__ship {
+            background: url("@img/ships/3_h.png") 0 0 / 100% 100% no-repeat;
+            width: calc(var(--cell-size) * 3);
+         }
+      }
+      &:nth-child(4) {
+         .list-ships__ship {
+            background: url("@img/ships/4_h.png") 0 0 / 100% 100% no-repeat;
+            width: calc(var(--cell-size) * 4);
+         }
+      }
+      &:not(:last-child) {
+         margin-bottom: rem(10);
+      }
+   }
+   // .list-ships__ship
+   &__ship {
+      height: var(--cell-size);
+      &_dead {
+      }
+   }
+}

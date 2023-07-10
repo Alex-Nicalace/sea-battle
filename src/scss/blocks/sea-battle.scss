@@ -32,6 +32,10 @@
    &__wrap-dock {
       display: none;
    }
+   // .sea-battle__info
+   &__info {
+   }
+   // .sea-battle_prep
    &_prep {
       .sea-battle__player_pc {
          display: none;
@@ -47,8 +51,7 @@
          }
       }
       .sea-battle__wrap-dock {
-         @include adaptiveValue("--size", $size-max-cell, $size-min-cell);
-         width: calc(var(--size) * 10);
+         width: calc(var(--cell-size) * 10);
          display: flex;
          flex-direction: column;
       }

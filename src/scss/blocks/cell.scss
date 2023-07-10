@@ -1,7 +1,6 @@
 .cell {
-   @include adaptiveValue("--size", $size-max-cell, $size-min-cell);
-   width: var(--size);
-   height: var(--size);
+   width: var(--cell-size);
+   height: var(--cell-size);
 
    display: flex;
    justify-content: center;

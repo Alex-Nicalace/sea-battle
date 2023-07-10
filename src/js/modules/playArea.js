@@ -20,7 +20,13 @@ import { PlayAreaError } from './error.js';
  */
 
 /**
- * @typedef {'Miss' | 'Hit' | 'Sunk' | 'Victory'} ShotResult
+ * @typedef {'Miss' | 'Hit' | 'Sunk' | 'Victory'} ShotResult Результат выстрела
+ */
+
+/**
+ * @typedef {Object} ResultShot
+ * @property {ShotResult} shotResult Результат выстрела
+ * @property {number=} sizeShip Размер убитого корабля
  */
 
 /**
@@ -680,7 +686,7 @@ class PlayArea extends Area {
    /**
     * 
     * @param {import('./area.js').Coord} coord координаты выстрела
-    * @returns {ShotResult} результат выстрела
+    * @returns {ResultShot} результат выстрела
     */
    takeShot({ i, k }) {
       if (!this.isReadyPlacement) {
@@ -693,7 +699,7 @@ class PlayArea extends Area {
       if (!this.area[i][k].dataShip) {
          // выстрел мимо
          console.log('мимо');
-         return 'Miss';
+         return { shotResult: 'Miss' };
       }
 
       const keyListShips = this.getKeyShipFromListShips({ i, k });
@@ -734,11 +740,11 @@ class PlayArea extends Area {
          if (this.numberKillsShips === this.totalShips) {
             return 'Victory';
          };
-         return 'Sunk';
+         return { shotResult: 'Sunk', sizeShip: health };
       }
       // попадание и ранение
       console.log('попал');
-      return 'Hit';
+      return { shotResult: 'Hit' };
 
    }
 

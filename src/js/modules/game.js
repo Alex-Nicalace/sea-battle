@@ -12,15 +12,32 @@ import Modal from './reused/modal.js';
  */
 class Game {
    /**
-    * 
-    * @param {import('./playArea.js').default} playUser Объект игрового поля пользователя
-    * @param {import('./playArea.js').default} playComp Объект игрового поля ПК
-    * @param {import('./logicComp.js').default} logicComp Объект логики ПК
-    * @param {string} btnRndSelector 
-    * @param {string} btnReadyToGameSelector 
-    * @param {string} cellSelector Селектор ячейки  
+    * @param {Object} [param={}]
+    * @param {import('./playArea.js').default} [param.playUser] Объект игрового поля пользователя
+    * @param {import('./playArea.js').default} [param.playComp] Объект игрового поля ПК
+    * @param {import('./logicComp.js').default} [param.logicComp] Объект логики ПК
+    * @param {string} [param.btnRndSelector] 
+    * @param {string} [param.btnReadyToGameSelector] 
+    * @param {string} [param.cellSelector] Селектор ячейки 
+    * @param {string} [param.quantityShotsPC] Селектор элемента куда будет отображаться статистика выстрелов пользователя
+    * @param {string} [param.listShipsPC] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
+    * @param {string} [param.quantityShotsHuman] Селектор элемента куда будет отображаться статистика выстрелов пользователя
+    * @param {string} [param.listShipsHuman] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
+    * @param {string} [param.classNameDeadShip] Название класса убитого корабля
     */
-   constructor(playUser, playComp, logicComp, btnRndSelector, btnReadyToGameSelector, cellSelector) {
+   constructor({
+      playUser,
+      playComp,
+      logicComp,
+      btnRndSelector,
+      btnReadyToGameSelector,
+      cellSelector,
+      quantityShotsPC,
+      listShipsPC,
+      quantityShotsHuman,
+      listShipsHuman,
+      classNameDeadShip,
+   }) {
       /**
        * @type {import('./playArea.js').default}
        */
@@ -38,6 +55,43 @@ class Game {
        * @type {number}
        */
       this.delay = 0;
+      /**
+       * @type {number} Количество выстрелов, сделанное ПК
+       */
+      this.quantityShotsPC = 0;
+      /**
+       * @type {number} Количество выстрелов, сделанное пользователем
+       */
+      this.quantityShotsHuman = 0;
+      /**
+       * элемент куда будет отображаться статистика выстрелов ПК
+       * @type {HTMLElement} 
+       */
+      this.quantityShotsPcEl = document.querySelector(quantityShotsPC);
+      /**
+       * контейнер кораблей где будут перечеркиваться убитые корабли ПК
+       * @type {HTMLElement}
+       */
+      this.listShipsPcEl = document.querySelector(listShipsPC);
+      /**
+       * элемент куда будет отображаться статистика выстрелов пользователя
+       * @type {HTMLElement} 
+       */
+      this.quantityShotsHumanEl = document.querySelector(quantityShotsHuman);
+      /**
+       * контейнер кораблей где будут перечеркиваться убитые корабли пользователя
+       * @type {HTMLElement}
+       */
+      this.listShipsHumanEl = document.querySelector(listShipsHuman);
+      /**
+       * Название класса убитого корабля
+       * @type {string}
+       */
+      this.classNameDeadShip = classNameDeadShip;
+
+      /**
+       * @type {HTMLElement}
+       */
       const cellElement = document.querySelector(cellSelector);
       if (cellElement) {
          const animDurationStr = getComputedStyle(cellElement).animationDuration;
@@ -70,10 +124,12 @@ class Game {
     */
    async shotUser() {
       const coord = await this.playComp.makeShot();
-      const answer = this.playComp.takeShot(coord);
+      const { shotResult: answer, sizeShip } = this.playComp.takeShot(coord);
       if (answer === 'Miss') {
          this.currentShot = this.shotComp;
       }
+      this.updateQuantityShots(this.quantityShotsHumanEl, ++this.quantityShotsHuman);
+      this.updateDeadShips(this.listShipsHumanEl, sizeShip);
       return answer
    }
    /**
@@ -82,12 +138,43 @@ class Game {
     */
    async shotComp() {
       const coord = await this.logicComp.makeShot(this.delay);
-      const answer = this.playUser.takeShot(coord);
+      const { shotResult: answer, sizeShip } = this.playUser.takeShot(coord);
       this.logicComp.getAnswer(answer);
       if (answer === 'Miss') {
          this.currentShot = this.shotUser;
       }
+      this.updateQuantityShots(this.quantityShotsPcEl, ++this.quantityShotsPC);
+      this.updateDeadShips(this.listShipsPcEl, sizeShip);
       return answer;
+   }
+   /**
+    * 
+    * @param {HTMLElement} element Контейнер кораблей по которым видно статистику
+    * @param {number} sizeShip Размер корабля
+    */
+   updateDeadShips(element, sizeShip) {
+      if (!element || !sizeShip || typeof sizeShip !== 'number') return;
+      /**
+       * @type {HTMLElement}
+       */
+      const shipEl = ([...element?.children[sizeShip - 1]?.children] || []).find(elem => !elem.classList.contains(this.classNameDeadShip));
+      shipEl.innerHTML = `
+         <svg width="100%" height="100%" viewBox="0 0 100 100" preserveAspectRatio="none" hidden>
+            <path d="M0,0 L100,100" vector-effect="non-scaling-stroke" stroke="red"
+               stroke-width="2" fill="none" />
+            <path d="M0,100 L100,0" vector-effect="non-scaling-stroke" stroke="red"
+               stroke-width="2" fill="none" />
+         </svg>      
+      `;
+      shipEl.classList.add(this.classNameDeadShip);
+   }
+   /**
+    * @param {HTMLElement} element элемент куда будет отображаться статистика выстрелов
+    * @param {number} quantity элемент куда будет отображаться статистика выстрелов
+    */
+   updateQuantityShots(element, quantity) {
+      if (!element) return;
+      element.innerHTML = quantity;
    }
    /**
     * Запускает игру

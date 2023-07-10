@@ -1,5 +1,4 @@
 .dock {
-   @include adaptiveValue("--size", $size-max-cell, $size-min-cell);
    // .dock__weight
    &__weight {
       display: grid;
@@ -14,21 +13,21 @@
          // margin-right: rem(60);
       }
       &:nth-child(1) > * {
-         width: var(--size);
+         width: var(--cell-size);
       }
       &:nth-child(2) > * {
-         width: calc(var(--size) * 2);
+         width: calc(var(--cell-size) * 2);
       }
       &:nth-child(3) > * {
-         width: calc(var(--size) * 3);
+         width: calc(var(--cell-size) * 3);
       }
       &:nth-child(4) > * {
-         width: calc(var(--size) * 4);
+         width: calc(var(--cell-size) * 4);
       }
    }
    &__port {
       position: relative;
-      height: var(--size);
+      height: var(--cell-size);
    }
    &__img {
       position: absolute;

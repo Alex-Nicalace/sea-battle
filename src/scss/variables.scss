@@ -17,4 +17,4 @@ $size-min-cell: 29;
 $color-shot-pseudo: rgba(0, 0, 0, 0.3);
 $color-shot: rgb(0, 0, 0);
 
-$font-size-cross: calc(var(--size) * 40 / $size-max-cell);
+$font-size-cross: calc(var(--cell-size) * 40 / $size-max-cell);
