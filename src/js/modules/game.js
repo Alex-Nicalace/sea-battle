@@ -219,6 +219,7 @@ class Game {
       do {
          answer = await this.currentShot.call(this);
       } while (answer !== 'Victory');
+      this.playComp.showShipsOnArea();
       const winner = this.currentShot === this.shotUser ? 'User' : 'PC';
       alert('Winner ' + winner);
    }

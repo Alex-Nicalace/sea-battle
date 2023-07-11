@@ -38,7 +38,14 @@
    // .list-ships__ship
    &__ship {
       height: var(--cell-size);
+      svg {
+         opacity: 0;
+         transition: all 1s ease 0s;
+      }
       &_dead {
+         svg {
+            opacity: 1;
+         }
       }
    }
 }

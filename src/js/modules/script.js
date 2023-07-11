@@ -21,6 +21,7 @@ playComp.setShips({
 // playComp.printPlayArea();
 // playComp.makeShootable();
 console.log('playComp', playComp);
+// playComp.showShipsOnArea();
 
 const playUser = new PlayArea();
 playUser.assignHtml({

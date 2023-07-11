@@ -737,8 +737,9 @@ class PlayArea extends Area {
             this.positioningElInArea(start.i, start.k, shipDied);
             this.containerCell.append(shipDied);
          }
+
          if (this.numberKillsShips === this.totalShips) {
-            return 'Victory';
+            return { shotResult: 'Victory', sizeShip: health };
          };
          return { shotResult: 'Sunk', sizeShip: health };
       }
@@ -747,7 +748,26 @@ class PlayArea extends Area {
       return { shotResult: 'Hit' };
 
    }
-
+   /**
+    * В конце игры показать оставшиеся уцелевшие корабли ПК
+    */
+   showShipsOnArea() {
+      if (this.shipsNodes.size === this.totalShips) return;
+      // ключи уцелевших кораблей из
+      const shipKeys = Object.keys(this.listShips)
+         .filter(key => this.listShips[key].track.some(({ isShooted }) => !isShooted));
+      // перебираю ключи уцелевших кораблей и создаю их на поле
+      shipKeys.forEach(key => {
+         const track = this.listShips[key].track;
+         const { coord: { i, k }, isVertical } = this.minCell(track);
+         const sizeShip = track.length;
+         const shipEl = this.createShipElement(sizeShip);
+         this.shipsNodes.set(shipEl, key);
+         if (isVertical) shipEl.classList.add(this.classNameVerticalShip);
+         this.positioningElInArea(i, k, shipEl);
+         this.containerCell.append(shipEl);
+      })
+   }
    /**
     * связать ключ списка (объекта) кораблей с ячейками корабля
     * т.о. по координатам ячейки можно выйти на весь корабль

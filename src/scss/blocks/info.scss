@@ -1,9 +1,19 @@
 .info {
+   &__title {
+      font-size: rem(30);
+      text-align: center;
+      &:not(:last-child) {
+         margin-bottom: rem(10);
+      }
+   }
    .sea-battle_prep & {
       display: none;
    }
    // .info__shots
-   &__shots {
+   &__shots-state {
+      &:not(:last-child) {
+         margin-bottom: rem(15);
+      }
    }
    // .info__list-ships
    &__list-ships {
