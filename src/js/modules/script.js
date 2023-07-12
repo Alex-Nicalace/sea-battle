@@ -57,7 +57,7 @@ new Game({
    logicComp: logicComp,
    btnRnd: '.sea-battle__btn-rnd',
    btnReadyToGame: '.sea-battle__btn-start',
-   cellSelector: '.cell',
+   cell: '.cell',
    statistics: {
       quantityShotsHuman: '.sea-battle__player_pc .shots-state__count',
       listShipsHuman: '.sea-battle__player_pc .list-ships',

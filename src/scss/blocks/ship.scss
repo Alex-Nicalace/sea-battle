@@ -2,6 +2,7 @@
    display: inline-flex;
    position: relative;
    @include adaptiveValue("transform-origin", math.div($size-max-cell, 2), math.div($size-min-cell, 2));
+   touch-action: none;
    &[data-drag] {
       transform: scale(0.85);
    }
@@ -12,6 +13,7 @@
       height: 100%;
       top: 0;
       left: 0;
+      touch-action: none;
       // transform: rotate(90deg);
    }
    // .ship__toolbar

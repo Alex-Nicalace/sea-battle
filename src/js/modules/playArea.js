@@ -304,14 +304,15 @@ class PlayArea extends Area {
       this.nameAttrDrag = nameAttrDrag;
 
       this.dock = document.querySelector(dockSelector);
+      this.offEventOnImg(this.dock);
 
       /**
-       * @type {HTMLElement | undefined}
+       * @type {HTMLCollection | undefined}
        */
       const ships = this.dock?.querySelectorAll(shipSelector);
       if (ships) {
          for (const ship of ships) {
-            this.shipsNodes.set(ship, null)
+            this.shipsNodes.set(ship, null);
          }
       }
 
@@ -351,6 +352,18 @@ class PlayArea extends Area {
          for (const btn of rotateBtns) {
             btn.addEventListener('click', rotateShip);
          }
+      }
+   }
+   /**
+    * Всем дочерним элементам img отключае контекстное меню и перетаскивание
+    * @param {HTMLElement} element 
+    */
+   offEventOnImg(element) {
+      if (!element) return;
+      const images = element.querySelectorAll('img');
+      for (const img of images) {
+         img.oncontextmenu = () => false;
+         img.ondragstart = () => false;
       }
    }
    /**

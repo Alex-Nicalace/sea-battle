@@ -38,5 +38,6 @@
       // mix-blend-mode: multiply;
       filter: grayscale(100%) blur(1px);
       opacity: 0.5;
+      touch-action: none;
    }
 }

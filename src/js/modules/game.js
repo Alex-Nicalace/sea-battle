@@ -98,9 +98,10 @@ class Game {
       const cellElement = document.querySelector(cell);
       if (cellElement) {
          const animDurationStr = getComputedStyle(cellElement).animationDuration;
+         // задержка м/у выстрелами исходя из продолжительности анимации Х на коэфициент подходящий
          this.delay = animDurationStr.replace(/(\d+)(s|ms)/gi, (m, p1, p2) => {
             return +p1 * (p2.toLowerCase() === 's' ? 1000 : 1);
-         }).split(',').reduce((sum, num) => sum += +num, 0);
+         }).split(',').reduce((sum, num) => sum += +num, 0) * 1.5;
       }
 
 

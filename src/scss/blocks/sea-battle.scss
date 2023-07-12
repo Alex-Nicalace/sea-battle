@@ -57,6 +57,13 @@
          margin-top: rem(30);
       }
    }
+   &__hint {
+      font-size: rem(20);
+      text-align: center;
+      &:not(:last-child) {
+         margin-bottom: rem(15);
+      }
+   }
    // .sea-battle_prep
    &_prep {
       .sea-battle__prompt {
