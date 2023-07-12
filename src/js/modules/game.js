@@ -16,29 +16,40 @@ class Game {
     * @param {import('./playArea.js').default} [param.playUser] Объект игрового поля пользователя
     * @param {import('./playArea.js').default} [param.playComp] Объект игрового поля ПК
     * @param {import('./logicComp.js').default} [param.logicComp] Объект логики ПК
-    * @param {string} [param.btnRnd] Селектор триггера автом. расстановки кораблей
-    * @param {string} [param.btnReadyToGame] Селектор триггера начала игры
-    * @param {string} [param.cell] Селектор ячейки 
     * @param {Object} [param.statistics] настроки отображения статистики выстрелов и убитых кораблей
-    * @param {string} [param.statistics.quantityShotsPC] Селектор элемента куда будет отображаться статистика выстрелов пользователя
-    * @param {string} [param.statistics.listShipsPC] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
-    * @param {string} [param.statistics.quantityShotsHuman] Селектор элемента куда будет отображаться статистика выстрелов пользователя
-    * @param {string} [param.statistics.listShipsHuman] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
+    * @param {string} [param.statistics.quantityShots] Селектор элемента куда будет отображаться статистика выстрелов
+    * @param {string} [param.statistics.listShips] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
     * @param {string} [param.statistics.classNameDeadShip] Название класса убитого корабля в отображении статистики
+    * @param {Object} [param.components] селекотры компонентов игрового процесса
+    * @param {string} [param.statistics.cell] Селектор ячейки 
+    * @param {string} [param.components.btnRnd] Селектор триггера автом. расстановки кораблей
+    * @param {string} [param.components.btnReadyToGame] Селектор триггера начала игры
+    * @param {string} [param.components.containerPlayers] селектор контенера игровых полей
+    * @param {string} [param.components.playerHuman] селектор игрового поля пользователя 
+    * @param {string} [param.components.playerPc] селектор игрового поля ПК  
+    * @param {string} [param.components.containerDock] селектор контенера дока кораблей и кнопок
+    * @param {string} [param.components.nameClassEmtyDock] название класса - пустой док
+    * @param {string} [param.components.nameClassShooting] название класса - чей ход-выстрел
     */
    constructor({
       playUser,
       playComp,
       logicComp,
-      btnRnd,
-      btnReadyToGame,
-      cell,
       statistics: {
-         quantityShotsPC,
-         listShipsPC,
-         quantityShotsHuman,
-         listShipsHuman,
+         quantityShots,
+         listShips,
          classNameDeadShip,
+      },
+      components: {
+         cell,
+         btnRnd,
+         btnReadyToGame,
+         containerPlayers,
+         playerHuman,
+         playerPc,
+         containerDock,
+         nameClassEmtyDock,
+         nameClassShooting,
       }
    }) {
       /**
@@ -67,30 +78,55 @@ class Game {
        */
       this.quantityShotsHuman = 0;
       /**
+       * элемент, содержащий игровые поля
+       * @type {HTMLElement}
+       */
+      this.containerPlayersEl = document.querySelector(containerPlayers);
+      /**
+       * элемент игрового поля пользователя
+       * @type {HTMLElement}
+       */
+      this.playerHumanEl = this.containerPlayersEl.querySelector(playerHuman);
+      /**
+       * элемент игрового поля ПК
+       * @type {HTMLElement}
+       */
+      this.playerPcEl = this.containerPlayersEl.querySelector(playerPc);
+      /**
        * элемент куда будет отображаться статистика выстрелов ПК
        * @type {HTMLElement} 
        */
-      this.quantityShotsPcEl = document.querySelector(quantityShotsPC);
+      this.quantityShotsPcEl = this.playerHumanEl.querySelector(quantityShots);
       /**
        * контейнер кораблей где будут перечеркиваться убитые корабли ПК
        * @type {HTMLElement}
        */
-      this.listShipsPcEl = document.querySelector(listShipsPC);
+      this.listShipsPcEl = this.playerHumanEl.querySelector(listShips);
       /**
        * элемент куда будет отображаться статистика выстрелов пользователя
        * @type {HTMLElement} 
        */
-      this.quantityShotsHumanEl = document.querySelector(quantityShotsHuman);
+      this.quantityShotsHumanEl = this.playerPcEl.querySelector(quantityShots);
       /**
        * контейнер кораблей где будут перечеркиваться убитые корабли пользователя
        * @type {HTMLElement}
        */
-      this.listShipsHumanEl = document.querySelector(listShipsHuman);
+      this.listShipsHumanEl = this.playerPcEl.querySelector(listShips);
       /**
        * Название класса убитого корабля в отображении статистики убитых кораблей
        * @type {string}
        */
       this.classNameDeadShip = classNameDeadShip;
+      /**
+       * елемент-контенер дока кораблей и кнопок
+       * @type {HTMLElement}
+       */
+      this.containerDockEl = this.containerPlayersEl.querySelector(containerDock);
+      /**
+       * название класса - чей ход-выстрел
+       * @type {string}
+       */
+      this.nameClassShooting = nameClassShooting
 
       /**
        * @type {HTMLElement}
@@ -112,8 +148,13 @@ class Game {
 
       document.querySelector(btnReadyToGame).addEventListener('click', () => {
          this.beginGame();
-
       });
+
+      const toggleVisibleBtnReady = (e) => {
+         if (!e.target.closest(playerHuman)) return
+         this.containerDockEl.classList.toggle(nameClassEmtyDock);
+      }
+      this.containerPlayersEl?.addEventListener('playarea', toggleVisibleBtnReady);
    }
    /**
     * Текущая функция выстрела.
@@ -127,9 +168,11 @@ class Game {
     * @returns {ShotResult}
     */
    async shotUser() {
+      this.playerPcEl.classList.add(this.nameClassShooting);
       const coord = await this.playComp.makeShot();
       const { shotResult: answer, sizeShip } = this.playComp.takeShot(coord);
       if (answer === 'Miss') {
+         this.playerPcEl.classList.remove(this.nameClassShooting);
          this.currentShot = this.shotComp;
       }
       this.updateQuantityShots(this.quantityShotsHumanEl, ++this.quantityShotsHuman);
@@ -141,10 +184,12 @@ class Game {
     * @returns {ShotResult}
     */
    async shotComp() {
+      this.playerHumanEl.classList.add(this.nameClassShooting);
       const coord = await this.logicComp.makeShot(this.delay);
       const { shotResult: answer, sizeShip } = this.playUser.takeShot(coord);
       this.logicComp.getAnswer(answer);
       if (answer === 'Miss') {
+         this.playerHumanEl.classList.remove(this.nameClassShooting);
          this.currentShot = this.shotUser;
       }
       this.updateQuantityShots(this.quantityShotsPcEl, ++this.quantityShotsPC);

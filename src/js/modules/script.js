@@ -55,22 +55,20 @@ new Game({
    playUser: playUser,
    playComp: playComp,
    logicComp: logicComp,
-   btnRnd: '.sea-battle__btn-rnd',
-   btnReadyToGame: '.sea-battle__btn-start',
-   cell: '.cell',
    statistics: {
-      quantityShotsHuman: '.sea-battle__player_pc .shots-state__count',
-      listShipsHuman: '.sea-battle__player_pc .list-ships',
-      quantityShotsPC: '.sea-battle__player_human .shots-state__count',
-      listShipsPC: '.sea-battle__player_human .list-ships',
+      quantityShots: '.shots-state__count',
+      listShips: '.list-ships',
       classNameDeadShip: 'list-ships__ship_dead',
+   },
+   components: {
+      btnRnd: '.sea-battle__btn-rnd',
+      btnReadyToGame: '.sea-battle__btn-start',
+      cell: '.cell',
+      containerPlayers: '.sea-battle__wrap',
+      playerHuman: '.sea-battle__player_human',
+      playerPc: '.sea-battle__player_pc',
+      containerDock: '.sea-battle__wrap-dock',
+      nameClassEmtyDock: 'sea-battle__wrap-dock_empty',
+      nameClassShooting: 'sea-battle__player_shooting',
    }
 });
-
-const wrap = document.querySelector('.sea-battle__wrap');
-wrap?.addEventListener('playarea', toggleVisibleBtnReady);
-
-function toggleVisibleBtnReady(e) {
-   if (!e.target.closest('.sea-battle__player_human')) return
-   wrap.querySelector('.sea-battle__wrap-dock').classList.toggle('sea-battle__wrap-dock_empty')
-}

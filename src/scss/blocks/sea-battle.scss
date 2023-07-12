@@ -28,6 +28,13 @@
       // .sea-battle__player_human
       &_human {
       }
+      // .sea-battle__player_shooting
+      &_shooting {
+         .sea-battle__hint {
+            opacity: 1;
+            visibility: visible;
+         }
+      }
    }
    // .sea-battle__greed
    &__grid {
@@ -57,15 +64,22 @@
          margin-top: rem(30);
       }
    }
+   // .sea-battle__hint
    &__hint {
+      opacity: 0;
+      visibility: hidden;
       font-size: rem(20);
       text-align: center;
       &:not(:last-child) {
          margin-bottom: rem(15);
       }
+      transition: all 0.3s ease 0s;
    }
    // .sea-battle_prep
    &_prep {
+      .sea-battle__hint {
+         display: none;
+      }
       .sea-battle__prompt {
          display: block;
       }
