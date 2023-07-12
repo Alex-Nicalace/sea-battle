@@ -55,12 +55,22 @@ new Game({
    playUser: playUser,
    playComp: playComp,
    logicComp: logicComp,
-   btnRndSelector: '#btn-auto-place',
-   btnReadyToGameSelector: '#btn-ready',
+   btnRnd: '.sea-battle__btn-rnd',
+   btnReadyToGame: '.sea-battle__btn-start',
    cellSelector: '.cell',
-   quantityShotsHuman: '.sea-battle__player_pc .shots-state__count',
-   listShipsHuman: '.sea-battle__player_pc .list-ships',
-   quantityShotsPC: '.sea-battle__player_human .shots-state__count',
-   listShipsPC: '.sea-battle__player_human .list-ships',
-   classNameDeadShip: 'list-ships__ship_dead',
+   statistics: {
+      quantityShotsHuman: '.sea-battle__player_pc .shots-state__count',
+      listShipsHuman: '.sea-battle__player_pc .list-ships',
+      quantityShotsPC: '.sea-battle__player_human .shots-state__count',
+      listShipsPC: '.sea-battle__player_human .list-ships',
+      classNameDeadShip: 'list-ships__ship_dead',
+   }
 });
+
+const wrap = document.querySelector('.sea-battle__wrap');
+wrap?.addEventListener('playarea', toggleVisibleBtnReady);
+
+function toggleVisibleBtnReady(e) {
+   if (!e.target.closest('.sea-battle__player_human')) return
+   wrap.querySelector('.sea-battle__wrap-dock').classList.toggle('sea-battle__wrap-dock_empty')
+}

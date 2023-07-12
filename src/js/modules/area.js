@@ -191,7 +191,6 @@ class Area {
          setBorder(coord.i, coord.k, sizeShip);
       });
       return aroundTrack;
-      // return this.addShipsOnArea(track, aroundTrack);
    }
 }
 

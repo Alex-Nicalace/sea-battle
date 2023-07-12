@@ -179,9 +179,13 @@ class PlayArea extends Area {
     */
    dragable;
    /**
-    * @type {Boolean} признак завершения расстановки кораблей
+    * @type {Boolean} признак подтвержденного завершения расстановки кораблей
     */
    isReadyPlacement = false;
+   /**
+    * @type {boolean} признак что все корабли расставлены
+    */
+   isAllShipsOnArea = false;
    /**
     * @type {number} количество уничтоженных кораблей собственных
     */
@@ -368,6 +372,7 @@ class PlayArea extends Area {
          });
          this.removeDekorCells(this.listShips[key].track);
          delete this.listShips[key];
+         this.setIsAllShipsOnArea();
          this.shipsNodes.set(shipEl, null);
          // this.printPlayArea();
       }
@@ -530,7 +535,7 @@ class PlayArea extends Area {
     * 
     * @param {Array<import('./area.js').Coord>} track координаты корабля
     * @param {Array<import('./area.js').Coord>} aroundTrack координаты буфера вокруг корабля
-    * @returns {String} ключ корабля в объекте shipsOnArea
+    * @returns {String} ключ корабля в объекте listShips
     */
    addListShips(track, aroundTrack) {
       if (!this.addListShips.counter) {
@@ -540,7 +545,23 @@ class PlayArea extends Area {
       this.listShips[key] = {};
       this.listShips[key].track = [...track];
       this.listShips[key].aroundTrack = [...aroundTrack];
+      this.setIsAllShipsOnArea();
       return key;
+   }
+   /**
+    * проверяет все ли корабли на поле и устанавливает соответсвующему свойству логическое значение
+    */
+   setIsAllShipsOnArea() {
+      const newValue = Object.keys(this.listShips).length === this.totalShips;
+      if (newValue === this.isAllShipsOnArea) return;
+      this.isAllShipsOnArea = newValue;
+      if (this.containerCell) {
+         const event = new CustomEvent('playarea', {
+            bubbles: true,
+            detail: { isAllShipsOnArea: this.isAllShipsOnArea }
+         });
+         this.containerCell.dispatchEvent(event);
+      }
    }
    /**
     * обновить буферную зону возле кораблей.

@@ -1,12 +1,14 @@
 .sea-battle {
-   background:
-      url("@img/islands/island.png") no-repeat,
-      url("@img/islands/island2.png") 0 300px /400px no-repeat,
-      url("@img/islands/island3.png") 0 600px no-repeat,
-      url("@img/islands/island5.png") no-repeat right / 400px,
-      url("@img/bg/water.jpg") 0 0 / cover;
    // .sea-battle__container
    &__container {
+   }
+   // .sea-battle__prompt
+   &__prompt {
+      display: none;
+      font-size: rem(40);
+      &:not(:last-child) {
+         margin-bottom: rem(20);
+      }
    }
    // .sea-battle__wrap
    &__wrap {
@@ -29,23 +31,37 @@
    }
    // .sea-battle__greed
    &__grid {
-      &:not(:last-child) {
-         margin-bottom: rem(30);
-      }
    }
    // .sea-battle__dock
    &__dock {
       flex-grow: 1;
    }
+   &__btn-start {
+      visibility: hidden;
+      opacity: 0;
+      transition: all 0.3s ease 0s;
+   }
    // .sea-battle__wrap-dock
    &__wrap-dock {
       display: none;
+      &_empty {
+         .sea-battle__btn-start {
+            visibility: visible;
+            opacity: 1;
+         }
+      }
    }
    // .sea-battle__info
    &__info {
+      &:not(:first-child) {
+         margin-top: rem(30);
+      }
    }
    // .sea-battle_prep
    &_prep {
+      .sea-battle__prompt {
+         display: block;
+      }
       .sea-battle__player_pc {
          display: none;
       }

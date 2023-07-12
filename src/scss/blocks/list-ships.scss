@@ -1,4 +1,5 @@
 .list-ships {
+   $k: 0.5;
    // .list-ships__row
    &__row {
       display: grid;
@@ -10,25 +11,25 @@
       &:nth-child(1) {
          .list-ships__ship {
             background: url("@img/ships/1_h.png") 0 0 / 100% 100% no-repeat;
-            width: var(--cell-size);
+            width: calc(var(--cell-size) * $k);
          }
       }
       &:nth-child(2) {
          .list-ships__ship {
             background: url("@img/ships/2_h.png") 0 0 / 100% 100% no-repeat;
-            width: calc(var(--cell-size) * 2);
+            width: calc(var(--cell-size) * 2 * $k);
          }
       }
       &:nth-child(3) {
          .list-ships__ship {
             background: url("@img/ships/3_h.png") 0 0 / 100% 100% no-repeat;
-            width: calc(var(--cell-size) * 3);
+            width: calc(var(--cell-size) * 3 * $k);
          }
       }
       &:nth-child(4) {
          .list-ships__ship {
             background: url("@img/ships/4_h.png") 0 0 / 100% 100% no-repeat;
-            width: calc(var(--cell-size) * 4);
+            width: calc(var(--cell-size) * 4 * $k);
          }
       }
       &:not(:last-child) {
@@ -37,7 +38,7 @@
    }
    // .list-ships__ship
    &__ship {
-      height: var(--cell-size);
+      height: calc(var(--cell-size) * $k);
       svg {
          opacity: 0;
          transition: all 1s ease 0s;

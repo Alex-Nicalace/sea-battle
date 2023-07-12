@@ -1,3 +1,6 @@
+h1 {
+   font-size: rem(40);
+}
 body {
    @include adaptiveValue("--cell-size", $size-max-cell, $size-min-cell);
    letter-spacing: em(1.5, 16);

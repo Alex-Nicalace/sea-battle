@@ -16,27 +16,30 @@ class Game {
     * @param {import('./playArea.js').default} [param.playUser] Объект игрового поля пользователя
     * @param {import('./playArea.js').default} [param.playComp] Объект игрового поля ПК
     * @param {import('./logicComp.js').default} [param.logicComp] Объект логики ПК
-    * @param {string} [param.btnRndSelector] 
-    * @param {string} [param.btnReadyToGameSelector] 
-    * @param {string} [param.cellSelector] Селектор ячейки 
-    * @param {string} [param.quantityShotsPC] Селектор элемента куда будет отображаться статистика выстрелов пользователя
-    * @param {string} [param.listShipsPC] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
-    * @param {string} [param.quantityShotsHuman] Селектор элемента куда будет отображаться статистика выстрелов пользователя
-    * @param {string} [param.listShipsHuman] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
-    * @param {string} [param.classNameDeadShip] Название класса убитого корабля
+    * @param {string} [param.btnRnd] Селектор триггера автом. расстановки кораблей
+    * @param {string} [param.btnReadyToGame] Селектор триггера начала игры
+    * @param {string} [param.cell] Селектор ячейки 
+    * @param {Object} [param.statistics] настроки отображения статистики выстрелов и убитых кораблей
+    * @param {string} [param.statistics.quantityShotsPC] Селектор элемента куда будет отображаться статистика выстрелов пользователя
+    * @param {string} [param.statistics.listShipsPC] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
+    * @param {string} [param.statistics.quantityShotsHuman] Селектор элемента куда будет отображаться статистика выстрелов пользователя
+    * @param {string} [param.statistics.listShipsHuman] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
+    * @param {string} [param.statistics.classNameDeadShip] Название класса убитого корабля в отображении статистики
     */
    constructor({
       playUser,
       playComp,
       logicComp,
-      btnRndSelector,
-      btnReadyToGameSelector,
-      cellSelector,
-      quantityShotsPC,
-      listShipsPC,
-      quantityShotsHuman,
-      listShipsHuman,
-      classNameDeadShip,
+      btnRnd,
+      btnReadyToGame,
+      cell,
+      statistics: {
+         quantityShotsPC,
+         listShipsPC,
+         quantityShotsHuman,
+         listShipsHuman,
+         classNameDeadShip,
+      }
    }) {
       /**
        * @type {import('./playArea.js').default}
@@ -84,7 +87,7 @@ class Game {
        */
       this.listShipsHumanEl = document.querySelector(listShipsHuman);
       /**
-       * Название класса убитого корабля
+       * Название класса убитого корабля в отображении статистики убитых кораблей
        * @type {string}
        */
       this.classNameDeadShip = classNameDeadShip;
@@ -92,7 +95,7 @@ class Game {
       /**
        * @type {HTMLElement}
        */
-      const cellElement = document.querySelector(cellSelector);
+      const cellElement = document.querySelector(cell);
       if (cellElement) {
          const animDurationStr = getComputedStyle(cellElement).animationDuration;
          this.delay = animDurationStr.replace(/(\d+)(s|ms)/gi, (m, p1, p2) => {
@@ -102,11 +105,11 @@ class Game {
 
 
 
-      document.querySelector(btnRndSelector).addEventListener('click', () => {
+      document.querySelector(btnRnd).addEventListener('click', () => {
          this.autoLocateShips();
       });
 
-      document.querySelector(btnReadyToGameSelector).addEventListener('click', () => {
+      document.querySelector(btnReadyToGame).addEventListener('click', () => {
          this.beginGame();
 
       });
@@ -234,8 +237,8 @@ class Game {
     * Начать игру
     */
    async beginGame() {
-      const { message } = this.playUser.finalisePlacementShips();
-      if (message) {
+      const { done, message } = this.playUser.finalisePlacementShips();
+      if (!done) {
          console.log(message);
          return;
       }
