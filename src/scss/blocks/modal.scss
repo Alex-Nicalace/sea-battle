@@ -31,10 +31,10 @@
    // .modal__icon-close
    &__icon-close {
       position: absolute;
-      top: rem(24);
-      right: rem(24);
+      top: rem(15);
+      right: rem(15);
       color: #aaa;
-      font-size: rem(28);
+      font-size: rem(20);
       font-weight: bold;
    }
    // .modal__header
@@ -51,6 +51,12 @@
    }
    // .modal__body
    &__body {
+   }
+   &__footer {
+      text-align: center;
+      &:not(:first-child) {
+         margin-top: rem(32);
+      }
    }
    // .modal_right-side
    &_right-side {

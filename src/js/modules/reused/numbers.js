@@ -8,8 +8,8 @@ function randomFloat(min, max) {
    return min + Math.random() * (max - min);
 }
 
-function numberWithSpaces(x) {
-   return x.toString().replace(/\D/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+function numberFormat(x, separator = ' ') {
+   return x.toString().replace(/[^-0-9]/g, "").replace(/\B(?=(\d{3})+(?!\d))/g, separator);
 }
 
-export { randomInteger, randomFloat, numberWithSpaces }
+export { randomInteger, randomFloat, numberFormat }

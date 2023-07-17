@@ -48,14 +48,22 @@ class Modal {
    }
    /**
     * Отображает модальное окно.
-    * @param {HTMLElement} modalEl - Элемент модального окна.
+    * @param {HTMLDialogElement} modalEl - Элемент модального окна.
     * @param {Object} [options] - Дополнительные параметры.
     * @param {string} [options.hash] - Хэш модального окна.
     * @param {Function} [options.afterModalClose] - Колбэк после закрытия модального окна.
+    * @param {Object} [options.content] Контент для элементов диалогового окна
+    * @param {string} [options.content.titleContetnt] Контент заголовка окна
+    * @param {string} [options.content.bodyContetnt] Контент для тела диалогового окна
     */
-   static showModal(modalEl, { hash, afterModalClose } = {}) {
+   static showModal(modalEl, { hash, afterModalClose, content } = {}) {
       // если нет метода showModal => некий другой ошибочный узел
       if (!modalEl.showModal) return;
+
+      if (content) {
+         setContentToElement('.modal__title', content.titleContetnt);
+         setContentToElement('.modal__body', content.bodyContetnt);
+      }
 
       visibilityScrollDocument.hide();
 
@@ -192,7 +200,6 @@ class Modal {
       }
       const _animate = animate({ draw });
       requestAnimationFrame(_animate);
-      // appearElement(modalEl, { displayValue: '' });
       modalEl.showModal();
 
       // установить фокус на первый фокусируемый элемент
@@ -208,6 +215,21 @@ class Modal {
             history.pushState('', '', window.location.href.split('#')[0])
          }
 
+      }
+
+      /**
+       * 
+       * @param {string} selector Селектор элемента диалогового окна
+       * @param {string | HTMLElement} contetnt Контент
+       */
+      function setContentToElement(selector, contetnt) {
+         if (contetnt === undefined) return;
+         /**
+          * @type {HTMLElement}
+          */
+         const element = modalEl.querySelector(selector);
+         if (!element) return;
+         element.innerHTML = contetnt;
       }
    }
 }

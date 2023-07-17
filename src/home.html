@@ -455,6 +455,24 @@
 			</div>
 		</div>
 	</dialog>
+	<dialog id="modal-message" class="modal">
+		<div class="modal__dialog">
+			<div class="modal__content">
+				<button class="modal__icon-close" data-close>
+					&#10006;
+				</button>
+				<div class="modal__header">
+					<div class="modal__title">Результат битвы</div>
+				</div>
+				<div class="modal__body result-battle">
+					Вы победили
+				</div>
+				<div class="modal__footer">
+					<button class="modal__close btn button" data-close>Ok</button>
+				</div>
+			</div>
+		</div>
+	</dialog>
 	@@include('html/_popup.htm',{})
 	@@include('html/_js.htm',{})
 </body>

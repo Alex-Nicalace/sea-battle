@@ -269,8 +269,25 @@ class Game {
          answer = await this.currentShot.call(this);
       } while (answer !== 'Victory');
       this.playComp.showShipsOnArea();
-      const winner = this.currentShot === this.shotUser ? 'User' : 'PC';
-      alert('Winner ' + winner);
+      const message = this.currentShot === this.shotUser ? 'Вы победитель!!!' : 'Вы проиграли ...';
+      // показать результат с задержкой по анимации выстрела
+      setTimeout(() => this.showDialog(message), this.delay);
+      ;
+   }
+   /**
+    * Показать диалоговое окно с укаазанным сообщением
+    * @param {string} message сообщение
+    */
+   showDialog(message) {
+      /**
+       * @type {HTMLDialogElement}
+       */
+      const modalWinnerEl = document.querySelector('#modal-message');
+      Modal.showModal(modalWinnerEl, {
+         content: {
+            bodyContetnt: message,
+         }
+      });
    }
    /**
     * Автоматическая расстановка кораблей пользователя
@@ -300,7 +317,7 @@ class Game {
     */
    askWhoGoesFirst() {
       /**
-       * @type {HTMLDivElement}
+       * @type {HTMLDialogElement}
        */
       const modalEl = document.querySelector('#modal-first-shot');
 

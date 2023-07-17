@@ -72,3 +72,9 @@ new Game({
       nameClassShooting: 'sea-battle__player_shooting',
    }
 });
+
+/**
+ * @type {HTMLDialogElement}
+ */
+// const modal = document.querySelector('#modal-message');
+// modal.showModal();
