@@ -154,7 +154,7 @@ class PlayArea extends Area {
     */
    nameAttrDrag;
    /**
-   * @type {Node} HTML-узел содержащий корабли
+   * @type {HTMLElement} HTML-узел содержащий корабли
    */
    dock;
    /**
@@ -203,14 +203,8 @@ class PlayArea extends Area {
     */
    createShips() {
       for (const ship of this.schemeShips) {
-         // console.log('iterator', iterator);
          this.createShip(+ship)
       }
-      /* for (let i = 4; i > 0; i--) {
-         for (let k = 1; k <= 5 - i; k++) {
-            this.createShip(i)
-         }
-      } */
    }
    /**
     * создание корабля заданной длины в автоматическом режиме
@@ -385,7 +379,7 @@ class PlayArea extends Area {
          });
          this.removeDekorCells(this.listShips[key].track);
          delete this.listShips[key];
-         this.setIsAllShipsOnArea();
+         this.checkIsAllShipsOnArea();
          this.shipsNodes.set(shipEl, null);
          // this.printPlayArea();
       }
@@ -460,18 +454,7 @@ class PlayArea extends Area {
       }
       const cbMouseUp = (dragElement) => {
          if (!canBuild) {
-            dragElement.removeAttribute('style');
-            dragElement.removeAttribute(this.nameAttrDrag);
-            const sizeShip = dragElement.dataset.ship - 1;
-            if (!this.dock.contains(dragElement)) {
-               for (const portNode of this.dock.children[sizeShip].children) {
-                  if (!portNode.querySelector(this.shipSelector)) {
-                     portNode.append(dragElement);
-                     break;
-                  }
-               }
-               dragElement.classList.remove(this.classNameVerticalShip);
-            }
+            this.returnShipToDock(dragElement);
             resetVariable();
             return;
          }
@@ -497,6 +480,30 @@ class PlayArea extends Area {
       function resetVariable() {
          track = [];
          isOverArea = canBuild = sizeShip = prevCellBegin = null;
+      }
+   }
+   /**
+    * Корабль - HTML-элемент возвращает в док
+    * если в объекте нет дока то корабль-элемент удаляется
+    * @param {HTMLElement} shipElement 
+    */
+   returnShipToDock(shipElement) {
+      if (!this.dock) {
+         this.shipsNodes.delete(shipElement);
+         shipElement.remove();
+         return;
+      }
+      shipElement.removeAttribute('style');
+      shipElement.removeAttribute(this.nameAttrDrag);
+      const sizeShip = shipElement.dataset.ship - 1;
+      if (!this.dock.contains(shipElement)) {
+         for (const portNode of this.dock.children[sizeShip].children) {
+            if (!portNode.querySelector(this.shipSelector)) {
+               portNode.append(shipElement);
+               break;
+            }
+         }
+         shipElement.classList.remove(this.classNameVerticalShip);
       }
    }
    /**
@@ -558,13 +565,13 @@ class PlayArea extends Area {
       this.listShips[key] = {};
       this.listShips[key].track = [...track];
       this.listShips[key].aroundTrack = [...aroundTrack];
-      this.setIsAllShipsOnArea();
+      this.checkIsAllShipsOnArea();
       return key;
    }
    /**
     * проверяет все ли корабли на поле и устанавливает соответсвующему свойству логическое значение
     */
-   setIsAllShipsOnArea() {
+   checkIsAllShipsOnArea() {
       const newValue = Object.keys(this.listShips).length === this.totalShips;
       if (newValue === this.isAllShipsOnArea) return;
       this.isAllShipsOnArea = newValue;
@@ -576,6 +583,7 @@ class PlayArea extends Area {
          this.containerCell.dispatchEvent(event);
       }
    }
+
    /**
     * обновить буферную зону возле кораблей.
     * когда корабль стоит возле корабля, то после перетаскивания близлежащего корабля удаляется и буферная зона
@@ -825,6 +833,33 @@ class PlayArea extends Area {
       shipEl.dataset.ship = size;
       shipEl.insertAdjacentHTML('afterbegin', `${'<div class="cell"></div>'.repeat(size)} <img class="ship__img" src="img/ships/${size}_h.png" alt="image of ship">`);
       return shipEl;
+   }
+   /**
+    * сброс к первоначальному состоянию
+    */
+   reset() {
+      // очистка сетки
+      for (let i = 0; i < this.area.length; i++) {
+         for (let k = 0; k < this.area[i].length; k++) {
+            this.area[i][k].cell = this.emptyCell;
+            delete this.area[i][k].dataShip;
+            delete this.area[i][k].isShooted;
+            this.area[i][k].cellHtml.removeAttribute(this.nameAttrShotTarget);
+            this.area[i][k].cellHtml.removeAttribute(this.nameAttrShotPseudo);
+            this.area[i][k].cellHtml.removeAttribute(this.nameAttrShot);
+            this.area[i][k].cellHtml.removeAttribute(this.nameAttrShotDied);
+
+         }
+      }
+      // очистка данных кораблей
+      this.listShips = {};
+      this.isReadyPlacement = false;
+      // возвращение кораблей в док
+      for (const shipElement of this.shipsNodes.keys()) {
+         this.shipsNodes.set(shipElement, null)
+         this.returnShipToDock(shipElement)
+      }
+      this.checkIsAllShipsOnArea();
    }
 }
 

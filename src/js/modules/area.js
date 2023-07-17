@@ -101,6 +101,7 @@ class Area {
     * создает игоровое поле, 2-мерный массив
     */
    createPlayArea() {
+      this.area = Array(10);
       for (let i = 0; i < this.area.length; i++) {
          this.area[i] = Array(this.area.length)
          for (let k = 0; k < this.area[i].length; k++) {

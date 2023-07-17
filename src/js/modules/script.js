@@ -58,11 +58,13 @@ new Game({
    statistics: {
       quantityShots: '.shots-state__count',
       listShips: '.list-ships',
+      shipOfList: '.list-ships__ship',
       classNameDeadShip: 'list-ships__ship_dead',
    },
    components: {
       btnRnd: '.sea-battle__btn-rnd',
       btnReadyToGame: '.sea-battle__btn-start',
+      btnResetGame: '#reset',
       cell: '.cell',
       containerPlayers: '.sea-battle__wrap',
       playerHuman: '.sea-battle__player_human',
@@ -72,9 +74,3 @@ new Game({
       nameClassShooting: 'sea-battle__player_shooting',
    }
 });
-
-/**
- * @type {HTMLDialogElement}
- */
-// const modal = document.querySelector('#modal-message');
-// modal.showModal();

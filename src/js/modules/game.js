@@ -19,11 +19,13 @@ class Game {
     * @param {Object} [param.statistics] настроки отображения статистики выстрелов и убитых кораблей
     * @param {string} [param.statistics.quantityShots] Селектор элемента куда будет отображаться статистика выстрелов
     * @param {string} [param.statistics.listShips] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
+    * @param {string} [param.statistics.shipOfList] Селектор корабля в контейнера кораблей где будут перечеркиваться убитые корабли
     * @param {string} [param.statistics.classNameDeadShip] Название класса убитого корабля в отображении статистики
     * @param {Object} [param.components] селекотры компонентов игрового процесса
     * @param {string} [param.statistics.cell] Селектор ячейки 
     * @param {string} [param.components.btnRnd] Селектор триггера автом. расстановки кораблей
     * @param {string} [param.components.btnReadyToGame] Селектор триггера начала игры
+    * @param {string} [param.components.btnResetGame] Селектор триггера сброса игры
     * @param {string} [param.components.containerPlayers] селектор контенера игровых полей
     * @param {string} [param.components.playerHuman] селектор игрового поля пользователя 
     * @param {string} [param.components.playerPc] селектор игрового поля ПК  
@@ -38,12 +40,14 @@ class Game {
       statistics: {
          quantityShots,
          listShips,
+         shipOfList,
          classNameDeadShip,
       },
       components: {
          cell,
          btnRnd,
          btnReadyToGame,
+         btnResetGame,
          containerPlayers,
          playerHuman,
          playerPc,
@@ -103,6 +107,11 @@ class Game {
        */
       this.listShipsPcEl = this.playerHumanEl.querySelector(listShips);
       /**
+       * Селектор корабля в контейнера кораблей где будут перечеркиваться убитые корабли
+       * @type {string}
+       */
+      this.shipOfList = shipOfList;
+      /**
        * элемент куда будет отображаться статистика выстрелов пользователя
        * @type {HTMLElement} 
        */
@@ -148,6 +157,9 @@ class Game {
 
       document.querySelector(btnReadyToGame).addEventListener('click', () => {
          this.beginGame();
+      });
+      document.querySelector(btnResetGame).addEventListener('click', () => {
+         this.resetGame();
       });
 
       const toggleVisibleBtnReady = (e) => {
@@ -218,8 +230,21 @@ class Game {
       shipEl.classList.add(this.classNameDeadShip);
    }
    /**
+    * Сброс статистики убитых кораблей
+    * @param {HTMLElement} element Контейнер кораблей по которым видно статистику
+    */
+   resetDeadShips(element) {
+      const ships = element.querySelectorAll(this.shipOfList);
+      for (const ship of ships) {
+         ship.classList.remove(this.classNameDeadShip);
+         for (const element of ship.children) {
+            element.remove();
+         }
+      }
+   }
+   /**
     * @param {HTMLElement} element элемент куда будет отображаться статистика выстрелов
-    * @param {number} quantity элемент куда будет отображаться статистика выстрелов
+    * @param {number} quantity количество выстрелов
     */
    updateQuantityShots(element, quantity) {
       if (!element) return;
@@ -351,6 +376,24 @@ class Game {
             },
          });
       });
+   }
+   /**
+    * Сброс игры к началу
+    */
+   resetGame() {
+      this.playUser.reset();
+
+      this.playComp.reset();
+      this.playComp.createShips();
+      this.playComp.finalisePlacementShips();
+
+      this.resetDeadShips(this.listShipsHumanEl);
+      this.resetDeadShips(this.listShipsPcEl);
+
+      this.quantityShotsHuman = 0;
+      this.quantityShotsPC = 0;
+      this.updateQuantityShots(this.quantityShotsHumanEl, 0)
+      this.updateQuantityShots(this.quantityShotsPcEl, 0)
    }
 }
 
