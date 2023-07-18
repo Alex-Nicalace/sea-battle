@@ -1,5 +1,6 @@
 import { randomInteger } from './reused/numbers.js';
 import Modal from './reused/modal.js';
+import LogicComp from './logicComp.js';
 /**
  * @typedef {'random' | 'user' | 'pc'} FirstShot кто первый сделает выстрел
  */
@@ -15,15 +16,16 @@ class Game {
     * @param {Object} [param={}]
     * @param {import('./playArea.js').default} [param.playUser] Объект игрового поля пользователя
     * @param {import('./playArea.js').default} [param.playComp] Объект игрового поля ПК
-    * @param {import('./logicComp.js').default} [param.logicComp] Объект логики ПК
     * @param {Object} [param.statistics] настроки отображения статистики выстрелов и убитых кораблей
     * @param {string} [param.statistics.quantityShots] Селектор элемента куда будет отображаться статистика выстрелов
     * @param {string} [param.statistics.listShips] Селектор контейнера кораблей где будут перечеркиваться убитые корабли
     * @param {string} [param.statistics.shipOfList] Селектор корабля в контейнера кораблей где будут перечеркиваться убитые корабли
     * @param {string} [param.statistics.classNameDeadShip] Название класса убитого корабля в отображении статистики
     * @param {Object} [param.components] селекотры компонентов игрового процесса
-    * @param {string} [param.statistics.cell] Селектор ячейки 
+    * @param {string} [param.components.containerGame] Селектор контейнера игры 
+    * @param {string} [param.components.cell] Селектор ячейки 
     * @param {string} [param.components.btnRnd] Селектор триггера автом. расстановки кораблей
+    * @param {string} [param.components.btnReset] Селектор триггера сбросса расстановки кораблей
     * @param {string} [param.components.btnReadyToGame] Селектор триггера начала игры
     * @param {string} [param.components.btnResetGame] Селектор триггера сброса игры
     * @param {string} [param.components.containerPlayers] селектор контенера игровых полей
@@ -32,11 +34,11 @@ class Game {
     * @param {string} [param.components.containerDock] селектор контенера дока кораблей и кнопок
     * @param {string} [param.components.nameClassEmtyDock] название класса - пустой док
     * @param {string} [param.components.nameClassShooting] название класса - чей ход-выстрел
+    * @param {string} [param.components.nameClassBeginGame] название класса, означающего начало игры
     */
    constructor({
       playUser,
       playComp,
-      logicComp,
       statistics: {
          quantityShots,
          listShips,
@@ -44,9 +46,11 @@ class Game {
          classNameDeadShip,
       },
       components: {
+         containerGame,
          cell,
          btnRnd,
          btnReadyToGame,
+         btnReset,
          btnResetGame,
          containerPlayers,
          playerHuman,
@@ -54,6 +58,7 @@ class Game {
          containerDock,
          nameClassEmtyDock,
          nameClassShooting,
+         nameClassBeginGame,
       }
    }) {
       /**
@@ -63,11 +68,20 @@ class Game {
       /**
        * @type {import('./logicComp.js').default}
        */
-      this.logicComp = logicComp;
+      this.logicComp = new LogicComp();
       /**
        * @type {import('./playArea.js').default}
        */
       this.playComp = playComp;
+      /**
+       * Элемент главный контейнер игры
+       * @type {HTMLElement}
+       */
+      this.containerGameEl = document.querySelector(containerGame);
+      /**
+       * @type {string} название класса, означающего начало игры
+       */
+      this.nameClassBeginGame = nameClassBeginGame;
       /**
        * количество mc
        * @type {number}
@@ -135,7 +149,9 @@ class Game {
        * название класса - чей ход-выстрел
        * @type {string}
        */
-      this.nameClassShooting = nameClassShooting
+      this.nameClassShooting = nameClassShooting;
+
+      this.containerGameEl.classList.add(this.nameClassBeginGame);
 
       /**
        * @type {HTMLElement}
@@ -150,23 +166,46 @@ class Game {
       }
 
 
-
       document.querySelector(btnRnd).addEventListener('click', () => {
          this.autoLocateShips();
       });
-
-      document.querySelector(btnReadyToGame).addEventListener('click', () => {
+      /**
+       * Кнопка начать игру
+       * @type {HTMLButtonElement}
+       */
+      this.buttonReadyToGame = document.querySelector(btnReadyToGame);
+      this.buttonReadyToGame?.addEventListener('click', () => {
          this.beginGame();
       });
+      /**
+       * Кнопка сбросить расположение кораблей пользователя
+       * @type {HTMLButtonElement}
+       */
+      this.buttonReset = document.querySelector(btnReset);
+      this.buttonReset?.addEventListener('click', () => {
+         this.resetUser();
+      });
+
       document.querySelector(btnResetGame).addEventListener('click', () => {
          this.resetGame();
       });
 
-      const toggleVisibleBtnReady = (e) => {
+      /**
+       * Отрабатывает события изменения кораблей на поле
+       * @param {CustomEvent} e 
+       */
+      const onChangearea = (e) => {
          if (!e.target.closest(playerHuman)) return
-         this.containerDockEl.classList.toggle(nameClassEmtyDock);
+         const { isAllShipsOnArea, quantityShipsOnArea } = e.detail;
+         // заблокировать кнопку если док не пуст
+         this.buttonReadyToGame.disabled = !isAllShipsOnArea;
+         // заблокировать кнопку если док заполнен
+         this.buttonReset.disabled = !!!quantityShipsOnArea;
+         // навесить класс пустому доку
+         const action = isAllShipsOnArea ? 'add' : 'remove';
+         this.containerDockEl.classList[action](nameClassEmtyDock);
       }
-      this.containerPlayersEl?.addEventListener('playarea', toggleVisibleBtnReady);
+      this.containerPlayersEl?.addEventListener('changearea', onChangearea);
    }
    /**
     * Текущая функция выстрела.
@@ -268,8 +307,7 @@ class Game {
          return
       }
 
-      const playerHuman = document.querySelector('.sea-battle_prep');
-      playerHuman.classList.remove('sea-battle_prep');
+      this.containerGameEl.classList.remove(this.nameClassBeginGame);
 
       // const players = document.querySelector('.sea-battle__players');
       // players.classList.add('sea-battle__players_gaming');
@@ -378,10 +416,18 @@ class Game {
       });
    }
    /**
+    * сброс расстановки кораблей пользователя
+    */
+   resetUser() {
+      this.playUser.reset();
+   }
+   /**
     * Сброс игры к началу
     */
    resetGame() {
       this.playUser.reset();
+
+      this.logicComp = new LogicComp();
 
       this.playComp.reset();
       this.playComp.createShips();
@@ -392,8 +438,17 @@ class Game {
 
       this.quantityShotsHuman = 0;
       this.quantityShotsPC = 0;
-      this.updateQuantityShots(this.quantityShotsHumanEl, 0)
-      this.updateQuantityShots(this.quantityShotsPcEl, 0)
+      this.updateQuantityShots(this.quantityShotsHumanEl, 0);
+      this.updateQuantityShots(this.quantityShotsPcEl, 0);
+
+      this.containerGameEl.classList.add(this.nameClassBeginGame);
+
+      this.isGaming = false;
+
+      console.log('playComp', this.playComp);
+      console.log('playUser', this.playUser);
+      console.log('game', this);
+      console.log('logicComp', this.logicComp);
    }
 }
 

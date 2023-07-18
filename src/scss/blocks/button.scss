@@ -10,7 +10,7 @@
    transition: all 0.3s ease 0s;
 
    @media (any-hover: hover) {
-      &:hover {
+      &:not(:disabled):hover {
          background-color: $color-button-bg-hover;
       }
    }
@@ -23,5 +23,10 @@
       padding: rem(5) rem(10);
       border-radius: rem(3);
       font-size: rem(14);
+   }
+
+   &:disabled {
+      opacity: 0.8;
+      cursor: not-allowed;
    }
 }

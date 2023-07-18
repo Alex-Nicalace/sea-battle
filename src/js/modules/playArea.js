@@ -183,10 +183,6 @@ class PlayArea extends Area {
     */
    isReadyPlacement = false;
    /**
-    * @type {boolean} признак что все корабли расставлены
-    */
-   isAllShipsOnArea = false;
-   /**
     * @type {number} количество уничтоженных кораблей собственных
     */
    numberKillsShips = 0;
@@ -379,7 +375,7 @@ class PlayArea extends Area {
          });
          this.removeDekorCells(this.listShips[key].track);
          delete this.listShips[key];
-         this.checkIsAllShipsOnArea();
+         this.genEventChangearea();
          this.shipsNodes.set(shipEl, null);
          // this.printPlayArea();
       }
@@ -503,7 +499,19 @@ class PlayArea extends Area {
                break;
             }
          }
-         shipElement.classList.remove(this.classNameVerticalShip);
+         this.recoveryShip(shipElement);
+      }
+   }
+   /**
+    * приведение корабля к первоначальному виду, удаление всех классов и аттрибутов
+    * @param {HTMLElement} shipElement 
+    */
+   recoveryShip(shipElement) {
+      shipElement.classList.remove(this.classNameVerticalShip);
+      shipElement.classList.remove(this.classNameDestroyed);
+      const cellEls = shipElement.querySelectorAll(`[${this.nameAttrShotTarget}]`);
+      for (const cellEl of cellEls) {
+         cellEl.removeAttribute(this.nameAttrShotTarget);
       }
    }
    /**
@@ -565,20 +573,22 @@ class PlayArea extends Area {
       this.listShips[key] = {};
       this.listShips[key].track = [...track];
       this.listShips[key].aroundTrack = [...aroundTrack];
-      this.checkIsAllShipsOnArea();
+      this.genEventChangearea();
       return key;
    }
    /**
-    * проверяет все ли корабли на поле и устанавливает соответсвующему свойству логическое значение
+    * генерирует событие изменения расстановки кораблей на поле
     */
-   checkIsAllShipsOnArea() {
-      const newValue = Object.keys(this.listShips).length === this.totalShips;
-      if (newValue === this.isAllShipsOnArea) return;
-      this.isAllShipsOnArea = newValue;
+   genEventChangearea() {
+      const quantityShipsOnArea = Object.keys(this.listShips).length;
+      const isAllShipsOnArea = quantityShipsOnArea === this.totalShips;
       if (this.containerCell) {
-         const event = new CustomEvent('playarea', {
+         const event = new CustomEvent('changearea', {
             bubbles: true,
-            detail: { isAllShipsOnArea: this.isAllShipsOnArea }
+            detail: {
+               isAllShipsOnArea,
+               quantityShipsOnArea,
+            }
          });
          this.containerCell.dispatchEvent(event);
       }
@@ -851,6 +861,7 @@ class PlayArea extends Area {
 
          }
       }
+      this.numberKillsShips = 0;
       // очистка данных кораблей
       this.listShips = {};
       this.isReadyPlacement = false;
@@ -859,7 +870,7 @@ class PlayArea extends Area {
          this.shipsNodes.set(shipElement, null)
          this.returnShipToDock(shipElement)
       }
-      this.checkIsAllShipsOnArea();
+      this.genEventChangearea();
    }
 }
 
