@@ -40,7 +40,6 @@ export { appearElement, fadeElement }
 import animate from './animateJS/animate.js';
 
 function fadeElement(el, options = {}) {
-   const _animate = animate({ draw, ...options });
    const { displayValue = 'none' } = options;
    // el.style.display = 'block';
    el.style.opacity = 1;
@@ -51,10 +50,9 @@ function fadeElement(el, options = {}) {
          el.style.opacity = '';
       }
    }
-   requestAnimationFrame(_animate);
+   animate({ draw, ...options });
 }
 function appearElement(el, options = {}) {
-   const _animate = animate({ draw, ...options });
    const { displayValue = 'block' } = options;
    el.style.opacity = 0;
    el.style.display = displayValue;
@@ -64,7 +62,7 @@ function appearElement(el, options = {}) {
          el.style.opacity = '';
       }
    }
-   requestAnimationFrame(_animate);
+   animate({ draw, ...options });
 }
 
 export { appearElement, fadeElement } 

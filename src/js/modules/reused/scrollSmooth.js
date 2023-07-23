@@ -6,11 +6,10 @@ function scrollSmooth(selector, option = {}) {
       toScrollTop = beginScrollTop + toBlockTop,
       distance = toBlockTop < 0 ? beginScrollTop - toScrollTop : beginScrollTop + toScrollTop;
 
-   const anim = animate({
+   animate({
       ...option,
       draw
    });
-   requestAnimationFrame(anim);
 
    function draw(progress) {
       const currentProgress = progress * distance;

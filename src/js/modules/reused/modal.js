@@ -73,15 +73,6 @@ class Modal {
       const trigersHideModal = modalEl.querySelectorAll('[data-close]');
       const closeModal = () => {
          // fin - запустить после анимации
-         const fin = () => {
-            // document.body.style.overflow = '';
-            // document.documentElement.style.marginRight = '';
-            visibilityScrollDocument.visible();
-            modalEl.close();
-            if (typeof afterModalClose === 'function') {
-               afterModalClose();
-            }
-         }
          // <анимация закрытия>
          let draw;
          switch (animateEffect) {
@@ -110,8 +101,16 @@ class Modal {
                }
                break;
          }
-         const _animate = animate({ draw, afterDraw: fin });
-         requestAnimationFrame(_animate);
+         animate({ draw })
+            .then(() => {
+               // document.body.style.overflow = '';
+               // document.documentElement.style.marginRight = '';
+               visibilityScrollDocument.visible();
+               modalEl.close();
+               if (typeof afterModalClose === 'function') {
+                  afterModalClose();
+               }
+            });
          // </анимация закрытия>
          // убрать слушатели со всех триггеров закрытия
          trigersHideModal.forEach(trigger => trigger.removeEventListener('click', closeModal));
@@ -198,8 +197,7 @@ class Modal {
             }
             break;
       }
-      const _animate = animate({ draw });
-      requestAnimationFrame(_animate);
+      animate({ draw });
       modalEl.showModal();
 
       // установить фокус на первый фокусируемый элемент
