@@ -291,10 +291,11 @@ class Game {
             (progress * distance < (distance / 2)
                ? progress
                : 1 - progress);
+         const rotate = progress * 720 % 360;
 
          cannonballEl.style.top = parseFloat(topFrom) + currentProgressTop + '%';
          cannonballEl.style.left = parseFloat(leftFrom) + currentProgressLeft + '%';
-         cannonballEl.style.transform = `scale(${scale}) ${transformStyle}`;
+         cannonballEl.style.transform = `scale(${scale}) rotate(${rotate}deg)`;
          console.log('scale', scale);
       }
       await animate({ draw, duration: 1000 });
