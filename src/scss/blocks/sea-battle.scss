@@ -12,6 +12,7 @@
    }
    // .sea-battle__wrap
    &__wrap {
+      position: relative;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;

@@ -1,6 +1,7 @@
 import Dragable from './reused/dragable.js';
 import Area from './area.js';
 import { PlayAreaError } from './error.js';
+import { randomInteger } from './reused/numbers.js';
 
 /**
  * @typedef {Array<import('./area.js').Coord>} AreaCoord
@@ -657,16 +658,29 @@ class PlayArea extends Area {
       }
    }
    /**
+    * получение абсолютных координат доч. элемента относительно родительского элемента 
+    * @param {HTMLElement} parentEl родительский элемент
+    * @param {HTMLElement} childEl дочерний элемент
+    * @returns {{top: string, left: string}}
+    */
+   static getAbsoluteCoordinates(parentEl, childEl) {
+      const { top: topParent, left: leftParent, height: heightParent, width: widthParent } = parentEl.getBoundingClientRect();
+      const { top: topChild, left: leftChild } = childEl.getBoundingClientRect();
+      return {
+         top: `${(topChild - topParent) / heightParent * 100}%`,
+         left: `${(leftChild - leftParent) / widthParent * 100}%`,
+      }
+   }
+   /**
     * позиционирование корабля по заданным координатам
     * @param {Number} i строка
     * @param {Number} k столбец
     * @param {Node} element HTML-узел
     */
    positioningElInArea(i, k, element) {
-      const { top: topDropEl, left: leftDropEl, height: heightDropEl, width: widthDropEl } = this.containerCell.getBoundingClientRect();
-      const { top: topDragEl, left: leftDragEl } = this.area[i][k].cellHtml.getBoundingClientRect();
-      element.style.top = `${(topDragEl - topDropEl) / heightDropEl * 100}%`;
-      element.style.left = `${(leftDragEl - leftDropEl) / widthDropEl * 100}%`;
+      const { left, top } = PlayArea.getAbsoluteCoordinates(this.containerCell, this.area[i][k].cellHtml);
+      element.style.top = top;
+      element.style.left = left;
       element.style.position = 'absolute';
       this.containerCell.appendChild(element);
    }
@@ -693,7 +707,7 @@ class PlayArea extends Area {
    /**
     * переводит игровое поле в ожижание клика-выстрела по полю
     * возвращает координаты выстрела
-    * @returns 
+    * @returns {Promise<import('./area.js').Coord>}
     */
    makeShot() {
       return new Promise((res) => {
@@ -871,6 +885,18 @@ class PlayArea extends Area {
          this.returnShipToDock(shipElement)
       }
       this.genEventChangearea();
+   }
+   /**
+    * Получить случайным образом неповрежденную координату любого корабля
+    * @returns {import('./area.js').Coord} координата ячейки корабля
+    */
+   getCoordCellOfShipRnd() {
+      const cellArr = [];
+      Object.keys(this.listShips).forEach(key => {
+         cellArr.push(...this.listShips[key].track.filter(({ isShooted }) => !isShooted));
+      });
+      const numRnd = randomInteger(0, cellArr.length - 1);
+      return cellArr[numRnd];
    }
 }
 

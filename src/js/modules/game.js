@@ -1,6 +1,8 @@
 import { randomInteger } from './reused/numbers.js';
 import Modal from './reused/modal.js';
 import LogicComp from './logicComp.js';
+import animate from './reused/animateJS/animate.js';
+import PlayArea from './playArea.js';
 /**
  * @typedef {'random' | 'user' | 'pc'} FirstShot кто первый сделает выстрел
  */
@@ -221,6 +223,9 @@ class Game {
    async shotUser() {
       this.playerPcEl.classList.add(this.nameClassShooting);
       const coord = await this.playComp.makeShot();
+      // анимация полета снаряда
+      await this.makeAnimateShot(this.playUser, this.playComp, this.playUser.getCoordCellOfShipRnd(), coord);
+      // получить результат выстрела
       const { shotResult: answer, sizeShip } = this.playComp.takeShot(coord);
       if (answer === 'Miss') {
          this.playerPcEl.classList.remove(this.nameClassShooting);
@@ -229,6 +234,44 @@ class Game {
       this.updateQuantityShots(this.quantityShotsHumanEl, ++this.quantityShotsHuman);
       this.updateDeadShips(this.listShipsHumanEl, sizeShip);
       return answer
+   }
+   /**
+    * Анимация полета снаряда с поля противника
+    * @param {import('./playArea.js').default} shooter объект стреляющий
+    * @param {import('./playArea.js').default} target объект принимающий выстрел
+    * @param {import('./area.js').Coord} shotFrom координата ячейки с которой происходит выстрел
+    * @param {import('./area.js').Coord} shotTo координата ячейки куда производится выстрел
+    */
+   async makeAnimateShot(shooter, target, shotFrom, shotTo) {
+      // координвты выстрела
+      const { i, k } = shotTo;
+      // координаты откуда выстрел
+      const { i: ii, k: kk } = shotFrom;
+      // создать ядро выстрела
+      const cannonballEl = document.createElement('div');
+      cannonballEl.classList.add('cannonball');
+      // Получение координат для полета снаряда
+      // координаты откуда выстрел
+      const { left: leftFrom, top: topFrom } = PlayArea.getAbsoluteCoordinates(target.containerCell, shooter.area[ii][kk].cellHtml);
+      // координаты куда выстрел
+      const { left: leftTo, top: topTo } = PlayArea.getAbsoluteCoordinates(target.containerCell, target.area[i][k].cellHtml);
+      // положить снаряд в контейнер
+      target.containerCell.append(cannonballEl);
+      // надо делать анимацию
+      cannonballEl.style.top = topFrom;
+      cannonballEl.style.left = leftFrom;
+      // дистанция полета
+      const distanceTop = parseFloat(topTo) - parseFloat(topFrom);
+      const distanceLeft = parseFloat(leftTo) - parseFloat(leftFrom);
+      const draw = (progress) => {
+         const currentProgressTop = progress * distanceTop;
+         const currentProgressLeft = progress * distanceLeft;
+         cannonballEl.style.top = parseFloat(topFrom) + currentProgressTop + '%';
+         cannonballEl.style.left = parseFloat(leftFrom) + currentProgressLeft + '%';
+      }
+      await animate({ draw, duration: 1000 });
+      // удалить прилитевший снаряд
+      cannonballEl.remove();
    }
    /**
     * Выстрел ПК

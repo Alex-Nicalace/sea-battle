@@ -28,7 +28,7 @@ class LogicComp extends Area {
    /**
     * сгенерить координату выстрела компьютером
     * @param {number} delay Количество ms
-    * @returns {import('./area.js').Coord}
+    * @returns {Promise<import('./area.js').Coord>}
     */
    makeShot(delay = 0) {
       return new Promise(res => {
