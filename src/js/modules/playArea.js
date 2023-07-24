@@ -661,14 +661,17 @@ class PlayArea extends Area {
     * получение абсолютных координат доч. элемента относительно родительского элемента 
     * @param {HTMLElement} parentEl родительский элемент
     * @param {HTMLElement} childEl дочерний элемент
+    * @param {Object} shift Объект, содержащий смещение
+    * @param {number} shift.x смещение по оси Х
+    * @param {number} shift.y смещение по оси Y
     * @returns {{top: string, left: string}}
     */
-   static getAbsoluteCoordinates(parentEl, childEl) {
+   static getAbsoluteCoordinates(parentEl, childEl, { x: shiftX = 0, y: shiftY = 0 } = {}) {
       const { top: topParent, left: leftParent, height: heightParent, width: widthParent } = parentEl.getBoundingClientRect();
       const { top: topChild, left: leftChild } = childEl.getBoundingClientRect();
       return {
-         top: `${(topChild - topParent) / heightParent * 100}%`,
-         left: `${(leftChild - leftParent) / widthParent * 100}%`,
+         top: `${(topChild + shiftX - topParent) / heightParent * 100}%`,
+         left: `${(leftChild + shiftY - leftParent) / widthParent * 100}%`,
       }
    }
    /**
@@ -888,6 +891,7 @@ class PlayArea extends Area {
    }
    /**
     * Получить случайным образом неповрежденную координату любого корабля
+    * (для анимация выстрела из неподюитой части корабля)
     * @returns {import('./area.js').Coord} координата ячейки корабля
     */
    getCoordCellOfShipRnd() {
@@ -897,6 +901,20 @@ class PlayArea extends Area {
       });
       const numRnd = randomInteger(0, cellArr.length - 1);
       return cellArr[numRnd];
+   }
+   /**
+    * Получить случайным образом координату ячейки игрового поля, по которой еще не было выстрела
+    * @returns {import('./area.js').Coord} координата ячейки корабля
+    */
+   getCoordCellOfAreaRnd() {
+      const coords = [];
+      for (const [cellEl, coord] of this.cellsHtml) {
+         if (!cellEl.hasAttribute(this.nameAttrShot) && !cellEl.hasAttribute(this.nameAttrShotPseudo)) {
+            coords.push(coord);
+         }
+      }
+      const numRnd = randomInteger(0, coords.length - 1);
+      return coords[numRnd];
    }
 }
 

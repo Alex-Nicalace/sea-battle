@@ -236,6 +236,25 @@ class Game {
       return answer
    }
    /**
+    * Выстрел ПК
+    * @returns {ShotResult}
+    */
+   async shotComp() {
+      this.playerHumanEl.classList.add(this.nameClassShooting);
+      const coord = await this.logicComp.makeShot(this.delay);
+      // анимация полета снаряда
+      await this.makeAnimateShot(this.playComp, this.playUser, this.playUser.getCoordCellOfAreaRnd(), coord);
+      const { shotResult: answer, sizeShip } = this.playUser.takeShot(coord);
+      this.logicComp.getAnswer(answer);
+      if (answer === 'Miss') {
+         this.playerHumanEl.classList.remove(this.nameClassShooting);
+         this.currentShot = this.shotUser;
+      }
+      this.updateQuantityShots(this.quantityShotsPcEl, ++this.quantityShotsPC);
+      this.updateDeadShips(this.listShipsPcEl, sizeShip);
+      return answer;
+   }
+   /**
     * Анимация полета снаряда с поля противника
     * @param {import('./playArea.js').default} shooter объект стреляющий
     * @param {import('./playArea.js').default} target объект принимающий выстрел
@@ -243,7 +262,7 @@ class Game {
     * @param {import('./area.js').Coord} shotTo координата ячейки куда производится выстрел
     */
    async makeAnimateShot(shooter, target, shotFrom, shotTo) {
-      // координвты выстрела
+      // координаты выстрела
       const { i, k } = shotTo;
       // координаты откуда выстрел
       const { i: ii, k: kk } = shotFrom;
@@ -263,32 +282,24 @@ class Game {
       // дистанция полета
       const distanceTop = parseFloat(topTo) - parseFloat(topFrom);
       const distanceLeft = parseFloat(leftTo) - parseFloat(leftFrom);
+      const distance = Math.sqrt((parseFloat(topFrom) - parseFloat(topTo)) ** 2 + (parseFloat(leftFrom) - parseFloat(leftTo)) ** 2);
+      const transformStyle = getComputedStyle(cannonballEl).transform;
       const draw = (progress) => {
          const currentProgressTop = progress * distanceTop;
          const currentProgressLeft = progress * distanceLeft;
+         const scale = 1 + 4 *
+            (progress * distance < (distance / 2)
+               ? progress
+               : 1 - progress);
+
          cannonballEl.style.top = parseFloat(topFrom) + currentProgressTop + '%';
          cannonballEl.style.left = parseFloat(leftFrom) + currentProgressLeft + '%';
+         cannonballEl.style.transform = `scale(${scale}) ${transformStyle}`;
+         console.log('scale', scale);
       }
       await animate({ draw, duration: 1000 });
       // удалить прилитевший снаряд
       cannonballEl.remove();
-   }
-   /**
-    * Выстрел ПК
-    * @returns {ShotResult}
-    */
-   async shotComp() {
-      this.playerHumanEl.classList.add(this.nameClassShooting);
-      const coord = await this.logicComp.makeShot(this.delay);
-      const { shotResult: answer, sizeShip } = this.playUser.takeShot(coord);
-      this.logicComp.getAnswer(answer);
-      if (answer === 'Miss') {
-         this.playerHumanEl.classList.remove(this.nameClassShooting);
-         this.currentShot = this.shotUser;
-      }
-      this.updateQuantityShots(this.quantityShotsPcEl, ++this.quantityShotsPC);
-      this.updateDeadShips(this.listShipsPcEl, sizeShip);
-      return answer;
    }
    /**
     * 

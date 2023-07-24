@@ -1,7 +1,16 @@
 .cannonball {
    position: absolute;
-   width: rem(20);
-   height: rem(20);
-   border-radius: 50%;
-   background-color: #000;
+   width: var(--cell-size);
+   height: var(--cell-size);
+   background: url("@img/cannonball.png") 0 0 / cover no-repeat;
+   animation: rotation 600ms infinite alternate;
+   z-index: 1;
+   @keyframes rotation {
+      0% {
+         transform: rotate(0);
+      }
+      100% {
+         transform: rotate(360deg);
+      }
+   }
 }
