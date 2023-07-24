@@ -243,7 +243,7 @@ class Game {
       this.playerHumanEl.classList.add(this.nameClassShooting);
       const coord = await this.logicComp.makeShot(this.delay);
       // анимация полета снаряда
-      await this.makeAnimateShot(this.playComp, this.playUser, this.playUser.getCoordCellOfAreaRnd(), coord);
+      await this.makeAnimateShot(this.playComp, this.playUser, this.playComp.getCoordCellOfAreaRnd(), coord);
       const { shotResult: answer, sizeShip } = this.playUser.takeShot(coord);
       this.logicComp.getAnswer(answer);
       if (answer === 'Miss') {
@@ -283,7 +283,6 @@ class Game {
       const distanceTop = parseFloat(topTo) - parseFloat(topFrom);
       const distanceLeft = parseFloat(leftTo) - parseFloat(leftFrom);
       const distance = Math.sqrt((parseFloat(topFrom) - parseFloat(topTo)) ** 2 + (parseFloat(leftFrom) - parseFloat(leftTo)) ** 2);
-      const transformStyle = getComputedStyle(cannonballEl).transform;
       const draw = (progress) => {
          const currentProgressTop = progress * distanceTop;
          const currentProgressLeft = progress * distanceLeft;
@@ -296,7 +295,6 @@ class Game {
          cannonballEl.style.top = parseFloat(topFrom) + currentProgressTop + '%';
          cannonballEl.style.left = parseFloat(leftFrom) + currentProgressLeft + '%';
          cannonballEl.style.transform = `scale(${scale}) rotate(${rotate}deg)`;
-         console.log('scale', scale);
       }
       await animate({ draw, duration: 1000 });
       // удалить прилитевший снаряд
