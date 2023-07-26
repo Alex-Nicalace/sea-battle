@@ -911,7 +911,6 @@ class PlayArea extends Area {
       for (const [cellEl, coord] of this.cellsHtml) {
          if (!cellEl.hasAttribute(this.nameAttrShot) && !cellEl.hasAttribute(this.nameAttrShotPseudo)) {
             coords.push(coord);
-            console.log(cellEl);
          }
       }
       const numRnd = randomInteger(0, coords.length - 1);

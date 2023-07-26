@@ -208,6 +208,26 @@ class Game {
          this.containerDockEl.classList[action](nameClassEmtyDock);
       }
       this.containerPlayersEl?.addEventListener('changearea', onChangearea);
+      /**
+       * Звук выстрела
+       * @type {HTMLAudioElement}
+       */
+      this.soundShot = new Audio('../../files/sounds/shot.mp3');
+      /**
+       * Звук попадания в воду
+       * @type {HTMLAudioElement}
+       */
+      this.soundWater = new Audio('../../files/sounds/water.mp3');
+      /**
+       * Звук попадания в цель
+       * @type {HTMLAudioElement}
+       */
+      this.soundExplosion = new Audio('../../files/sounds/explosion.mp3');
+      /**
+       * Продолжительность анимации выстрела
+       * @type {number}
+       */
+      this.durationAnimateShot = 1000;
    }
    /**
     * Текущая функция выстрела.
@@ -216,6 +236,16 @@ class Game {
     * @type {CurrentShotType}
     */
    currentShot;
+   /**
+    * 
+    * @param {HTMLAudioElement} sound 
+    * @param {number} duration 
+    */
+   playSound(sound, duration) {
+      sound.currentTime = 0; // Перемотка звука в начало
+      sound.play();
+      setTimeout(() => sound.pause(), duration)
+   }
    /**
     * Выстрел пользователя
     * @returns {ShotResult}
@@ -296,7 +326,8 @@ class Game {
          cannonballEl.style.left = parseFloat(leftFrom) + currentProgressLeft + '%';
          cannonballEl.style.transform = `scale(${scale}) rotate(${rotate}deg)`;
       }
-      await animate({ draw, duration: 1000 });
+      this.playSound(this.soundShot, this.durationAnimateShot);
+      await animate({ draw, duration: this.durationAnimateShot });
       // удалить прилитевший снаряд
       cannonballEl.remove();
    }
@@ -383,6 +414,11 @@ class Game {
       let answer;
       do {
          answer = await this.currentShot.call(this);
+         if (answer === 'Miss') {
+            this.playSound(this.soundWater, this.durationAnimateShot);
+         } else {
+            this.playSound(this.soundExplosion, this.durationAnimateShot);
+         }
       } while (answer !== 'Victory');
       this.playComp.showShipsOnArea();
       const message = this.currentShot === this.shotUser ? 'Вы победитель!!!' : 'Вы проиграли ...';
