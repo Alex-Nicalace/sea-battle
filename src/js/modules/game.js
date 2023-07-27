@@ -198,8 +198,17 @@ class Game {
       });
 
       const btnResetGameEl = document.querySelector(btnResetGame);
-      btnResetGameEl && btnResetGameEl.addEventListener('click', () => {
-         this.resetGame();
+      btnResetGameEl && btnResetGameEl.addEventListener('click', async () => {
+         /**
+          * @type {HTMLDialogElement}
+          */
+         const modalEl = document.querySelector('#modal-reset-game');
+
+         const elementCloseModal = await Modal.showModal(modalEl);
+         const isResolve = elementCloseModal && elementCloseModal.value === 'yes';
+         if (isResolve) {
+            this.resetGame();
+         }
       });
 
       /**
@@ -259,11 +268,11 @@ class Game {
        */
       this.isPlayEffects = true;
 
-      this.soundEffectsToggle?.addEventListener('click', () => this.toggleSoundEffect())
+      this.soundEffectsToggle?.addEventListener('click', (e) => this.toggleSoundEffect(e))
 
       if (this.soundBackground) {
          this.soundBackground.loop = true;
-         this.soundBackgroundToggle?.addEventListener('click', () => this.toggleSoundBg())
+         this.soundBackgroundToggle?.addEventListener('click', (e) => this.toggleSoundBg(e))
       }
    }
    /**
@@ -505,42 +514,14 @@ class Game {
     * - 'pc' - если компьютер должен делать первый выстрел.
     * - 'random' - если случайным образом должно определиться.
     */
-   askWhoGoesFirst() {
+   async askWhoGoesFirst() {
       /**
        * @type {HTMLDialogElement}
        */
       const modalEl = document.querySelector('#modal-first-shot');
 
-      /**
-       * @type {HTMLDivElement}
-       */
-      const buttonsContainer = document.querySelector('.first-shot');
-
-      return new Promise((resolve) => {
-         /**
-          * @type {FirstShot}
-          */
-         let value;
-
-         /**
-          * Обработчик события клика на кнопках.
-          * @param {MouseEvent} e Событие клика.
-          */
-         const onClick = (e) => {
-            const button = e?.target.closest('button');
-            if (!button) return;
-            value = button.value;
-         };
-
-         buttonsContainer.addEventListener('click', onClick);
-
-         Modal.showModal(modalEl, {
-            afterModalClose: () => {
-               buttonsContainer.removeEventListener('click', onClick);
-               resolve(value);
-            },
-         });
-      });
+      const elementCloseModal = await Modal.showModal(modalEl);
+      return elementCloseModal && elementCloseModal.value;
    }
    /**
     * сброс расстановки кораблей пользователя
@@ -579,9 +560,11 @@ class Game {
    }
    /**
     * Вкл/выкл фоновую музыку
+    * @param {Event} e
     */
-   toggleSoundBg() {
-      if (this.soundBackground.paused) {
+   toggleSoundBg(e) {
+      const isChecked = e && e.target && e.target.checked;
+      if (!isChecked) {
          this.soundBackground.play()
       } else {
          this.soundBackground.pause();
@@ -589,10 +572,14 @@ class Game {
    }
    /**
     * Вкл/выкл звук. эффекты
+    * @param {Event} e
     */
-   toggleSoundEffect() {
-      this.isPlayEffects = !this.isPlayEffects;
+   toggleSoundEffect(e) {
+      const isChecked = e && e.target && e.target.checked;
+      this.isPlayEffects = !isChecked;
    }
 }
 
 export default Game;
+
+new Modal('[data-modal]');

@@ -11,7 +11,7 @@
 			<div class="sea-battle__container">
 				<div class="sea-battle__toolbar">
 					<input class="button-toggle sr-only" type="checkbox" id="music" checked>
-					<label class="icon-label" for="music">
+					<label class="icon-label" for="music" title="Фонов">
 						<svg data-on width="20" height="20">
 							<use xlink:href="@img/icons/sprite.svg#sound"></use>
 						</svg>
@@ -30,7 +30,7 @@
 						</svg>
 						<span>звуки</span>
 					</label>
-					<button class="sea-battle__btn-reset-game button">Сброс игры</button>
+					<button class="sea-battle__btn-reset-game button">Сброс</button>
 				</div>
 				<div class="sea-battle__prompt">Разместите корабли</div>
 				<div class="sea-battle__wrap">
@@ -493,6 +493,26 @@
 				</div>
 				<div class="modal__footer">
 					<button class="modal__close btn button" data-close>Ok</button>
+				</div>
+			</div>
+		</div>
+	</dialog>
+	<dialog id="modal-reset-game" class="modal">
+		<div class="modal__dialog">
+			<div class="modal__content">
+				<button class="modal__icon-close" data-close>
+					&#10006;
+				</button>
+				<div class="modal__header">
+					<div class="modal__title">Внимание!</div>
+				</div>
+				<div class="modal__body result-battle">
+					Сброс игры привидет к потере прогресса текущей игры. <br>
+					Продолжить?
+				</div>
+				<div class="modal__footer">
+					<button class="modal__close button" data-close value="yes">Да</button>
+					<button class="modal__close button" data-close value="no">Нет</button>
 				</div>
 			</div>
 		</div>
