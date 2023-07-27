@@ -34,12 +34,34 @@
 
    &-toggle {
       & + label {
+         position: relative;
          @extend .button;
          [data-on] {
             display: inline;
          }
          [data-off] {
             display: none;
+         }
+         &::after {
+            content: attr(data-title-unchecked);
+            position: absolute;
+            top: 150%;
+            left: 50%;
+            transform: translateX(-50%);
+            padding: 4px 8px;
+            background-color: $color-button-font;
+            color: $color-shot;
+            border-radius: 4px;
+            font-size: 12px;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s ease-in-out;
+         }
+         @media (any-hover: hover) {
+            &:hover::after {
+               opacity: 1;
+               visibility: visible;
+            }
          }
       }
       &:checked + label {
@@ -48,6 +70,9 @@
          }
          [data-off] {
             display: inline;
+         }
+         &::after {
+            content: attr(data-title-checked);
          }
       }
    }
