@@ -4,6 +4,8 @@
    padding: rem(10) rem(20);
    border-radius: rem(5);
    letter-spacing: em(1.5, 16);
+   text-align: center;
+   cursor: pointer;
 
    box-shadow: 0 rem(2) rem(4) rgba(0, 0, 0, 0.4);
 
@@ -28,5 +30,25 @@
    &:disabled {
       opacity: 0.8;
       cursor: not-allowed;
+   }
+
+   &-toggle {
+      & + label {
+         @extend .button;
+         [data-on] {
+            display: inline;
+         }
+         [data-off] {
+            display: none;
+         }
+      }
+      &:checked + label {
+         [data-on] {
+            display: none;
+         }
+         [data-off] {
+            display: inline;
+         }
+      }
    }
 }

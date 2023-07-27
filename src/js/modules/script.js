@@ -53,7 +53,7 @@ const game = new Game({
       btnRnd: '.sea-battle__btn-rnd',
       btnReadyToGame: '.sea-battle__btn-start',
       btnReset: '.sea-battle__btn-reset',
-      btnResetGame: '#reset',
+      btnResetGame: '.sea-battle__btn-reset-game',
       cell: '.cell',
       containerPlayers: '.sea-battle__wrap',
       playerHuman: '.sea-battle__player_human',
@@ -62,6 +62,11 @@ const game = new Game({
       nameClassEmtyDock: 'sea-battle__wrap-dock_empty',
       nameClassShooting: 'sea-battle__player_shooting',
       nameClassBeginGame: 'sea-battle_prep',
+   },
+   sound: {
+      soundBackgroundSelector: '#sound-bg',
+      soundBackgroundToggleSelector: '#music',
+      soundEffectsToggleSelector: '#sound',
    }
 });
 

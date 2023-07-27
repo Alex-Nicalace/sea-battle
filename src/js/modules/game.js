@@ -37,6 +37,10 @@ class Game {
     * @param {string} [param.components.nameClassEmtyDock] название класса - пустой док
     * @param {string} [param.components.nameClassShooting] название класса - чей ход-выстрел
     * @param {string} [param.components.nameClassBeginGame] название класса, означающего начало игры
+    * @param {Object} [param.sound] селекотры триггеров вкл./выкл. звука
+    * @param {string} [param.sound.soundBackgroundSelector] селелектор фоновой музыки
+    * @param {string} [param.sound.soundBackgroundToggleSelector] триггер фонового звука
+    * @param {string} [param.sound.soundEffectsToggleSelector] триггер звук. эффектов
     */
    constructor({
       playUser,
@@ -61,6 +65,11 @@ class Game {
          nameClassEmtyDock,
          nameClassShooting,
          nameClassBeginGame,
+      },
+      sound: {
+         soundBackgroundSelector,
+         soundBackgroundToggleSelector,
+         soundEffectsToggleSelector,
       }
    }) {
       /**
@@ -188,7 +197,8 @@ class Game {
          this.resetUser();
       });
 
-      document.querySelector(btnResetGame).addEventListener('click', () => {
+      const btnResetGameEl = document.querySelector(btnResetGame);
+      btnResetGameEl && btnResetGameEl.addEventListener('click', () => {
          this.resetGame();
       });
 
@@ -228,6 +238,33 @@ class Game {
        * @type {number}
        */
       this.durationAnimateShot = 1000;
+      /**
+       * Элемент фоновой музыки
+       * @type {HTMLAudioElement}
+       */
+      this.soundBackground = document.querySelector(soundBackgroundSelector);
+      /**
+       * Переключатель фоновой музыки
+       * @type {HTMLButtonElement}
+       */
+      this.soundBackgroundToggle = document.querySelector(soundBackgroundToggleSelector);
+      /**
+       * Переключатель звуковых эффектов
+       * @type {HTMLButtonElement}
+       */
+      this.soundEffectsToggle = document.querySelector(soundEffectsToggleSelector);
+      /**
+       * Проигрывать ли звуковые эффекты
+       * @type {boolean}
+       */
+      this.isPlayEffects = true;
+
+      this.soundEffectsToggle?.addEventListener('click', () => this.toggleSoundEffect())
+
+      if (this.soundBackground) {
+         this.soundBackground.loop = true;
+         this.soundBackgroundToggle?.addEventListener('click', () => this.toggleSoundBg())
+      }
    }
    /**
     * Текущая функция выстрела.
@@ -242,6 +279,7 @@ class Game {
     * @param {number} duration 
     */
    playSound(sound, duration) {
+      if (!this.isPlayEffects) return;
       sound.currentTime = 0; // Перемотка звука в начало
       sound.play();
       setTimeout(() => sound.pause(), duration)
@@ -538,6 +576,22 @@ class Game {
       console.log('playUser', this.playUser);
       console.log('game', this);
       console.log('logicComp', this.logicComp);
+   }
+   /**
+    * Вкл/выкл фоновую музыку
+    */
+   toggleSoundBg() {
+      if (this.soundBackground.paused) {
+         this.soundBackground.play()
+      } else {
+         this.soundBackground.pause();
+      }
+   }
+   /**
+    * Вкл/выкл звук. эффекты
+    */
+   toggleSoundEffect() {
+      this.isPlayEffects = !this.isPlayEffects;
    }
 }
 

@@ -10,6 +10,17 @@
          margin-bottom: rem(20);
       }
    }
+   // .sea-battle__toolbar
+   &__toolbar {
+      display: flex;
+      margin: 0 rem(-10);
+      & > * {
+         margin: 0 rem(10);
+      }
+      &:not(:last-child) {
+         margin-bottom: rem(20);
+      }
+   }
    // .sea-battle__wrap
    &__wrap {
       position: relative;
@@ -40,6 +51,10 @@
    // .sea-battle__greed
    &__grid {
    }
+   // .sea-battle__btn-reset-game
+   &__btn-reset-game {
+      // display: inline-block;
+   }
    // .sea-battle__dock
    &__dock {
       flex-grow: 1;
@@ -59,7 +74,7 @@
    // .sea-battle__info
    &__info {
       &:not(:first-child) {
-         margin-top: rem(30);
+         margin-top: rem(10);
       }
    }
    // .sea-battle__hint
@@ -98,6 +113,9 @@
          width: calc(var(--cell-size) * 10);
          display: flex;
          flex-direction: column;
+      }
+      .sea-battle__btn-reset-game {
+         display: none;
       }
    }
 }
