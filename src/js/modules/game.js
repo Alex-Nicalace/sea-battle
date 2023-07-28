@@ -295,13 +295,15 @@ class Game {
    }
    /**
     * Выстрел пользователя
-    * @returns {ShotResult}
+    * @returns {ShotResult|null}
     */
    async shotUser() {
       this.playerPcEl.classList.add(this.nameClassShooting);
       const coord = await this.playComp.makeShot();
+      if (!coord) return null;
       // анимация полета снаряда
       await this.makeAnimateShot(this.playUser, this.playComp, this.playUser.getCoordCellOfShipRnd(), coord);
+      if (!this.isGaming) return null;
       // получить результат выстрела
       const { shotResult: answer, sizeShip } = this.playComp.takeShot(coord);
       if (answer === 'Miss') {
@@ -314,13 +316,15 @@ class Game {
    }
    /**
     * Выстрел ПК
-    * @returns {ShotResult}
+    * @returns {ShotResult|null}
     */
    async shotComp() {
       this.playerHumanEl.classList.add(this.nameClassShooting);
       const coord = await this.logicComp.makeShot(this.delay);
+      if (!this.isGaming) return null;
       // анимация полета снаряда
       await this.makeAnimateShot(this.playComp, this.playUser, this.playComp.getCoordCellOfAreaRnd(), coord);
+      if (!this.isGaming) return null;
       const { shotResult: answer, sizeShip } = this.playUser.takeShot(coord);
       this.logicComp.getAnswer(answer);
       if (answer === 'Miss') {
@@ -440,9 +444,6 @@ class Game {
 
       this.containerGameEl.classList.remove(this.nameClassBeginGame);
 
-      // const players = document.querySelector('.sea-battle__players');
-      // players.classList.add('sea-battle__players_gaming');
-
       switch (mode) {
          case 'human':
             this.currentShot = this.shotUser;
@@ -461,17 +462,19 @@ class Game {
       let answer;
       do {
          answer = await this.currentShot.call(this);
+         if (!answer) break;
          if (answer === 'Miss') {
             this.playSound(this.soundWater, this.durationAnimateShot);
          } else {
             this.playSound(this.soundExplosion, this.durationAnimateShot);
          }
       } while (answer !== 'Victory');
-      this.playComp.showShipsOnArea();
-      const message = this.currentShot === this.shotUser ? 'Вы победитель!!!' : 'Вы проиграли ...';
-      // показать результат с задержкой по анимации выстрела
-      setTimeout(() => this.showDialog(message), this.delay);
-      ;
+      if (answer === 'Victory') {
+         this.playComp.showShipsOnArea();
+         const message = this.currentShot === this.shotUser ? 'Вы победитель!!!' : 'Вы проиграли ...';
+         // показать результат с задержкой по анимации выстрела
+         setTimeout(() => this.showDialog(message), this.delay);
+      }
    }
    /**
     * Показать диалоговое окно с укаазанным сообщением
@@ -533,7 +536,10 @@ class Game {
     * Сброс игры к началу
     */
    resetGame() {
+      this.isGaming = false;
+
       this.playUser.reset();
+      this.playUser.makeDragableShips();
 
       this.logicComp = new LogicComp();
 
@@ -550,8 +556,6 @@ class Game {
       this.updateQuantityShots(this.quantityShotsPcEl, 0);
 
       this.containerGameEl.classList.add(this.nameClassBeginGame);
-
-      this.isGaming = false;
 
       console.log('playComp', this.playComp);
       console.log('playUser', this.playUser);

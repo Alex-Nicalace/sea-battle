@@ -710,7 +710,7 @@ class PlayArea extends Area {
    /**
     * переводит игровое поле в ожижание клика-выстрела по полю
     * возвращает координаты выстрела
-    * @returns {Promise<import('./area.js').Coord>}
+    * @returns {Promise<import('./area.js').Coord>|null}
     */
    makeShot() {
       return new Promise((res) => {
@@ -721,9 +721,16 @@ class PlayArea extends Area {
             // если за ячейкой есть атрибут выстрела то не засчитывать этот выстрел
             if (cellEl.hasAttribute(this.nameAttrShot)) return;
             this.containerCell.removeEventListener('click', onClick);
+            this.containerCell.removeEventListener('changearea', onGameReset);
             res(coord);
          }
-         this.containerCell.addEventListener('click', onClick)
+         const onGameReset = () => {
+            this.containerCell.removeEventListener('click', onClick);
+            this.containerCell.removeEventListener('changearea', onGameReset);
+            res(null)
+         }
+         this.containerCell.addEventListener('click', onClick);
+         this.containerCell.addEventListener('changearea', onGameReset);
       })
    }
    /**
