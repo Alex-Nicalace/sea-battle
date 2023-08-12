@@ -35,248 +35,264 @@ import { randomInteger } from './reused/numbers.js';
  * @class
  */
 class PlayArea extends Area {
-   /**
-    * селектор контейнера клеток игорового поля
-    * @type {string | null;}
-    */
-   cellSelector = null;
-   /**
-    * @type {Node} HTML-узлел - общий родитель cellsHtml
-    */
-   containerCell;
-   /**
-    * Поле, представляющее Map с ключами в виде HTML-узлов и значениями в виде объектов {i, k} - координаты 2-мерного массива.
-    * @type {Map<Node, import('./area.js').Coord>}
-    */
-   cellsHtml;
-   /**
-    * @type {Tracks}
-    */
-   tracks = {
+  constructor() {
+    super();
+    /**
+     * селектор контейнера клеток игорового поля
+     * @type {string | null;}
+     */
+    this.cellSelector = null;
+    /**
+     * @type {Node} HTML-узлел - общий родитель cellsHtml
+     */
+    this.containerCell;
+    /**
+     * Поле, представляющее Map с ключами в виде HTML-узлов и значениями в виде объектов {i, k} - координаты 2-мерного массива.
+     * @type {Map<Node, import('./area.js').Coord>}
+     */
+    this.cellsHtml;
+    /**
+     * @type {Tracks}
+     */
+    this.tracks = {
       up: {
-         /**
-          * Формирует массив координат корабля, от указанной координаты на указанную длину вверх
-          * @param {number} i - строка массива
-          * @param {number} k - столбец массива
-          * @param {number} len - длина корабля
-          * @returns {AreaCoord}
-          */
-         filler: (i, k, len) => {
-            /**
-             * @type {AreaCoord}
-             */
-            const track = [];
-            if (i - len < -1) return track;
-            for (let d = i; d > i - len; d--) {
-               track.push({ i: d, k });
-            }
-            return track;
-         }
+        /**
+         * Формирует массив координат корабля, от указанной координаты на указанную длину вверх
+         * @param {number} i - строка массива
+         * @param {number} k - столбец массива
+         * @param {number} len - длина корабля
+         * @returns {AreaCoord}
+         */
+        filler: (i, k, len) => {
+          /**
+           * @type {AreaCoord}
+           */
+          const track = [];
+          if (i - len < -1) return track;
+          for (let d = i; d > i - len; d--) {
+            track.push({ i: d, k });
+          }
+          return track;
+        },
       },
       right: {
-         /**
-          * Формирует массив координат корабля, от указанной координаты на указанную длину вправо
-          * @param {number} i - строка массива
-          * @param {number} k - столбец массива
-          * @param {number} len - длина корабля
-          * @returns {AreaCoord}
-          */
-         filler: (i, k, len) => {
-            const track = [];
-            if (k + len > 10) return track;
-            for (let d = k; d < k + len; d++) {
-               track.push({ i, k: d });
-            }
-            return track;
-         }
+        /**
+         * Формирует массив координат корабля, от указанной координаты на указанную длину вправо
+         * @param {number} i - строка массива
+         * @param {number} k - столбец массива
+         * @param {number} len - длина корабля
+         * @returns {AreaCoord}
+         */
+        filler: (i, k, len) => {
+          const track = [];
+          if (k + len > 10) return track;
+          for (let d = k; d < k + len; d++) {
+            track.push({ i, k: d });
+          }
+          return track;
+        },
       },
       down: {
-         /**
-          * Формирует массив координат корабля, от указанной координаты на указанную длину вниз
-          * @param {number} i - строка массива
-          * @param {number} k - столбец массива
-          * @param {number} len - длина корабля
-          * @returns {AreaCoord}
-          */
-         filler: (i, k, len) => {
-            const track = [];
-            if (i + len > 10) return track;
-            for (let d = i; d < i + len; d++) {
-               track.push({ i: d, k });
-            }
-            return track;
-         }
+        /**
+         * Формирует массив координат корабля, от указанной координаты на указанную длину вниз
+         * @param {number} i - строка массива
+         * @param {number} k - столбец массива
+         * @param {number} len - длина корабля
+         * @returns {AreaCoord}
+         */
+        filler: (i, k, len) => {
+          const track = [];
+          if (i + len > 10) return track;
+          for (let d = i; d < i + len; d++) {
+            track.push({ i: d, k });
+          }
+          return track;
+        },
       },
       left: {
-         /**
-          * Формирует массив координат корабля, от указанной координаты на указанную длину влево
-          * @param {number} i - строка массива
-          * @param {number} k - столбец массива
-          * @param {number} len - длина корабля
-          * @returns {AreaCoord}
-          */
-         filler: (i, k, len) => {
-            const track = [];
-            if (k - len < -1) return track;
-            for (let d = k; d > k - len; d--) {
-               track.push({ i, k: d });
-            }
-            return track;
-         }
+        /**
+         * Формирует массив координат корабля, от указанной координаты на указанную длину влево
+         * @param {number} i - строка массива
+         * @param {number} k - столбец массива
+         * @param {number} len - длина корабля
+         * @returns {AreaCoord}
+         */
+        filler: (i, k, len) => {
+          const track = [];
+          if (k - len < -1) return track;
+          for (let d = k; d > k - len; d--) {
+            track.push({ i, k: d });
+          }
+          return track;
+        },
       },
-   }
-   /**
-   * @type {String} селектор корабля
+    };
+    /**
+     * @type {String} селектор корабля
+     */
+    this.shipSelector;
+    /**
+     * Map структура, где ключ - HTML-узел крабля, значение - ключ объекта listShips
+     * @type {Map<Node, String>}
+     */
+    this.shipsNodes = new Map();
+    /**
+     * вертикальный корабль имеет указанный класс
+     * @type {String}
+     */
+    this.classNameVerticalShip;
+    /**
+     * уничтоженный корабль имеет указанный класс
+     * @type {String}
+     */
+    this.classNameDestroyed;
+    /**
+     * атрибут указывающий на возможность размещения корабля
+     * @type {String}
+     */
+    this.nameAttrCanDrop;
+    /**
+     * атрибут - признак перемещения крабля
+     * @type {String}
+     */
+    this.nameAttrDrag;
+    /**
+     * @type {HTMLElement} HTML-узел содержащий корабли
+     */
+    this.dock;
+    /**
+     * @type {String} селектор панели настроек корабля
+     */
+    this.toolbarSelector;
+    /**
+     * Тип для координат корабля и буферной зоны
+     * @typedef {Object} ShipCoords
+     * @property {import('./area.js').Coord[]} track - координаты занятые кораблем
+     * @property {import('./area.js').Coord[]} aroundTrack - координаты буферной зоны
+     */
+    /**
+     * Объект содержит по определенному ключу координаты занятые кораблем и координаты буферной зоны
+     * @type {Object.<string, ShipCoords>}
+     * @property {string} - уникальный ключ корабля
+     * @property {ShipCoords} - координаты корабля
+     */
+    this.listShips = {};
+    /**
+     * @type {Dragable}
+     */
+    this.dragable;
+    /**
+     * @type {Boolean} признак подтвержденного завершения расстановки кораблей
+     */
+    this.isReadyPlacement = false;
+    /**
+     * @type {number} количество уничтоженных кораблей собственных
+     */
+    this.numberKillsShips = 0;
+  }
+  /**
+   * Проверить возможность размещения корабля по заданным координатам
+   * @param {import('./area.js').Coord[]} track массив координат корабля
+   * @returns {Boolean}
    */
-   shipSelector;
-   /**
-   * Map структура, где ключ - HTML-узел крабля, значение - ключ объекта listShips
-   * @type {Map<Node, String>}
+  canBuildShip(track = []) {
+    return (
+      !!track.length &&
+      !track.some(({ i, k }) => this.area[i][k].cell != this.emptyCell)
+    );
+  }
+  /**
+   * создание кораблей на поле в автаматическом режиме
    */
-   shipsNodes = new Map;
-   /**
-    * вертикальный корабль имеет указанный класс
-    * @type {String}
-    */
-   classNameVerticalShip;
-   /**
-    * уничтоженный корабль имеет указанный класс
-    * @type {String}
-    */
-   classNameDestroyed;
-   /**
-    * атрибут указывающий на возможность размещения корабля
-    * @type {String}
-    */
-   nameAttrCanDrop;
-   /**
-    * атрибут - признак перемещения крабля
-    * @type {String}
-    */
-   nameAttrDrag;
-   /**
-   * @type {HTMLElement} HTML-узел содержащий корабли
+  createShips() {
+    for (const ship of this.schemeShips) {
+      this.createShip(+ship);
+    }
+  }
+  /**
+   * создание корабля заданной длины в автоматическом режиме
+   * @param {number} len длина корабля
    */
-   dock;
-   /**
-    * @type {String} селектор панели настроек корабля
-    */
-   toolbarSelector;
-   /**
-    * Тип для координат корабля и буферной зоны
-    * @typedef {Object} ShipCoords
-    * @property {import('./area.js').Coord[]} track - координаты занятые кораблем
-    * @property {import('./area.js').Coord[]} aroundTrack - координаты буферной зоны
-    */
-   /**
-    * Объект содержит по определенному ключу координаты занятые кораблем и координаты буферной зоны
-    * @type {Object.<string, ShipCoords>}
-    * @property {string} - уникальный ключ корабля
-    * @property {ShipCoords} - координаты корабля
-    */
-   listShips = {};
-   /**
-    * @type {Dragable}
-    */
-   dragable;
-   /**
-    * @type {Boolean} признак подтвержденного завершения расстановки кораблей
-    */
-   isReadyPlacement = false;
-   /**
-    * @type {number} количество уничтоженных кораблей собственных
-    */
-   numberKillsShips = 0;
-   /**
-    * Проверить возможность размещения корабля по заданным координатам
-    * @param {import('./area.js').Coord[]} track массив координат корабля
-    * @returns {Boolean}
-    */
-   canBuildShip(track = []) {
-      return !!track.length && !track.some(({ i, k }) => this.area[i][k].cell != this.emptyCell);
-   }
-   /**
-    * создание кораблей на поле в автаматическом режиме
-    */
-   createShips() {
-      for (const ship of this.schemeShips) {
-         this.createShip(+ship)
+  createShip(len) {
+    let i,
+      k,
+      direct,
+      track,
+      canBuildShip = false;
+    do {
+      const result = this.getRandomEmptyPoint();
+      i = result.i;
+      k = result.k;
+      let excludeDirect = [];
+      direct = this.getRandomDirect(excludeDirect);
+      while (!canBuildShip && direct) {
+        track = this.tracks[direct].filler(i, k, len);
+        excludeDirect.push(direct);
+        canBuildShip = this.canBuildShip(track);
+        direct = this.getRandomDirect(excludeDirect);
       }
-   }
-   /**
-    * создание корабля заданной длины в автоматическом режиме
-    * @param {number} len длина корабля
-    */
-   createShip(len) {
-      let i, k, direct,
-         track,
-         canBuildShip = false;
-      do {
-         const result = this.getRandomEmptyPoint();
-         i = result.i;
-         k = result.k;
-         let excludeDirect = [];
-         direct = this.getRandomDirect(excludeDirect);
-         while (!canBuildShip && direct) {
-            track = this.tracks[direct].filler(i, k, len);
-            excludeDirect.push(direct);
-            canBuildShip = this.canBuildShip(track);
-            direct = this.getRandomDirect(excludeDirect);
-         }
-      } while (!canBuildShip);
+    } while (!canBuildShip);
 
-      // this.buildShip(track);
-      const aroundTrack = this.buildShip(track);
-      this.addListShips(track, aroundTrack);
+    // this.buildShip(track);
+    const aroundTrack = this.buildShip(track);
+    this.addListShips(track, aroundTrack);
+  }
+  /**
+   * Ассоциация ячеек 2-мерного массива (игрового поля) с HTML-узлами, представляющие собой ячейку
+   * @param {Object} [options={}] - Объект с параметрами.
+   * @param {String} [options.containerCellSelector] селектор HTML-узла, кот. является контейнером ячеек
+   * @param {String} [options.cellSelector] селектор HTML-узла, кот. будет считаться ячейкой
+   * @param {String} [options.nameAttrShot] - атрибут для ячейки по которой был выстрел
+   * @param {String} [options.nameAttrShotPseudo] - атрибут для ячейки по которой был псевдо выстрел
+   * @param {String} [options.nameAttrShotTarget] - атрибут для ячейки по которой было попадание
+   * @param {String} [options.nameAttrShotDied] - атрибут для ячейки входит в состав убитого корабля
+   * @returns
+   */
+  assignHtml({
+    containerCellSelector,
+    cellSelector,
+    nameAttrShot,
+    nameAttrShotTarget,
+    nameAttrShotDied,
+    nameAttrShotPseudo,
+  }) {
+    this.containerCell = document.querySelector(containerCellSelector);
+    this.cellSelector = cellSelector;
+    /**
+     * атрибут для ячейки по которой был выстрел
+     */
+    this.nameAttrShot = nameAttrShot;
+    /**
+     * атрибут для ячейки по которой был псевдо выстрел
+     */
+    this.nameAttrShotPseudo = nameAttrShotPseudo;
+    /**
+     * атрибут для ячейки по которой было попадание
+     */
+    this.nameAttrShotTarget = nameAttrShotTarget;
+    /**
+     * атрибут для ячейки входит в состав убитого корабля
+     */
+    this.nameAttrShotDied = nameAttrShotDied;
 
-   }
-   /**
-      * Ассоциация ячеек 2-мерного массива (игрового поля) с HTML-узлами, представляющие собой ячейку
-      * @param {Object} [options={}] - Объект с параметрами.
-      * @param {String} [options.containerCellSelector] селектор HTML-узла, кот. является контейнером ячеек
-      * @param {String} [options.cellSelector] селектор HTML-узла, кот. будет считаться ячейкой
-      * @param {String} [options.nameAttrShot] - атрибут для ячейки по которой был выстрел
-      * @param {String} [options.nameAttrShotPseudo] - атрибут для ячейки по которой был псевдо выстрел
-      * @param {String} [options.nameAttrShotTarget] - атрибут для ячейки по которой было попадание
-      * @param {String} [options.nameAttrShotDied] - атрибут для ячейки входит в состав убитого корабля
-      * @returns 
-      */
-   assignHtml({ containerCellSelector, cellSelector, nameAttrShot, nameAttrShotTarget, nameAttrShotDied, nameAttrShotPseudo }) {
-      this.containerCell = document.querySelector(containerCellSelector);
-      this.cellSelector = cellSelector;
-      /**
-       * атрибут для ячейки по которой был выстрел
-       */
-      this.nameAttrShot = nameAttrShot;
-      /**
-       * атрибут для ячейки по которой был псевдо выстрел
-       */
-      this.nameAttrShotPseudo = nameAttrShotPseudo;
-      /**
-       * атрибут для ячейки по которой было попадание
-       */
-      this.nameAttrShotTarget = nameAttrShotTarget;
-      /**
-       * атрибут для ячейки входит в состав убитого корабля
-       */
-      this.nameAttrShotDied = nameAttrShotDied;
-
-      const elements = [...document.querySelectorAll(this.cellSelector)];
-      const sizeSideArea = this.area.length;
-      if (elements.length < Math.pow(sizeSideArea, 2)) {
-         throw new PlayAreaError('The number of node elements does not match the size of the grid');
+    const elements = [...document.querySelectorAll(this.cellSelector)];
+    const sizeSideArea = this.area.length;
+    if (elements.length < Math.pow(sizeSideArea, 2)) {
+      throw new PlayAreaError(
+        'The number of node elements does not match the size of the grid'
+      );
+    }
+    this.cellsHtml = new Map();
+    for (let i = 0; i < sizeSideArea; i++) {
+      for (let k = 0; k < sizeSideArea; k++) {
+        const el = elements[i * 10 + k];
+        this.area[i][k].cellHtml = el;
+        this.cellsHtml.set(el, { i, k });
       }
-      this.cellsHtml = new Map();
-      for (let i = 0; i < sizeSideArea; i++) {
-         for (let k = 0; k < sizeSideArea; k++) {
-            const el = elements[i * 10 + k];
-            this.area[i][k].cellHtml = el;
-            this.cellsHtml.set(el, { i, k });
-         }
-      }
-   }
-   /**
-    * Указаней короблей в HTML верстке и сопутсвующих настроек для кораблей
+    }
+  }
+  /**
+   * Указаней короблей в HTML верстке и сопутсвующих настроек для кораблей
    * @param {Object} [options={}] - Объект с параметрами.
    * @param {string} [options.dockSelector] - селектор дока (гаража) кораблей
    * @param {string} [options.shipSelector] - селектор кораблей
@@ -287,642 +303,717 @@ class PlayArea extends Area {
    * @param {string} [options.nameAttrCanDrop] - атрибут указывающий на возможность размещения корабля
    * @param {string} [options.nameAttrDrag] - атрибут - признак перемещения крабля
    */
-   setShips({ dockSelector, shipSelector, rotateBtnSelector, toolbarSelector, classNameVertical, nameAttrCanDrop, nameAttrDrag, classNameDestroyed, } = {}) {
-      this.shipSelector = shipSelector;
-      this.classNameVerticalShip = classNameVertical;
-      this.classNameDestroyed = classNameDestroyed;
-      this.nameAttrCanDrop = nameAttrCanDrop;
-      this.nameAttrDrag = nameAttrDrag;
+  setShips({
+    dockSelector,
+    shipSelector,
+    rotateBtnSelector,
+    toolbarSelector,
+    classNameVertical,
+    nameAttrCanDrop,
+    nameAttrDrag,
+    classNameDestroyed,
+  } = {}) {
+    this.shipSelector = shipSelector;
+    this.classNameVerticalShip = classNameVertical;
+    this.classNameDestroyed = classNameDestroyed;
+    this.nameAttrCanDrop = nameAttrCanDrop;
+    this.nameAttrDrag = nameAttrDrag;
 
-      this.dock = document.querySelector(dockSelector);
-      this.offEventOnImg(this.dock);
+    this.dock = document.querySelector(dockSelector);
+    this.offEventOnImg(this.dock);
 
-      /**
-       * @type {HTMLCollection | undefined}
-       */
-      const ships = this.dock?.querySelectorAll(shipSelector);
-      if (ships) {
-         for (const ship of ships) {
-            this.shipsNodes.set(ship, null);
-         }
+    /**
+     * @type {HTMLCollection | undefined}
+     */
+    const ships = this.dock?.querySelectorAll(shipSelector);
+    if (ships) {
+      for (const ship of ships) {
+        this.shipsNodes.set(ship, null);
       }
+    }
 
-      this.toolbarSelector = toolbarSelector;
-      const rotateShip = (e) => {
-         if (this.isReadyPlacement) return;
-         const shipEl = e.target.closest(this.shipSelector);
-         if (!shipEl) return;
-         shipEl.classList.toggle(this.classNameVerticalShip);
-         this.clearCellsUnderShip(shipEl);
-         shipEl.removeAttribute(this.nameAttrCanDrop);
+    this.toolbarSelector = toolbarSelector;
+    const rotateShip = (e) => {
+      if (this.isReadyPlacement) return;
+      const shipEl = e.target.closest(this.shipSelector);
+      if (!shipEl) return;
+      shipEl.classList.toggle(this.classNameVerticalShip);
+      this.clearCellsUnderShip(shipEl);
+      shipEl.removeAttribute(this.nameAttrCanDrop);
 
-         const { cellBegin, dir } = this.getCellsUnderShip(shipEl);
-         const
-            cellBeginCoord = this.cellsHtml.get(cellBegin),
-            sizeShip = +shipEl.dataset.ship,
-            track = this.tracks[dir].filler(cellBeginCoord.i, cellBeginCoord.k, sizeShip);
-         if (!this.canBuildShip(track)) {
-            // shipEl.classList.add('[data-drag]');
-            shipEl.setAttribute(this.nameAttrDrag, '')
-            return;
-         }
-         const { i, k } = track[0];
+      const { cellBegin, dir } = this.getCellsUnderShip(shipEl);
+      const cellBeginCoord = this.cellsHtml.get(cellBegin),
+        sizeShip = +shipEl.dataset.ship,
+        track = this.tracks[dir].filler(
+          cellBeginCoord.i,
+          cellBeginCoord.k,
+          sizeShip
+        );
+      if (!this.canBuildShip(track)) {
+        // shipEl.classList.add('[data-drag]');
+        shipEl.setAttribute(this.nameAttrDrag, '');
+        return;
+      }
+      const { i, k } = track[0];
 
-         this.positioningElInArea(i, k, shipEl);
+      this.positioningElInArea(i, k, shipEl);
 
-         const aroundTrack = this.buildShip(track);
-         const keyShip = this.addListShips(track, aroundTrack);
-         this.shipsNodes.set(shipEl, keyShip);
-         // this.printPlayArea();
+      const aroundTrack = this.buildShip(track);
+      const keyShip = this.addListShips(track, aroundTrack);
+      this.shipsNodes.set(shipEl, keyShip);
+      // this.printPlayArea();
+    };
+    /**
+     * @type {HTMLElement | undefined}
+     */
+    const rotateBtns = this.dock?.querySelectorAll(rotateBtnSelector);
+    if (rotateBtns) {
+      for (const btn of rotateBtns) {
+        btn.addEventListener('click', rotateShip);
       }
-      /**
-       * @type {HTMLElement | undefined}
-       */
-      const rotateBtns = this.dock?.querySelectorAll(rotateBtnSelector);
-      if (rotateBtns) {
-         for (const btn of rotateBtns) {
-            btn.addEventListener('click', rotateShip);
-         }
-      }
-   }
-   /**
-    * Всем дочерним элементам img отключае контекстное меню и перетаскивание
-    * @param {HTMLElement} element 
-    */
-   offEventOnImg(element) {
-      if (!element) return;
-      const images = element.querySelectorAll('img');
-      for (const img of images) {
-         img.oncontextmenu = () => false;
-         img.ondragstart = () => false;
-      }
-   }
-   /**
-    * Очищает поле от корабля
-    * @param {Node} shipEl 
-    */
-   clearCellsUnderShip(shipEl) {
-      const key = this.shipsNodes.get(shipEl);
-      if (!key) return;
-      /**
-       * массив координат корабаля и буферной зоны
-       * @type {import('./area.js').Coord[]}
-       */
-      const coordShip = [...this.listShips[key].track, ...this.listShips[key].aroundTrack];
-      if (coordShip.length) {
-         coordShip.forEach(({ i, k }) => {
-            this.area[i][k].cell = this.emptyCell;
-            delete this.area[i][k].dataShip;
-         });
-         this.removeDekorCells(this.listShips[key].track);
-         delete this.listShips[key];
-         this.genEventChangearea();
-         this.shipsNodes.set(shipEl, null);
-         // this.printPlayArea();
-      }
-      // обновить буферные зоны кораблей, т.к. циклы выше почистил
-      this.refreshBufferZone();
-   }
-   /**
-    * 
-    * @param {Array<import('./area.js').Coord>} track 
-    */
-   removeDekorCells(track) {
-      track.forEach(({ i, k }) => {
-         this.area[i][k].cellHtml.removeAttribute(this.nameAttrCanDrop, '')
+    }
+  }
+  /**
+   * Всем дочерним элементам img отключае контекстное меню и перетаскивание
+   * @param {HTMLElement} element
+   */
+  offEventOnImg(element) {
+    if (!element) return;
+    const images = element.querySelectorAll('img');
+    for (const img of images) {
+      img.oncontextmenu = () => false;
+      img.ondragstart = () => false;
+    }
+  }
+  /**
+   * Очищает поле от корабля
+   * @param {Node} shipEl
+   */
+  clearCellsUnderShip(shipEl) {
+    const key = this.shipsNodes.get(shipEl);
+    if (!key) return;
+    /**
+     * массив координат корабаля и буферной зоны
+     * @type {import('./area.js').Coord[]}
+     */
+    const coordShip = [
+      ...this.listShips[key].track,
+      ...this.listShips[key].aroundTrack,
+    ];
+    if (coordShip.length) {
+      coordShip.forEach(({ i, k }) => {
+        this.area[i][k].cell = this.emptyCell;
+        delete this.area[i][k].dataShip;
       });
-   }
-   /**
-    * 
-    * @param {Array<import('./area.js').Coord>} track 
-    */
-   setDekorCells(track) {
-      track.forEach(({ i, k }) => {
-         this.area[i][k].cellHtml.setAttribute(this.nameAttrCanDrop, '')
-      });
-   }
-   /**
-    * Уже имеющиеся в классе корабли делает перетаскиваемыми
-    */
-   makeDragableShips() {
-      if (!this.containerCell) return new PlayAreaError('The containerCell property does not exist');
-
-      this.containerCell.style.position = 'relative';
-      let
-         isOverArea,
-         track = [],
-         canBuild,
-         sizeShip,
-         prevCellBegin;
-      const cbMouseDown = (dragElement, e) => {
-         // если клик просходит по тулбару корабля, то не отрабатывать этот клик
-         if (e.target.closest(this.toolbarSelector)) return true;
-
-         sizeShip = +dragElement.dataset.ship;
-         dragElement.setAttribute(this.nameAttrDrag, '');
-         this.clearCellsUnderShip(dragElement);
-      }
-      const cbMouseMove = (dragElement) => {
-         const { cellBegin, cellEnd, dir } = this.getCellsUnderShip(dragElement);
-         if (prevCellBegin === cellBegin) return;
-         prevCellBegin = cellBegin;
-
-         dragElement.removeAttribute(this.nameAttrCanDrop);
-         this.removeDekorCells(track);
-
-         isOverArea =
-            this.containerCell.contains(cellBegin) &&
-            this.containerCell.contains(cellEnd);
-
-         const
-            cellBeginCoord = this.cellsHtml.get(cellBegin),
-            cellEndCoord = this.cellsHtml.get(cellEnd);
-         canBuild = !!(cellBeginCoord && cellEndCoord);
-         if (canBuild) {
-            const currentTrack = this.tracks[dir].filler(cellBeginCoord.i, cellBeginCoord.k, sizeShip);
-            canBuild = this.canBuildShip(currentTrack);
-
-            if (canBuild) {
-               dragElement.setAttribute(this.nameAttrCanDrop, '');
-               track = [...currentTrack];
-               this.setDekorCells(track);
-            }
-         }
-      }
-      const cbMouseUp = (dragElement) => {
-         if (!canBuild) {
-            this.returnShipToDock(dragElement);
-            resetVariable();
-            return;
-         }
-         const { i, k } = track[0];
-
-         this.positioningElInArea(i, k, dragElement);
-
-         const aroundTrack = this.buildShip(track);
-         const keyShip = this.addListShips(track, aroundTrack);
-         this.shipsNodes.set(dragElement, keyShip);
-         // this.printPlayArea();
-         dragElement.removeAttribute(this.nameAttrDrag);
-         dragElement.removeAttribute(this.nameAttrCanDrop);
-         this.removeDekorCells(track);
-         resetVariable();
-      }
-      this.dragable = new Dragable(this.shipSelector, {
-         cbMouseDown,
-         cbMouseMove,
-         cbMouseUp,
-      });
-      this.dragable.on();
-      function resetVariable() {
-         track = [];
-         isOverArea = canBuild = sizeShip = prevCellBegin = null;
-      }
-   }
-   /**
-    * Корабль - HTML-элемент возвращает в док
-    * если в объекте нет дока то корабль-элемент удаляется
-    * @param {HTMLElement} shipElement 
-    */
-   returnShipToDock(shipElement) {
-      if (!this.dock) {
-         this.shipsNodes.delete(shipElement);
-         shipElement.remove();
-         return;
-      }
-      shipElement.removeAttribute('style');
-      shipElement.removeAttribute(this.nameAttrDrag);
-      const sizeShip = shipElement.dataset.ship - 1;
-      if (!this.dock.contains(shipElement)) {
-         for (const portNode of this.dock.children[sizeShip].children) {
-            if (!portNode.querySelector(this.shipSelector)) {
-               portNode.append(shipElement);
-               break;
-            }
-         }
-         this.recoveryShip(shipElement);
-      }
-   }
-   /**
-    * приведение корабля к первоначальному виду, удаление всех классов и аттрибутов
-    * @param {HTMLElement} shipElement 
-    */
-   recoveryShip(shipElement) {
-      shipElement.classList.remove(this.classNameVerticalShip);
-      shipElement.classList.remove(this.classNameDestroyed);
-      const cellEls = shipElement.querySelectorAll(`[${this.nameAttrShotTarget}]`);
-      for (const cellEl of cellEls) {
-         cellEl.removeAttribute(this.nameAttrShotTarget);
-      }
-   }
-   /**
-    * 
-    * @param {Node} dragElement перетаскиваемый корабль
-    * @returns {Object}
-    * @property {Element} cellBegin
-    * @property {Element} cellEnd
-    * @property {string} dir
-    */
-   getCellsUnderShip(dragElement) {
-      const dragElementCoord = dragElement.getBoundingClientRect();
-      dragElement.style.display = 'none';
-      const topLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.top)?.closest(this.cellSelector);
-      const topRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.top)?.closest(this.cellSelector);
-      const bottomLeft = document.elementFromPoint(dragElementCoord.left, dragElementCoord.bottom)?.closest(this.cellSelector);
-      const bottomRight = document.elementFromPoint(dragElementCoord.right, dragElementCoord.bottom)?.closest(this.cellSelector);
-      dragElement.style.display = '';
-
-      let cellBegin, cellEnd, dir;
-      if (dragElementCoord.width > dragElementCoord.height) {
-         cellBegin = topLeft || bottomLeft;
-         cellEnd = topLeft ? topRight : bottomRight;
-         dir = 'right';
-      } else {
-         cellBegin = topLeft || topRight;
-         cellEnd = topLeft ? bottomLeft : bottomRight;
-         dir = 'down';
-      }
-      return { cellBegin, cellEnd, dir }
-   }
-   /**
-    * отключить Drag'n drop
-    * @returns 
-    */
-   offDragable() {
-      if (!this.dragable) return;
-      this.dragable.off();
-   }
-   /**
-    * включить Drag'n drop
-    * @returns 
-    */
-   onDragable() {
-      if (!this.dragable) return;
-      this.dragable.on();
-   }
-   /**
-    * 
-    * @param {Array<import('./area.js').Coord>} track координаты корабля
-    * @param {Array<import('./area.js').Coord>} aroundTrack координаты буфера вокруг корабля
-    * @returns {String} ключ корабля в объекте listShips
-    */
-   addListShips(track, aroundTrack) {
-      if (!this.addListShips.counter) {
-         this.addListShips.counter = 0;
-      }
-      const key = `${track.length}_${++this.addListShips.counter}`;
-      this.listShips[key] = {};
-      this.listShips[key].track = [...track];
-      this.listShips[key].aroundTrack = [...aroundTrack];
+      this.removeDekorCells(this.listShips[key].track);
+      delete this.listShips[key];
       this.genEventChangearea();
-      return key;
-   }
-   /**
-    * генерирует событие изменения расстановки кораблей на поле
-    */
-   genEventChangearea() {
-      const quantityShipsOnArea = Object.keys(this.listShips).length;
-      const isAllShipsOnArea = quantityShipsOnArea === this.totalShips;
-      if (this.containerCell) {
-         const event = new CustomEvent('changearea', {
-            bubbles: true,
-            detail: {
-               isAllShipsOnArea,
-               quantityShipsOnArea,
-            }
-         });
-         this.containerCell.dispatchEvent(event);
+      this.shipsNodes.set(shipEl, null);
+      // this.printPlayArea();
+    }
+    // обновить буферные зоны кораблей, т.к. циклы выше почистил
+    this.refreshBufferZone();
+  }
+  /**
+   *
+   * @param {Array<import('./area.js').Coord>} track
+   */
+  removeDekorCells(track) {
+    track.forEach(({ i, k }) => {
+      this.area[i][k].cellHtml.removeAttribute(this.nameAttrCanDrop, '');
+    });
+  }
+  /**
+   *
+   * @param {Array<import('./area.js').Coord>} track
+   */
+  setDekorCells(track) {
+    track.forEach(({ i, k }) => {
+      this.area[i][k].cellHtml.setAttribute(this.nameAttrCanDrop, '');
+    });
+  }
+  /**
+   * Уже имеющиеся в классе корабли делает перетаскиваемыми
+   */
+  makeDragableShips() {
+    if (!this.containerCell)
+      return new PlayAreaError('The containerCell property does not exist');
+
+    this.containerCell.style.position = 'relative';
+    let isOverArea,
+      track = [],
+      canBuild,
+      sizeShip,
+      prevCellBegin;
+    const cbMouseDown = (dragElement, e) => {
+      // если клик просходит по тулбару корабля, то не отрабатывать этот клик
+      if (e.target.closest(this.toolbarSelector)) return true;
+
+      sizeShip = +dragElement.dataset.ship;
+      dragElement.setAttribute(this.nameAttrDrag, '');
+      this.clearCellsUnderShip(dragElement);
+    };
+    const cbMouseMove = (dragElement) => {
+      const { cellBegin, cellEnd, dir } = this.getCellsUnderShip(dragElement);
+      if (prevCellBegin === cellBegin) return;
+      prevCellBegin = cellBegin;
+
+      dragElement.removeAttribute(this.nameAttrCanDrop);
+      this.removeDekorCells(track);
+
+      isOverArea =
+        this.containerCell.contains(cellBegin) &&
+        this.containerCell.contains(cellEnd);
+
+      const cellBeginCoord = this.cellsHtml.get(cellBegin),
+        cellEndCoord = this.cellsHtml.get(cellEnd);
+      canBuild = !!(cellBeginCoord && cellEndCoord);
+      if (canBuild) {
+        const currentTrack = this.tracks[dir].filler(
+          cellBeginCoord.i,
+          cellBeginCoord.k,
+          sizeShip
+        );
+        canBuild = this.canBuildShip(currentTrack);
+
+        if (canBuild) {
+          dragElement.setAttribute(this.nameAttrCanDrop, '');
+          track = [...currentTrack];
+          this.setDekorCells(track);
+        }
       }
-   }
-
-   /**
-    * обновить буферную зону возле кораблей.
-    * когда корабль стоит возле корабля, то после перетаскивания близлежащего корабля удаляется и буферная зона
-    */
-   refreshBufferZone() {
-      Object.values(this.listShips).forEach(({ track, aroundTrack }) => aroundTrack = [...this.buildShip(track)]);
-   }
-   /**
-    * Расстановка ранее указанных Node-кораблей в автоматическом режиме по полю
-    */
-   locateShips() {
-      for (const [shipNode, value] of this.shipsNodes) {
-         const sizeShip = +shipNode.dataset.ship;
-         if (!value) {
-            this.createShip(sizeShip);
-         };
-
-         const listShipsItem = Object.entries(this.listShips).find(([key, { track }]) => track.length == sizeShip && ![...this.shipsNodes.values()].includes(key));
-         // если не существует, вероятно этот кораблб уже на поле
-         if (!listShipsItem) continue;
-
-         const [listShipsKey, { track }] = listShipsItem;
-
-         const { coord: { i, k }, isVertical } = this.minCell(track);
-
-         if (isVertical) shipNode.classList.add(this.classNameVerticalShip);
-
-         this.positioningElInArea(i, k, shipNode);
-
-         this.shipsNodes.set(shipNode, listShipsKey);
+    };
+    const cbMouseUp = (dragElement) => {
+      if (!canBuild) {
+        this.returnShipToDock(dragElement);
+        resetVariable();
+        return;
       }
-   }
-   /**
-    * 
-    * @typedef {Object} result Информация о минимальной ячейке
-    * @property {import('./area.js').Coord} result.coord
-    * @property {boolean} result.isVertical Признак, что корабль расположен вертикально
-    */
-   /**
-    * Находит минимальную ячейку на треке и возвращает информацию о ней.
-    * @param {import('./area.js').Coord[]} track 
-    * @returns {result} 
-    *   - coord: {Coord} Объект с координатами минимальной ячейки (i, k).
-    *   - isVertical: {boolean} Флаг, указывающий, является ли трек вертикальным.
-    */
-   minCell(track) {
-      // найти стартовую ячеку корабля
-      let minI = Infinity;
-      let minK = Infinity;
-      let maxI = -Infinity;
-      let maxK = -Infinity;
-      track.forEach(({ i, k }) => {
-         if (minI > i) minI = i;
-         if (minK > k) minK = k;
-         if (maxI < i) maxI = i;
-         if (maxK < k) maxK = k;
+      const { i, k } = track[0];
+
+      this.positioningElInArea(i, k, dragElement);
+
+      const aroundTrack = this.buildShip(track);
+      const keyShip = this.addListShips(track, aroundTrack);
+      this.shipsNodes.set(dragElement, keyShip);
+      // this.printPlayArea();
+      dragElement.removeAttribute(this.nameAttrDrag);
+      dragElement.removeAttribute(this.nameAttrCanDrop);
+      this.removeDekorCells(track);
+      resetVariable();
+    };
+    this.dragable = new Dragable(this.shipSelector, {
+      cbMouseDown,
+      cbMouseMove,
+      cbMouseUp,
+    });
+    this.dragable.on();
+    function resetVariable() {
+      track = [];
+      isOverArea = canBuild = sizeShip = prevCellBegin = null;
+    }
+  }
+  /**
+   * Корабль - HTML-элемент возвращает в док
+   * если в объекте нет дока то корабль-элемент удаляется
+   * @param {HTMLElement} shipElement
+   */
+  returnShipToDock(shipElement) {
+    if (!this.dock) {
+      this.shipsNodes.delete(shipElement);
+      shipElement.remove();
+      return;
+    }
+    shipElement.removeAttribute('style');
+    shipElement.removeAttribute(this.nameAttrDrag);
+    const sizeShip = shipElement.dataset.ship - 1;
+    if (!this.dock.contains(shipElement)) {
+      for (const portNode of this.dock.children[sizeShip].children) {
+        if (!portNode.querySelector(this.shipSelector)) {
+          portNode.append(shipElement);
+          break;
+        }
+      }
+      this.recoveryShip(shipElement);
+    }
+  }
+  /**
+   * приведение корабля к первоначальному виду, удаление всех классов и аттрибутов
+   * @param {HTMLElement} shipElement
+   */
+  recoveryShip(shipElement) {
+    shipElement.classList.remove(this.classNameVerticalShip);
+    shipElement.classList.remove(this.classNameDestroyed);
+    const cellEls = shipElement.querySelectorAll(
+      `[${this.nameAttrShotTarget}]`
+    );
+    for (const cellEl of cellEls) {
+      cellEl.removeAttribute(this.nameAttrShotTarget);
+    }
+  }
+  /**
+   *
+   * @param {Node} dragElement перетаскиваемый корабль
+   * @returns {Object}
+   * @property {Element} cellBegin
+   * @property {Element} cellEnd
+   * @property {string} dir
+   */
+  getCellsUnderShip(dragElement) {
+    const dragElementCoord = dragElement.getBoundingClientRect();
+    dragElement.style.display = 'none';
+    const topLeft = document
+      .elementFromPoint(dragElementCoord.left, dragElementCoord.top)
+      ?.closest(this.cellSelector);
+    const topRight = document
+      .elementFromPoint(dragElementCoord.right, dragElementCoord.top)
+      ?.closest(this.cellSelector);
+    const bottomLeft = document
+      .elementFromPoint(dragElementCoord.left, dragElementCoord.bottom)
+      ?.closest(this.cellSelector);
+    const bottomRight = document
+      .elementFromPoint(dragElementCoord.right, dragElementCoord.bottom)
+      ?.closest(this.cellSelector);
+    dragElement.style.display = '';
+
+    let cellBegin, cellEnd, dir;
+    if (dragElementCoord.width > dragElementCoord.height) {
+      cellBegin = topLeft || bottomLeft;
+      cellEnd = topLeft ? topRight : bottomRight;
+      dir = 'right';
+    } else {
+      cellBegin = topLeft || topRight;
+      cellEnd = topLeft ? bottomLeft : bottomRight;
+      dir = 'down';
+    }
+    return { cellBegin, cellEnd, dir };
+  }
+  /**
+   * отключить Drag'n drop
+   * @returns
+   */
+  offDragable() {
+    if (!this.dragable) return;
+    this.dragable.off();
+  }
+  /**
+   * включить Drag'n drop
+   * @returns
+   */
+  onDragable() {
+    if (!this.dragable) return;
+    this.dragable.on();
+  }
+  /**
+   *
+   * @param {Array<import('./area.js').Coord>} track координаты корабля
+   * @param {Array<import('./area.js').Coord>} aroundTrack координаты буфера вокруг корабля
+   * @returns {String} ключ корабля в объекте listShips
+   */
+  addListShips(track, aroundTrack) {
+    if (!this.addListShips.counter) {
+      this.addListShips.counter = 0;
+    }
+    const key = `${track.length}_${++this.addListShips.counter}`;
+    this.listShips[key] = {};
+    this.listShips[key].track = [...track];
+    this.listShips[key].aroundTrack = [...aroundTrack];
+    this.genEventChangearea();
+    return key;
+  }
+  /**
+   * генерирует событие изменения расстановки кораблей на поле
+   */
+  genEventChangearea() {
+    const quantityShipsOnArea = Object.keys(this.listShips).length;
+    const isAllShipsOnArea = quantityShipsOnArea === this.totalShips;
+    if (this.containerCell) {
+      const event = new CustomEvent('changearea', {
+        bubbles: true,
+        detail: {
+          isAllShipsOnArea,
+          quantityShipsOnArea,
+        },
       });
-      return {
-         coord: { i: minI, k: minK },
-         isVertical: minI < maxI,
+      this.containerCell.dispatchEvent(event);
+    }
+  }
+
+  /**
+   * обновить буферную зону возле кораблей.
+   * когда корабль стоит возле корабля, то после перетаскивания близлежащего корабля удаляется и буферная зона
+   */
+  refreshBufferZone() {
+    Object.values(this.listShips).forEach(
+      ({ track, aroundTrack }) => (aroundTrack = [...this.buildShip(track)])
+    );
+  }
+  /**
+   * Расстановка ранее указанных Node-кораблей в автоматическом режиме по полю
+   */
+  locateShips() {
+    for (const [shipNode, value] of this.shipsNodes) {
+      const sizeShip = +shipNode.dataset.ship;
+      if (!value) {
+        this.createShip(sizeShip);
       }
-   }
-   /**
-    * получение абсолютных координат доч. элемента относительно родительского элемента 
-    * @param {HTMLElement} parentEl родительский элемент
-    * @param {HTMLElement} childEl дочерний элемент
-    * @param {Object} shift Объект, содержащий смещение
-    * @param {number} shift.x смещение по оси Х
-    * @param {number} shift.y смещение по оси Y
-    * @returns {{top: string, left: string}}
-    */
-   static getAbsoluteCoordinates(parentEl, childEl, { x: shiftX = 0, y: shiftY = 0 } = {}) {
-      const { top: topParent, left: leftParent, height: heightParent, width: widthParent } = parentEl.getBoundingClientRect();
-      const { top: topChild, left: leftChild } = childEl.getBoundingClientRect();
+
+      const listShipsItem = Object.entries(this.listShips).find(
+        ([key, { track }]) =>
+          track.length == sizeShip &&
+          ![...this.shipsNodes.values()].includes(key)
+      );
+      // если не существует, вероятно этот кораблб уже на поле
+      if (!listShipsItem) continue;
+
+      const [listShipsKey, { track }] = listShipsItem;
+
+      const {
+        coord: { i, k },
+        isVertical,
+      } = this.minCell(track);
+
+      if (isVertical) shipNode.classList.add(this.classNameVerticalShip);
+
+      this.positioningElInArea(i, k, shipNode);
+
+      this.shipsNodes.set(shipNode, listShipsKey);
+    }
+  }
+  /**
+   *
+   * @typedef {Object} result Информация о минимальной ячейке
+   * @property {import('./area.js').Coord} result.coord
+   * @property {boolean} result.isVertical Признак, что корабль расположен вертикально
+   */
+  /**
+   * Находит минимальную ячейку на треке и возвращает информацию о ней.
+   * @param {import('./area.js').Coord[]} track
+   * @returns {result}
+   *   - coord: {Coord} Объект с координатами минимальной ячейки (i, k).
+   *   - isVertical: {boolean} Флаг, указывающий, является ли трек вертикальным.
+   */
+  minCell(track) {
+    // найти стартовую ячеку корабля
+    let minI = Infinity;
+    let minK = Infinity;
+    let maxI = -Infinity;
+    let maxK = -Infinity;
+    track.forEach(({ i, k }) => {
+      if (minI > i) minI = i;
+      if (minK > k) minK = k;
+      if (maxI < i) maxI = i;
+      if (maxK < k) maxK = k;
+    });
+    return {
+      coord: { i: minI, k: minK },
+      isVertical: minI < maxI,
+    };
+  }
+  /**
+   * получение абсолютных координат доч. элемента относительно родительского элемента
+   * @param {HTMLElement} parentEl родительский элемент
+   * @param {HTMLElement} childEl дочерний элемент
+   * @param {Object} shift Объект, содержащий смещение
+   * @param {number} shift.x смещение по оси Х
+   * @param {number} shift.y смещение по оси Y
+   * @returns {{top: string, left: string}}
+   */
+  static getAbsoluteCoordinates(
+    parentEl,
+    childEl,
+    { x: shiftX = 0, y: shiftY = 0 } = {}
+  ) {
+    const {
+      top: topParent,
+      left: leftParent,
+      height: heightParent,
+      width: widthParent,
+    } = parentEl.getBoundingClientRect();
+    const { top: topChild, left: leftChild } = childEl.getBoundingClientRect();
+    return {
+      top: `${((topChild + shiftX - topParent) / heightParent) * 100}%`,
+      left: `${((leftChild + shiftY - leftParent) / widthParent) * 100}%`,
+    };
+  }
+  /**
+   * позиционирование корабля по заданным координатам
+   * @param {Number} i строка
+   * @param {Number} k столбец
+   * @param {Node} element HTML-узел
+   */
+  positioningElInArea(i, k, element) {
+    const { left, top } = PlayArea.getAbsoluteCoordinates(
+      this.containerCell,
+      this.area[i][k].cellHtml
+    );
+    element.style.top = top;
+    element.style.left = left;
+    element.style.position = 'absolute';
+    this.containerCell.appendChild(element);
+  }
+  /**
+   * завершить расстановку кораблей
+   * @returns {{done: boolean, message?: string}}
+   */
+  finalisePlacementShips() {
+    const isCompleate = this.totalShips === Object.keys(this.listShips).length;
+    if (!isCompleate)
       return {
-         top: `${(topChild + shiftX - topParent) / heightParent * 100}%`,
-         left: `${(leftChild + shiftY - leftParent) / widthParent * 100}%`,
-      }
-   }
-   /**
-    * позиционирование корабля по заданным координатам
-    * @param {Number} i строка
-    * @param {Number} k столбец
-    * @param {Node} element HTML-узел
-    */
-   positioningElInArea(i, k, element) {
-      const { left, top } = PlayArea.getAbsoluteCoordinates(this.containerCell, this.area[i][k].cellHtml);
-      element.style.top = top;
-      element.style.left = left;
-      element.style.position = 'absolute';
-      this.containerCell.appendChild(element);
-   }
-   /**
-    * завершить расстановку кораблей
-    * @returns {{done: boolean, message?: string}}
-    */
-   finalisePlacementShips() {
-      const isCompleate = this.totalShips === Object.keys(this.listShips).length;
-      if (!isCompleate) return { done: false, message: 'Необходимо расставить все корабли на поле' };
-      this.offDragable();
-      this.bindShipsToArrayCells();
-      this.isReadyPlacement = true;
-      return { done: true };
-   }
-   /**
+        done: false,
+        message: 'Необходимо расставить все корабли на поле',
+      };
+    this.offDragable();
+    this.bindShipsToArrayCells();
+    this.isReadyPlacement = true;
+    return { done: true };
+  }
+  /**
    * сделать поле, спсобным принять клик-выстрел
    */
-   makeShootable() {
-      for (const [cellEl, coord] of this.cellsHtml) {
-         cellEl.addEventListener('click', () => this.takeShot(coord))
+  makeShootable() {
+    for (const [cellEl, coord] of this.cellsHtml) {
+      cellEl.addEventListener('click', () => this.takeShot(coord));
+    }
+  }
+  /**
+   * переводит игровое поле в ожижание клика-выстрела по полю
+   * возвращает координаты выстрела
+   * @returns {Promise<import('./area.js').Coord>|null}
+   */
+  makeShot() {
+    return new Promise((res) => {
+      const onClick = (e) => {
+        const cellEl = e?.target?.closest(this.cellSelector);
+        const coord = this.cellsHtml.get(cellEl);
+        if (!coord)
+          return new PlayAreaError('The HTML node has no coordinates');
+        // если за ячейкой есть атрибут выстрела то не засчитывать этот выстрел
+        if (cellEl.hasAttribute(this.nameAttrShot)) return;
+        this.containerCell.removeEventListener('click', onClick);
+        this.containerCell.removeEventListener('changearea', onGameReset);
+        res(coord);
+      };
+      const onGameReset = () => {
+        this.containerCell.removeEventListener('click', onClick);
+        this.containerCell.removeEventListener('changearea', onGameReset);
+        res(null);
+      };
+      this.containerCell.addEventListener('click', onClick);
+      this.containerCell.addEventListener('changearea', onGameReset);
+    });
+  }
+  /**
+   * По указанной координате получить ключ корабля в списке listShips
+   * @param {import('./area.js').Coord} coord
+   * @returns {string} Ключ
+   */
+  getKeyShipFromListShips({ i, k }) {
+    return Object.keys(this.listShips).find(
+      (key) => this.listShips[key] == this.area[i][k].dataShip
+    );
+  }
+  /**
+   *
+   * @param {string} keyListShips Ключ объекта listShips
+   * @returns {HTMLElement} HTML-узел корабля
+   */
+  getShipElementFromShipsNodes(keyListShips) {
+    /**
+     * @type {HTMLElement}
+     */
+    let shipHtml;
+    for (const [HTML, key] of this.shipsNodes) {
+      if (key === keyListShips) {
+        shipHtml = HTML;
+        break;
       }
-   }
-   /**
-    * переводит игровое поле в ожижание клика-выстрела по полю
-    * возвращает координаты выстрела
-    * @returns {Promise<import('./area.js').Coord>|null}
-    */
-   makeShot() {
-      return new Promise((res) => {
-         const onClick = e => {
-            const cellEl = e?.target?.closest(this.cellSelector);
-            const coord = this.cellsHtml.get(cellEl);
-            if (!coord) return new PlayAreaError('The HTML node has no coordinates');
-            // если за ячейкой есть атрибут выстрела то не засчитывать этот выстрел
-            if (cellEl.hasAttribute(this.nameAttrShot)) return;
-            this.containerCell.removeEventListener('click', onClick);
-            this.containerCell.removeEventListener('changearea', onGameReset);
-            res(coord);
-         }
-         const onGameReset = () => {
-            this.containerCell.removeEventListener('click', onClick);
-            this.containerCell.removeEventListener('changearea', onGameReset);
-            res(null)
-         }
-         this.containerCell.addEventListener('click', onClick);
-         this.containerCell.addEventListener('changearea', onGameReset);
-      })
-   }
-   /**
-    * По указанной координате получить ключ корабля в списке listShips
-    * @param {import('./area.js').Coord} coord
-    * @returns {string} Ключ
-    */
-   getKeyShipFromListShips({ i, k }) {
-      return Object.keys(this.listShips).find(key => this.listShips[key] == this.area[i][k].dataShip);
-   }
-   /**
-    * 
-    * @param {string} keyListShips Ключ объекта listShips
-    * @returns {HTMLElement} HTML-узел корабля
-    */
-   getShipElementFromShipsNodes(keyListShips) {
-      /**
-       * @type {HTMLElement}
-       */
-      let shipHtml;
-      for (const [HTML, key] of this.shipsNodes) {
-         if (key === keyListShips) {
-            shipHtml = HTML;
-            break;
-         }
-      }
-      return shipHtml;
-   }
-   /**
-    * 
-    * @param {import('./area.js').Coord} coord координаты выстрела
-    * @returns {ResultShot} результат выстрела
-    */
-   takeShot({ i, k }) {
-      if (!this.isReadyPlacement) {
-         throw new PlayAreaError('The placement of ships has not been completed');
-      }
-      this.area[i][k].isShooted = true;
-      const cellHtml = this.area[i][k].cellHtml
-      cellHtml.setAttribute(this.nameAttrShot, '')
+    }
+    return shipHtml;
+  }
+  /**
+   *
+   * @param {import('./area.js').Coord} coord координаты выстрела
+   * @returns {ResultShot} результат выстрела
+   */
+  takeShot({ i, k }) {
+    if (!this.isReadyPlacement) {
+      throw new PlayAreaError('The placement of ships has not been completed');
+    }
+    this.area[i][k].isShooted = true;
+    const cellHtml = this.area[i][k].cellHtml;
+    cellHtml.setAttribute(this.nameAttrShot, '');
 
-      if (!this.area[i][k].dataShip) {
-         // выстрел мимо
-         console.log('мимо');
-         return { shotResult: 'Miss' };
+    if (!this.area[i][k].dataShip) {
+      // выстрел мимо
+      console.log('мимо');
+      return { shotResult: 'Miss' };
+    }
+
+    const keyListShips = this.getKeyShipFromListShips({ i, k });
+    const shipHtml = this.getShipElementFromShipsNodes(keyListShips);
+
+    const { track, aroundTrack } = this.area[i][k].dataShip;
+    // попадание в цель
+    const coord = track.find(({ i: ii, k: kk }) => i === ii && k === kk);
+    coord.isShooted = true;
+    cellHtml.setAttribute(this.nameAttrShotTarget, '');
+    const health = track.filter(({ isShooted }) => isShooted).length;
+
+    const { coord: start, isVertical } = this.minCell(track);
+    const idxCell = i + k - start.i - start.k;
+    if (shipHtml) {
+      [...shipHtml.querySelectorAll(this.cellSelector)][idxCell].setAttribute(
+        this.nameAttrShotTarget,
+        ''
+      );
+    }
+    if (health === track.length) {
+      // попадание и убил
+      console.log('убил');
+      ++this.numberKillsShips;
+      track
+        .map(({ i, k }) => this.area[i][k].cellHtml)
+        .forEach((elCell) => elCell.setAttribute(this.nameAttrShotDied, ''));
+      aroundTrack
+        .map(({ i, k }) => this.area[i][k].cellHtml)
+        .forEach((elCell) => {
+          if (!elCell.hasAttribute(this.nameAttrShot))
+            elCell.setAttribute(this.nameAttrShotPseudo, '');
+        });
+      shipHtml?.classList.add(this.classNameDestroyed);
+
+      // если нет кораблей на поле, то это поле противника и после попадания необходимо его показать, а прежде создать
+      if (this.shipsNodes.size !== this.totalShips) {
+        const shipDied = this.createShipElement(health);
+        shipDied.classList.add(this.classNameDestroyed);
+        this.shipsNodes.set(shipDied, keyListShips);
+        if (isVertical) shipDied.classList.add(this.classNameVerticalShip);
+        this.positioningElInArea(start.i, start.k, shipDied);
+        this.containerCell.append(shipDied);
       }
 
-      const keyListShips = this.getKeyShipFromListShips({ i, k });
-      const shipHtml = this.getShipElementFromShipsNodes(keyListShips);
-
-      const { track, aroundTrack } = this.area[i][k].dataShip;
-      // попадание в цель
-      const coord = track.find(({ i: ii, k: kk }) => i === ii && k === kk);
-      coord.isShooted = true;
-      cellHtml.setAttribute(this.nameAttrShotTarget, '');
-      const health = track.filter(({ isShooted }) => isShooted).length;
-
-      const { coord: start, isVertical } = this.minCell(track);
-      const idxCell = i + k - start.i - start.k;
-      if (shipHtml) {
-         [...shipHtml.querySelectorAll(this.cellSelector)][idxCell].setAttribute(this.nameAttrShotTarget, '');
+      if (this.numberKillsShips === this.totalShips) {
+        return { shotResult: 'Victory', sizeShip: health };
       }
-      if (health === track.length) {
-         // попадание и убил
-         console.log('убил');
-         ++this.numberKillsShips;
-         track.map(({ i, k }) => this.area[i][k].cellHtml).forEach(elCell => elCell.setAttribute(this.nameAttrShotDied, ''));
-         aroundTrack.map(({ i, k }) => this.area[i][k].cellHtml).forEach(elCell => {
-            if (!elCell.hasAttribute(this.nameAttrShot))
-               elCell.setAttribute(this.nameAttrShotPseudo, '');
-         });
-         shipHtml?.classList.add(this.classNameDestroyed);
-
-         // если нет кораблей на поле, то это поле противника и после попадания необходимо его показать, а прежде создать
-         if (this.shipsNodes.size !== this.totalShips) {
-            const shipDied = this.createShipElement(health);
-            shipDied.classList.add(this.classNameDestroyed);
-            this.shipsNodes.set(shipDied, keyListShips);
-            if (isVertical) shipDied.classList.add(this.classNameVerticalShip);
-            this.positioningElInArea(start.i, start.k, shipDied);
-            this.containerCell.append(shipDied);
-         }
-
-         if (this.numberKillsShips === this.totalShips) {
-            return { shotResult: 'Victory', sizeShip: health };
-         };
-         return { shotResult: 'Sunk', sizeShip: health };
-      }
-      // попадание и ранение
-      console.log('попал');
-      return { shotResult: 'Hit' };
-
-   }
-   /**
-    * В конце игры показать оставшиеся уцелевшие корабли ПК
-    */
-   showShipsOnArea() {
-      if (this.shipsNodes.size === this.totalShips) return;
-      // ключи уцелевших кораблей из
-      const shipKeys = Object.keys(this.listShips)
-         .filter(key => this.listShips[key].track.some(({ isShooted }) => !isShooted));
-      // перебираю ключи уцелевших кораблей и создаю их на поле
-      shipKeys.forEach(key => {
-         const track = this.listShips[key].track;
-         const { coord: { i, k }, isVertical } = this.minCell(track);
-         const sizeShip = track.length;
-         const shipEl = this.createShipElement(sizeShip);
-         this.shipsNodes.set(shipEl, key);
-         if (isVertical) shipEl.classList.add(this.classNameVerticalShip);
-         this.positioningElInArea(i, k, shipEl);
-         this.containerCell.append(shipEl);
-      })
-   }
-   /**
-    * связать ключ списка (объекта) кораблей с ячейками корабля
-    * т.о. по координатам ячейки можно выйти на весь корабль
-    */
-   bindShipsToArrayCells() {
-      Object.entries(this.listShips).forEach(([key, { track }]) => {
-         track.forEach(({ i, k }) => {
-            this.area[i][k].dataShip = this.listShips[key];
-         })
+      return { shotResult: 'Sunk', sizeShip: health };
+    }
+    // попадание и ранение
+    console.log('попал');
+    return { shotResult: 'Hit' };
+  }
+  /**
+   * В конце игры показать оставшиеся уцелевшие корабли ПК
+   */
+  showShipsOnArea() {
+    if (this.shipsNodes.size === this.totalShips) return;
+    // ключи уцелевших кораблей из
+    const shipKeys = Object.keys(this.listShips).filter((key) =>
+      this.listShips[key].track.some(({ isShooted }) => !isShooted)
+    );
+    // перебираю ключи уцелевших кораблей и создаю их на поле
+    shipKeys.forEach((key) => {
+      const track = this.listShips[key].track;
+      const {
+        coord: { i, k },
+        isVertical,
+      } = this.minCell(track);
+      const sizeShip = track.length;
+      const shipEl = this.createShipElement(sizeShip);
+      this.shipsNodes.set(shipEl, key);
+      if (isVertical) shipEl.classList.add(this.classNameVerticalShip);
+      this.positioningElInArea(i, k, shipEl);
+      this.containerCell.append(shipEl);
+    });
+  }
+  /**
+   * связать ключ списка (объекта) кораблей с ячейками корабля
+   * т.о. по координатам ячейки можно выйти на весь корабль
+   */
+  bindShipsToArrayCells() {
+    Object.entries(this.listShips).forEach(([key, { track }]) => {
+      track.forEach(({ i, k }) => {
+        this.area[i][k].dataShip = this.listShips[key];
       });
-   }
-   /**
-    * Создает элемент корабля и возвращает его.
-    *
-    * @param {number} size - Размер корабля.
-    * @returns {HTMLElement} Элемент корабля.
-    */
-   createShipElement(size) {
-      const shipEl = document.createElement('div');
-      shipEl.classList.add('ship');
-      shipEl.dataset.ship = size;
-      shipEl.insertAdjacentHTML('afterbegin', `${'<div class="cell"></div>'.repeat(size)} <img class="ship__img" src="img/ships/${size}_h.png" alt="image of ship">`);
-      return shipEl;
-   }
-   /**
-    * сброс к первоначальному состоянию
-    */
-   reset() {
-      // очистка сетки
-      for (let i = 0; i < this.area.length; i++) {
-         for (let k = 0; k < this.area[i].length; k++) {
-            this.area[i][k].cell = this.emptyCell;
-            delete this.area[i][k].dataShip;
-            delete this.area[i][k].isShooted;
-            this.area[i][k].cellHtml.removeAttribute(this.nameAttrShotTarget);
-            this.area[i][k].cellHtml.removeAttribute(this.nameAttrShotPseudo);
-            this.area[i][k].cellHtml.removeAttribute(this.nameAttrShot);
-            this.area[i][k].cellHtml.removeAttribute(this.nameAttrShotDied);
-
-         }
+    });
+  }
+  /**
+   * Создает элемент корабля и возвращает его.
+   *
+   * @param {number} size - Размер корабля.
+   * @returns {HTMLElement} Элемент корабля.
+   */
+  createShipElement(size) {
+    const shipEl = document.createElement('div');
+    shipEl.classList.add('ship');
+    shipEl.dataset.ship = size;
+    shipEl.insertAdjacentHTML(
+      'afterbegin',
+      `${'<div class="cell"></div>'.repeat(
+        size
+      )} <img class="ship__img" src="img/ships/${size}_h.png" alt="image of ship">`
+    );
+    return shipEl;
+  }
+  /**
+   * сброс к первоначальному состоянию
+   */
+  reset() {
+    // очистка сетки
+    for (let i = 0; i < this.area.length; i++) {
+      for (let k = 0; k < this.area[i].length; k++) {
+        this.area[i][k].cell = this.emptyCell;
+        delete this.area[i][k].dataShip;
+        delete this.area[i][k].isShooted;
+        this.area[i][k].cellHtml.removeAttribute(this.nameAttrShotTarget);
+        this.area[i][k].cellHtml.removeAttribute(this.nameAttrShotPseudo);
+        this.area[i][k].cellHtml.removeAttribute(this.nameAttrShot);
+        this.area[i][k].cellHtml.removeAttribute(this.nameAttrShotDied);
       }
-      this.numberKillsShips = 0;
-      // очистка данных кораблей
-      this.listShips = {};
-      this.isReadyPlacement = false;
-      // возвращение кораблей в док
-      for (const shipElement of this.shipsNodes.keys()) {
-         this.shipsNodes.set(shipElement, null)
-         this.returnShipToDock(shipElement)
+    }
+    this.numberKillsShips = 0;
+    // очистка данных кораблей
+    this.listShips = {};
+    this.isReadyPlacement = false;
+    // возвращение кораблей в док
+    for (const shipElement of this.shipsNodes.keys()) {
+      this.shipsNodes.set(shipElement, null);
+      this.returnShipToDock(shipElement);
+    }
+    this.genEventChangearea();
+  }
+  /**
+   * Получить случайным образом неповрежденную координату любого корабля
+   * (для анимация выстрела из неподюитой части корабля)
+   * @returns {import('./area.js').Coord} координата ячейки корабля
+   */
+  getCoordCellOfShipRnd() {
+    const cellArr = [];
+    Object.keys(this.listShips).forEach((key) => {
+      cellArr.push(
+        ...this.listShips[key].track.filter(({ isShooted }) => !isShooted)
+      );
+    });
+    const numRnd = randomInteger(0, cellArr.length - 1);
+    return cellArr[numRnd];
+  }
+  /**
+   * Получить случайным образом координату ячейки игрового поля, по которой еще не было выстрела
+   * @returns {import('./area.js').Coord} координата ячейки корабля
+   */
+  getCoordCellOfAreaRnd() {
+    const coords = [];
+    for (const [cellEl, coord] of this.cellsHtml) {
+      if (
+        !cellEl.hasAttribute(this.nameAttrShot) &&
+        !cellEl.hasAttribute(this.nameAttrShotPseudo)
+      ) {
+        coords.push(coord);
       }
-      this.genEventChangearea();
-   }
-   /**
-    * Получить случайным образом неповрежденную координату любого корабля
-    * (для анимация выстрела из неподюитой части корабля)
-    * @returns {import('./area.js').Coord} координата ячейки корабля
-    */
-   getCoordCellOfShipRnd() {
-      const cellArr = [];
-      Object.keys(this.listShips).forEach(key => {
-         cellArr.push(...this.listShips[key].track.filter(({ isShooted }) => !isShooted));
-      });
-      const numRnd = randomInteger(0, cellArr.length - 1);
-      return cellArr[numRnd];
-   }
-   /**
-    * Получить случайным образом координату ячейки игрового поля, по которой еще не было выстрела
-    * @returns {import('./area.js').Coord} координата ячейки корабля
-    */
-   getCoordCellOfAreaRnd() {
-      const coords = [];
-      for (const [cellEl, coord] of this.cellsHtml) {
-         if (!cellEl.hasAttribute(this.nameAttrShot) && !cellEl.hasAttribute(this.nameAttrShotPseudo)) {
-            coords.push(coord);
-         }
-      }
-      const numRnd = randomInteger(0, coords.length - 1);
-      return coords[numRnd];
-   }
+    }
+    const numRnd = randomInteger(0, coords.length - 1);
+    return coords[numRnd];
+  }
 }
 
 export default PlayArea;

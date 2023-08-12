@@ -1,531 +1,639 @@
 <!DOCTYPE html>
 <html lang="ru">
-@@include('html/_head.htm',{
-"title":"sea battle"
-})
+  @@include('html/_head.htm',{ "title":"sea battle" })
 
-<body>
-	<div class="wrapper">
-		@@include('html/_header.htm',{})
-		<main class="sea-battle sea-battle_prep">
-			<div class="sea-battle__container">
-				<div class="sea-battle__toolbar">
-					<input class="button-toggle sr-only" type="checkbox" id="music" checked>
-					<label class="icon-label" for="music" data-title-checked="Включить шум моря"
-						data-title-unchecked="Выключить шум моря">
-						<svg data-on width="20" height="20">
-							<use xlink:href="@img/icons/sprite.svg#sound"></use>
-						</svg>
-						<svg data-off class="" width="20" height="20">
-							<use xlink:href="@img/icons/sprite.svg#sound-off"></use>
-						</svg>
-						<span>фон</span>
-					</label>
-					<input class="button-toggle sr-only" type="checkbox" id="sound">
-					<label class="icon-label" for="sound" data-title-checked="Включить звук. эффекты"
-						data-title-unchecked="Выключить звук. эффекты">
-						<svg data-on width="20" height="20">
-							<use xlink:href="@img/icons/sprite.svg#sound"></use>
-						</svg>
-						<svg data-off width="20" height="20">
-							<use xlink:href="@img/icons/sprite.svg#sound-off"></use>
-						</svg>
-						<span>звуки</span>
-					</label>
-					<button class="sea-battle__btn-reset-game button">Сброс</button>
-				</div>
-				<div class="sea-battle__prompt">Разместите корабли</div>
-				<div class="sea-battle__wrap">
-					<div class="sea-battle__player sea-battle__player_human">
-						<div class="sea-battle__hint">
-							Ход ПК
-						</div>
-						<div class="sea-battle__grid grid">
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-						</div>
-						<div class="sea-battle__info info">
-							<div class="info__title">Ваше поле</div>
-							<div class="info__shots-state shots-state">
-								<span class="shots-state__descr">Выстрелов:</span>
-								<span class="shots-state__count">0</span>
-							</div>
-							<div class="info__list-ships list-ships">
-								<div class="list-ships__row">
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-								</div>
-								<div class="list-ships__row">
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-								</div>
-								<div class="list-ships__row">
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-								</div>
-								<div class="list-ships__row">
-									<div class="list-ships__ship">
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="sea-battle__player sea-battle__player_pc">
-						<div class="sea-battle__hint">
-							Ваш ход
-						</div>
-						<div class="sea-battle__grid grid">
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-							<div class="cell"></div>
-						</div>
-						<div class="sea-battle__info info">
-							<div class="info__title">Поле противника</div>
-							<div class="info__shots-state shots-state">
-								<span class="shots-state__descr">Выстрелов:</span>
-								<span class="shots-state__count">0</span>
-							</div>
-							<div class="info__list-ships list-ships">
-								<div class="list-ships__row">
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-								</div>
-								<div class="list-ships__row">
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-								</div>
-								<div class="list-ships__row">
-									<div class="list-ships__ship">
-									</div>
-									<div class="list-ships__ship">
-									</div>
-								</div>
-								<div class="list-ships__row">
-									<div class="list-ships__ship">
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="sea-battle__wrap-dock">
-						<div class="sea-battle__dock dock">
-							<div class="dock__weight">
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/1_h.png" alt="image of ship">
-									<div class="ship" data-ship="1">
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
-									</div>
-								</div>
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/1_h.png" alt="image of ship">
-									<div class="ship" data-ship="1">
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
-									</div>
-								</div>
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/1_h.png" alt="image of ship">
-									<div class="ship" data-ship="1">
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
-									</div>
-								</div>
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/1_h.png" alt="image of ship">
-									<div class="ship" data-ship="1">
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/1_h.png" alt="image of ship">
-									</div>
-								</div>
-							</div>
-							<div class="dock__weight">
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/2_h.png" alt="image of ship">
-									<div class="ship" data-ship="2">
-										<div class="ship__toolbar">
-											<button class="ship__rotate-btn button button_small">
-												<svg class="button__icon" width="16" height="16">
-													<use xlink:href="@img/icons/sprite.svg#turn"></use>
-												</svg>
-											</button>
-										</div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/2_h.png" alt="image of ship">
-									</div>
-								</div>
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/2_h.png" alt="image of ship">
-									<div class="ship" data-ship="2">
-										<div class="ship__toolbar">
-											<button class="ship__rotate-btn button button_small"><svg class="button__icon"
-													width="16" height="16">
-													<use xlink:href="@img/icons/sprite.svg#turn"></use>
-												</svg></button>
-										</div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/2_h.png" alt="image of ship">
-									</div>
-								</div>
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/2_h.png" alt="image of ship">
-									<div class="ship" data-ship="2">
-										<div class="ship__toolbar">
-											<button class="ship__rotate-btn button button_small"><svg class="button__icon"
-													width="16" height="16">
-													<use xlink:href="@img/icons/sprite.svg#turn"></use>
-												</svg></button>
-										</div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/2_h.png" alt="image of ship">
-									</div>
-								</div>
-							</div>
-							<div class="dock__weight">
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/2_h.png" alt="image of ship">
-									<div class="ship" data-ship="3">
-										<div class="ship__toolbar">
-											<button class="ship__rotate-btn button button_small"><svg class="button__icon"
-													width="16" height="16">
-													<use xlink:href="@img/icons/sprite.svg#turn"></use>
-												</svg></button>
-										</div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/3_h.png" alt="image of ship">
-									</div>
-								</div>
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/2_h.png" alt="image of ship">
-									<div class="ship" data-ship="3">
-										<div class="ship__toolbar">
-											<button class="ship__rotate-btn button button_small"><svg class="button__icon"
-													width="16" height="16">
-													<use xlink:href="@img/icons/sprite.svg#turn"></use>
-												</svg></button>
-										</div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/3_h.png" alt="image of ship">
-									</div>
-								</div>
-							</div>
-							<div class="dock__weight">
-								<div class="dock__port">
-									<img class="dock__img" src="@img/ships/4_h.png" alt="image of ship">
-									<div class="ship" data-ship="4">
-										<div class="ship__toolbar">
-											<button class="ship__rotate-btn button button_small"><svg class="button__icon"
-													width="16" height="16">
-													<use xlink:href="@img/icons/sprite.svg#turn"></use>
-												</svg></button>
-										</div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<div class="cell"></div>
-										<img class="ship__img" src="@img/ships/4_h.png" alt="image of ship">
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="sea-battle__dock-buttons">
-							<button class="sea-battle__btn-rnd button">Случайно</button>
-							<button class="sea-battle__btn-reset button" disabled>Сброс</button>
-							<button class="sea-battle__btn-start button" disabled>Начать игру</button>
-						</div>
-					</div>
-				</div>
-			</div>
-		</main>
-		@@include('html/_footer.htm',{})
-	</div>
-	<dialog id="modal-first-shot" class="modal">
-		<div class="modal__dialog">
-			<div class="modal__content">
-				<div class="modal__header">
-					<div class="modal__title">Первый выстрел</div>
-				</div>
-				<div class="modal__body first-shot">
-					<button class="button" value="human" data-close>Я</button>
-					<button class="button" value="pc" data-close>ПК</button>
-					<button class="button" value="random" data-close>Случайно</button>
-				</div>
-				<!-- <div class="modal__footer">
+  <body>
+    <div class="wrapper">
+      @@include('html/_header.htm',{})
+      <main class="sea-battle sea-battle_prep">
+        <img
+          class="sea-battle__bg"
+          src="@img/bg/water.jpg"
+          alt="background water"
+          loading="lazy"
+        />
+        <img
+          class="sea-battle__island-bg sea-battle__island-bg_num_1"
+          src="@img/islands/island.png"
+          alt="background water"
+          loading="lazy"
+        />
+        <img
+          class="sea-battle__island-bg sea-battle__island-bg_num_2"
+          src="@img/islands/island2.png"
+          alt="background water"
+          loading="lazy"
+        />
+        <img
+          class="sea-battle__island-bg sea-battle__island-bg_num_3"
+          src="@img/islands/island3.png"
+          alt="background water"
+          loading="lazy"
+        />
+        <img
+          class="sea-battle__island-bg sea-battle__island-bg_num_4"
+          src="@img/islands/island4.png"
+          alt="background water"
+          loading="lazy"
+        />
+        <img
+          class="sea-battle__island-bg sea-battle__island-bg_num_5"
+          src="@img/islands/island5.png"
+          alt="background water"
+          loading="lazy"
+        />
+        <div class="sea-battle__container">
+          <div class="sea-battle__toolbar">
+            <input
+              class="button-toggle sr-only"
+              type="checkbox"
+              id="music"
+              checked
+            />
+            <label
+              class="icon-label"
+              for="music"
+              data-title-checked="Включить шум моря"
+              data-title-unchecked="Выключить шум моря"
+            >
+              <svg data-on width="20" height="20">
+                <use xlink:href="@img/icons/sprite.svg#sound"></use>
+              </svg>
+              <svg data-off class="" width="20" height="20">
+                <use xlink:href="@img/icons/sprite.svg#sound-off"></use>
+              </svg>
+              <span>фон</span>
+            </label>
+            <input class="button-toggle sr-only" type="checkbox" id="sound" />
+            <label
+              class="icon-label"
+              for="sound"
+              data-title-checked="Включить звук. эффекты"
+              data-title-unchecked="Выключить звук. эффекты"
+            >
+              <svg data-on width="20" height="20">
+                <use xlink:href="@img/icons/sprite.svg#sound"></use>
+              </svg>
+              <svg data-off width="20" height="20">
+                <use xlink:href="@img/icons/sprite.svg#sound-off"></use>
+              </svg>
+              <span>звуки</span>
+            </label>
+            <button class="sea-battle__btn-reset-game button">Сброс</button>
+          </div>
+          <div class="sea-battle__prompt">Разместите корабли</div>
+          <div class="sea-battle__wrap">
+            <div class="sea-battle__player sea-battle__player_human">
+              <div class="sea-battle__hint">Ход ПК</div>
+              <div class="sea-battle__grid grid">
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+              </div>
+              <div class="sea-battle__info info">
+                <div class="info__title">Ваше поле</div>
+                <div class="info__shots-state shots-state">
+                  <span class="shots-state__descr">Выстрелов:</span>
+                  <span class="shots-state__count">0</span>
+                </div>
+                <div class="info__list-ships list-ships">
+                  <div class="list-ships__row">
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                  </div>
+                  <div class="list-ships__row">
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                  </div>
+                  <div class="list-ships__row">
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                  </div>
+                  <div class="list-ships__row">
+                    <div class="list-ships__ship"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sea-battle__player sea-battle__player_pc">
+              <div class="sea-battle__hint">Ваш ход</div>
+              <div class="sea-battle__grid grid">
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+                <div class="cell"></div>
+              </div>
+              <div class="sea-battle__info info">
+                <div class="info__title">Поле противника</div>
+                <div class="info__shots-state shots-state">
+                  <span class="shots-state__descr">Выстрелов:</span>
+                  <span class="shots-state__count">0</span>
+                </div>
+                <div class="info__list-ships list-ships">
+                  <div class="list-ships__row">
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                  </div>
+                  <div class="list-ships__row">
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                  </div>
+                  <div class="list-ships__row">
+                    <div class="list-ships__ship"></div>
+                    <div class="list-ships__ship"></div>
+                  </div>
+                  <div class="list-ships__row">
+                    <div class="list-ships__ship"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="sea-battle__wrap-dock">
+              <div class="sea-battle__dock dock">
+                <div class="dock__weight">
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/1_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="1">
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/1_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/1_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="1">
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/1_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/1_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="1">
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/1_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/1_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="1">
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/1_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="dock__weight">
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/2_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="2">
+                      <div class="ship__toolbar">
+                        <button class="ship__rotate-btn button button_small">
+                          <svg class="button__icon" width="16" height="16">
+                            <use xlink:href="@img/icons/sprite.svg#turn"></use>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/2_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/2_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="2">
+                      <div class="ship__toolbar">
+                        <button class="ship__rotate-btn button button_small">
+                          <svg class="button__icon" width="16" height="16">
+                            <use xlink:href="@img/icons/sprite.svg#turn"></use>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/2_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/2_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="2">
+                      <div class="ship__toolbar">
+                        <button class="ship__rotate-btn button button_small">
+                          <svg class="button__icon" width="16" height="16">
+                            <use xlink:href="@img/icons/sprite.svg#turn"></use>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/2_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="dock__weight">
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/2_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="3">
+                      <div class="ship__toolbar">
+                        <button class="ship__rotate-btn button button_small">
+                          <svg class="button__icon" width="16" height="16">
+                            <use xlink:href="@img/icons/sprite.svg#turn"></use>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/3_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/2_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="3">
+                      <div class="ship__toolbar">
+                        <button class="ship__rotate-btn button button_small">
+                          <svg class="button__icon" width="16" height="16">
+                            <use xlink:href="@img/icons/sprite.svg#turn"></use>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/3_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class="dock__weight">
+                  <div class="dock__port">
+                    <img
+                      class="dock__img"
+                      src="@img/ships/4_h.png"
+                      alt="image of ship"
+                    />
+                    <div class="ship" data-ship="4">
+                      <div class="ship__toolbar">
+                        <button class="ship__rotate-btn button button_small">
+                          <svg class="button__icon" width="16" height="16">
+                            <use xlink:href="@img/icons/sprite.svg#turn"></use>
+                          </svg>
+                        </button>
+                      </div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <div class="cell"></div>
+                      <img
+                        class="ship__img"
+                        src="@img/ships/4_h.png"
+                        alt="image of ship"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="sea-battle__dock-buttons">
+                <button class="sea-battle__btn-rnd button">Случайно</button>
+                <button class="sea-battle__btn-reset button" disabled>
+                  Сброс
+                </button>
+                <button class="sea-battle__btn-start button" disabled>
+                  Начать игру
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+      @@include('html/_footer.htm',{})
+    </div>
+    <dialog id="modal-first-shot" class="modal">
+      <div class="modal__dialog">
+        <div class="modal__content">
+          <div class="modal__header">
+            <div class="modal__title">Первый выстрел</div>
+          </div>
+          <div class="modal__body first-shot">
+            <button class="button" value="human" data-close>Я</button>
+            <button class="button" value="pc" data-close>ПК</button>
+            <button class="button" value="random" data-close>Случайно</button>
+          </div>
+          <!-- <div class="modal__footer">
 				<button class="modal__close btn btn-danger" data-close>Close</button>
 				<button class="modal__accept btn btn-success">Save changes</button>
 			</div> -->
-			</div>
-		</div>
-	</dialog>
-	<dialog id="modal-message" class="modal">
-		<div class="modal__dialog">
-			<div class="modal__content">
-				<button class="modal__icon-close" data-close>
-					&#10006;
-				</button>
-				<div class="modal__header">
-					<div class="modal__title">Результат битвы</div>
-				</div>
-				<div class="modal__body result-battle">
-					Вы победили
-				</div>
-				<div class="modal__footer">
-					<button class="modal__close btn button" data-close>Ok</button>
-				</div>
-			</div>
-		</div>
-	</dialog>
-	<dialog id="modal-reset-game" class="modal">
-		<div class="modal__dialog">
-			<div class="modal__content">
-				<button class="modal__icon-close" data-close>
-					&#10006;
-				</button>
-				<div class="modal__header">
-					<div class="modal__title">Внимание!</div>
-				</div>
-				<div class="modal__body result-battle">
-					Сброс игры привидет к потере прогресса текущей игры. <br>
-					Продолжить?
-				</div>
-				<div class="modal__footer">
-					<button class="modal__close button" data-close value="yes">Да</button>
-					<button class="modal__close button" data-close value="no">Нет</button>
-				</div>
-			</div>
-		</div>
-	</dialog>
-	<audio id="sound-bg">
-		<source src="files/sounds/background.mp3" type="audio/mpeg">
-		<source src="files/sounds/background.wav" type="audio/wav">
-		Тег audio не поддерживается вашим браузером.
-	</audio>
-	@@include('html/_popup.htm',{})
-	@@include('html/_js.htm',{})
-</body>
-
+        </div>
+      </div>
+    </dialog>
+    <dialog id="modal-message" class="modal">
+      <div class="modal__dialog">
+        <div class="modal__content">
+          <button class="modal__icon-close" data-close>&#10006;</button>
+          <div class="modal__header">
+            <div class="modal__title">Результат битвы</div>
+          </div>
+          <div class="modal__body result-battle">Вы победили</div>
+          <div class="modal__footer">
+            <button class="modal__close btn button" data-close>Ok</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+    <dialog id="modal-reset-game" class="modal">
+      <div class="modal__dialog">
+        <div class="modal__content">
+          <button class="modal__icon-close" data-close>&#10006;</button>
+          <div class="modal__header">
+            <div class="modal__title">Внимание!</div>
+          </div>
+          <div class="modal__body result-battle">
+            Сброс игры привидет к потере прогресса текущей игры. <br />
+            Продолжить?
+          </div>
+          <div class="modal__footer">
+            <button class="modal__close button" data-close value="yes">
+              Да
+            </button>
+            <button class="modal__close button" data-close value="no">
+              Нет
+            </button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+    <audio id="sound-bg">
+      <source src="files/sounds/background.mp3" type="audio/mpeg" />
+      <source src="files/sounds/background.wav" type="audio/wav" />
+      Тег audio не поддерживается вашим браузером.
+    </audio>
+    @@include('html/_popup.htm',{}) @@include('html/_js.htm',{})
+  </body>
 </html>

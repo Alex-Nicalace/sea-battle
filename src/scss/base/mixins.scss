@@ -3,7 +3,9 @@
 	@font-face {
 		font-family: $font_name;
 		font-display: swap;
-		src: url("../fonts/#{$file_name}.woff2") format("woff2"), url("../fonts/#{$file_name}.woff") format("woff");
+		src:
+			url("../fonts/#{$file_name}.woff2") format("woff2"),
+			url("../fonts/#{$file_name}.woff") format("woff");
 		font-weight: #{$weight};
 		font-style: #{$style};
 	}
@@ -86,11 +88,11 @@
 	}
 
 	// Если поддерживается clamp();
-	@supports (#{$property}: $propertyValue) and (width: clamp(100px, 50%, 200px)) {
+	@supports (width: clamp(0px, 0px, 0px)) {
 		#{$property}: $propertyValue;
 	}
 	// Если не поддерживается clamp();
-	@supports (not (#{$property}: $propertyValue)) and (not (width: clamp(100px, 50%, 200px))) {
+	@supports (not (width: clamp(0px, 0px, 0px))) {
 		#{$property}: calc(
 			#{rem($minSize)} + #{$addSize} * (100vw - #{rem($widthTo)}) / #{math.div($widthFrom, 16) -
 				math.div($widthTo, 16)}

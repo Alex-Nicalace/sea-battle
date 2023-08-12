@@ -2,8 +2,12 @@ h1 {
    font-size: rem(40);
 }
 body {
-   @include adaptiveValue("--cell-size", $size-max-cell, $size-min-cell);
+   @include adaptiveValue("--cell-size", $size-max-cell, $size-min-cell, $containerWidth, 650, 1);
+   // --cell-size: #{$size-max-cell + 0px};
    letter-spacing: em(1.5, 16);
+   @media (max-width: $mobile) {
+      @include adaptiveValue("--cell-size", $size-max-cell, $size-min-cell, 768, 320, 1);
+   }
 }
 
 [data-dragable] {

@@ -29,15 +29,16 @@
    &[data-shot]:not([data-shot-target]) {
       color: $color-shot;
       animation-name: shot;
+      background: url("@img/bang2.png") center / 0 0 no-repeat;
       @keyframes shot {
          0% {
-            background: url("@img/bang2.png") center / 0 0 no-repeat;
+            background-size: 0 0;
          }
          40% {
-            background: url("@img/bang2.png") center / 100% 100% no-repeat;
+            background-size: 100% 100%;
          }
          80% {
-            background: url("@img/bang2.png") center / 0 0 no-repeat;
+            background-size: 0 0;
             font-size: rem(0);
          }
          100% {
@@ -47,12 +48,13 @@
    }
    &[data-shot-target]:not([data-shot-died]) {
       animation-name: shot-target;
+      background: url("@img/bang.png") center / 0 0 no-repeat;
       @keyframes shot-target {
          0% {
-            background: url("@img/bang.png") center / 0 0 no-repeat;
+            background-size: 0 0;
          }
          100% {
-            background: url("@img/bang.png") center / 100% 100% no-repeat;
+            background-size: 100% 100%;
          }
       }
    }
